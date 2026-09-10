@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "BabyBoo",
+    "slug": "babyboo",
+    "version": "1.0.0",
+    "sdkVersion": "57.0.0",
+    "orientation": "portrait",
+    "icon": "./public/favicon.svg",
+    "scheme": "babyboo",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#4F46E5",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.babyboo.app",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "fetch",
+          "processing",
+          "remote-notification"
+        ],
+        "NSFamilyControlsUsageDescription": "BabyBoo uses Screen Time controls to safely enforce parent-configured session boundaries and prevent screen fatigue."
+      }
+    },
+    "android": {
+      "package": "com.babyboo.app",
+      "versionCode": 1,
+      "compileSdkVersion": 35,
+      "targetSdkVersion": 35,
+      "adaptiveIcon": {
+        "backgroundColor": "#4F46E5"
+      },
+      "permissions": [
+        "SYSTEM_ALERT_WINDOW",
+        "PACKAGE_USAGE_STATS",
+        "RECEIVE_BOOT_COMPLETED",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_SPECIAL_USE",
+        "WAKE_LOCK",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./public/favicon.svg"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
