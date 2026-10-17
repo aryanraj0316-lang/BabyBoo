@@ -101,7 +101,7 @@ class ScreenTimeBackgroundService : Service() {
             .putLong(KEY_TIMER_END_AT, endTimeMillis)
             .putInt(KEY_TIMER_TOTAL_SECONDS, totalSeconds)
             .putBoolean(KEY_TIMER_ACTIVE, true)
-            .apply()
+            .commit()
 
         // Acquire partial wake lock to keep timer alive
         try {
@@ -118,8 +118,14 @@ class ScreenTimeBackgroundService : Service() {
         BabyBooWidgetProvider.updateAllWidgets(this, totalSeconds)
 
         // Show foreground notification and start ticking
-        val notification = buildNotification(totalSeconds)
-        startForeground(NOTIFICATION_ID, notification)
+        try {
+            val notification = buildNotification(totalSeconds)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+            }
+        } catch (_: Exception) {}
         handler.post(tickRunnable)
     }
 
@@ -184,7 +190,7 @@ class ScreenTimeBackgroundService : Service() {
             )
 
             val fullScreenNotification = NotificationCompat.Builder(this, CHANNEL_ALARM_ID)
-                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+                .setSmallIcon(applicationInfo.icon)
                 .setContentTitle("BabyBoo Screen Time Reached")
                 .setContentText("Screen time session complete.")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -262,11 +268,11 @@ class ScreenTimeBackgroundService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("BabyBoo Screen Time Active")
             .setContentText("Time remaining: $timeStr")
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setSmallIcon(applicationInfo.icon)
             .setOngoing(true)
             .setSilent(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .addAction(android.R.drawable.ic_delete, "Cancel", cancelPendingIntent)
+            .addAction(applicationInfo.icon, "Cancel", cancelPendingIntent)
             .build()
     }
 

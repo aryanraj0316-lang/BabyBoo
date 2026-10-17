@@ -453,19 +453,35 @@ class WidgetPopupActivity : Activity() {
     private fun onTimerOptionSelected(minutes: Int) {
         vibrateBriefly()
 
+        val now = System.currentTimeMillis()
+        val totalSecs = minutes * 60
+        val endAt = now + (totalSecs * 1000L)
+
+        // Persist timer state synchronously to disk
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(ScreenTimeBackgroundService.KEY_TIMER_ACTIVE, true)
+            .putLong(ScreenTimeBackgroundService.KEY_TIMER_END_AT, endAt)
+            .putInt(ScreenTimeBackgroundService.KEY_TIMER_TOTAL_SECONDS, totalSecs)
+            .commit()
+
         // Start the ScreenTimeBackgroundService
         val serviceIntent = Intent(this, ScreenTimeBackgroundService::class.java).apply {
             action = ScreenTimeBackgroundService.ACTION_START_TIMER
             putExtra(ScreenTimeBackgroundService.EXTRA_MINUTES, minutes)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
+        } catch (_: Exception) {
+            try { startService(serviceIntent) } catch (_: Exception) {}
         }
 
         // Update home screen widget immediately
-        BabyBooWidgetProvider.updateAllWidgets(this, minutes * 60)
+        BabyBooWidgetProvider.updateAllWidgets(this, totalSecs)
 
         // Switch to Active Countdown View immediately so the user SEES the timer ticking down live
         renderPopupUI()
@@ -481,10 +497,18 @@ class WidgetPopupActivity : Activity() {
     private fun onStopTimerSelected() {
         vibrateBriefly()
 
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(ScreenTimeBackgroundService.KEY_TIMER_ACTIVE, false)
+            .remove(ScreenTimeBackgroundService.KEY_TIMER_END_AT)
+            .commit()
+
         val serviceIntent = Intent(this, ScreenTimeBackgroundService::class.java).apply {
             action = ScreenTimeBackgroundService.ACTION_CANCEL_TIMER
         }
-        startService(serviceIntent)
+        try {
+            startService(serviceIntent)
+        } catch (_: Exception) {}
 
         BabyBooWidgetProvider.updateAllWidgets(this, 0)
 
