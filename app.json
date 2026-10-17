@@ -17,8 +17,7 @@
     "updates": {
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 5000,
-      "url": "https://u.expo.dev/52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
+      "fallbackToCacheTimeout": 5000
     },
     "ios": {
       "supportsTablet": true,
@@ -82,8 +81,9 @@
         }
       },
       "eas": {
-        "projectId": "52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
+        "projectId": "83ea71f2-9b91-44b8-a0de-2260bf28cf4b"
       }
-    }
+    },
+    "owner": "aryanraj0316"
   }
 }
