@@ -429,60 +429,6 @@ export const ChildProfileAutomationSection: React.FC<ChildProfileAutomationSecti
     </View>
   );
 
-  // Render the End Screen Style Card (Reusable for both One-Time and Recurring tabs)
-  const renderEndScreenStyleCard = () => (
-    <View style={styles.subSection}>
-      <View style={styles.subSectionHeaderRow}>
-        <View style={styles.subSectionTitleGroup}>
-          <Text style={styles.subSectionTitle}>END SCREEN STYLE FOR WARNING</Text>
-        </View>
-        <View style={styles.endingBadge}>
-          <Text style={styles.endingBadgeText}>
-            {endingType === 'monster' ? '👾 Monster Mode' : '🔋 Switch-Off Style'}
-          </Text>
-        </View>
-      </View>
-
-      {/* Grand Interactive End Screen Style Card */}
-      <TouchableOpacity
-        activeOpacity={0.85}
-        onPress={() => {
-          setModalTab(endingType);
-          setShowStylePickerModal(true);
-        }}
-        style={styles.endStyleCard}
-      >
-        <View style={styles.endStyleCardInner}>
-          <View style={[styles.endStyleIconBox, { backgroundColor: endingType === 'monster' ? 'rgba(129, 140, 248, 0.2)' : 'rgba(245, 158, 11, 0.2)' }]}>
-            <Text style={{ fontSize: 24 }}>
-              {endingType === 'monster' ? currentMonster.emoji : currentSwitchOff.icon}
-            </Text>
-          </View>
-
-          <View style={styles.endStyleTextGroup}>
-            <View style={styles.endStyleTitleRow}>
-              <Text style={styles.endStyleTitle} numberOfLines={1}>
-                {endingType === 'monster' ? currentMonster.name : currentSwitchOff.title}
-              </Text>
-              <View style={styles.endStyleSubBadge}>
-                <Text style={styles.endStyleSubBadgeText} numberOfLines={1}>
-                  {endingType === 'monster' ? currentMonster.badge : currentSwitchOff.badge}
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.endStyleDescription} numberOfLines={2}>
-              {endingType === 'monster' ? `"${currentMonster.dialogue}"` : currentSwitchOff.description}
-            </Text>
-          </View>
-
-          <View style={styles.changeBtn}>
-            <Text style={styles.changeBtnText}>Change</Text>
-            <Text style={styles.changeBtnArrow}>→</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <View style={styles.outerContainer}>
@@ -623,20 +569,17 @@ export const ChildProfileAutomationSection: React.FC<ChildProfileAutomationSecti
               {/* Specific Warning Trigger Time */}
               {renderWarningTimeSelector()}
 
-              {/* End Screen Style Picker */}
-              {renderEndScreenStyleCard()}
-
               {/* Informative Guidance Banner */}
               <View style={styles.infoBanner}>
                 <Text style={styles.infoBannerText}>
-                  Screen will automatically display the <Text style={{ fontWeight: '900', color: '#FCD34D' }}>{endingType === 'monster' ? currentMonster.name : currentSwitchOff.title}</Text> warning at <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>{formattedWarningTime}</Text> on {oneTimeOption === 'Custom' ? customSelectedDate : oneTimeOption.toLowerCase()}. No manual timer start required.
+                  Screen will automatically display the wrap-up warning at <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>{formattedWarningTime}</Text> on {oneTimeOption === 'Custom' ? customSelectedDate : oneTimeOption.toLowerCase()}. No manual timer start required.
                 </Text>
               </View>
             </View>
           )}
 
           {/* ========================================================================= */}
-          {/* TAB B: RECURRING ROUTINE (ONLY End Screen Style + Warning Time, NO Time Limit) */}
+          {/* TAB B: RECURRING ROUTINE */}
           {/* ========================================================================= */}
           {repetitionMode === 'recurring_weekly' && (
             <View style={{ gap: 14, width: '100%' }}>
@@ -724,13 +667,10 @@ export const ChildProfileAutomationSection: React.FC<ChildProfileAutomationSecti
               {/* Specific Warning Trigger Time */}
               {renderWarningTimeSelector()}
 
-              {/* End Screen Style Picker */}
-              {renderEndScreenStyleCard()}
-
               {/* Informative Guidance Banner */}
               <View style={styles.infoBanner}>
                 <Text style={styles.infoBannerText}>
-                  Screen will automatically display the <Text style={{ fontWeight: '900', color: '#FCD34D' }}>{endingType === 'monster' ? currentMonster.name : currentSwitchOff.title}</Text> warning daily at <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>{formattedWarningTime}</Text> on scheduled days. No manual timer start required.
+                  Screen will automatically display the wrap-up warning daily at <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>{formattedWarningTime}</Text> on scheduled days. No manual timer start required.
                 </Text>
               </View>
             </View>
@@ -753,154 +693,6 @@ export const ChildProfileAutomationSection: React.FC<ChildProfileAutomationSecti
           </TouchableOpacity>
         </View>
       )}
-
-      {/* ========================================================================= */}
-      {/* 4. END SCREEN STYLE PICKER MODAL */}
-      {/* ========================================================================= */}
-      <Modal visible={showStylePickerModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.stylePickerDialog}>
-            {/* Header */}
-            <View style={styles.pickerHeaderRow}>
-              <View style={{ flex: 1, marginRight: 8 }}>
-                <Text style={styles.pickerTitle}>Select End Screen Warning</Text>
-                <Text style={styles.pickerSubtitle}>
-                  Choose what {childName} experiences when warning time arrives:
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setShowStylePickerModal(false)}
-                style={styles.pickerCloseBtn}
-              >
-                <Text style={styles.pickerCloseBtnText}>✕</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Sub-Tabs: Monster Mode vs Switch-Off */}
-            <View style={styles.modalTabsRow}>
-              <TouchableOpacity
-                onPress={() => setModalTab('monster')}
-                style={[
-                  styles.modalTabBtn,
-                  modalTab === 'monster' && styles.modalTabBtnActive,
-                ]}
-              >
-                <Text style={styles.modalTabBtnText}>👾 Monster Mode ({MONSTER_PROFILES.length})</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setModalTab('switchoff')}
-                style={[
-                  styles.modalTabBtn,
-                  modalTab === 'switchoff' && styles.modalTabBtnActive,
-                ]}
-              >
-                <Text style={styles.modalTabBtnText}>🔋 Switch-Off ({SWITCH_OFF_PROFILES.length})</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* List of Styles */}
-            <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
-              {modalTab === 'monster' ? (
-                <View style={{ gap: 8 }}>
-                  {MONSTER_PROFILES.map((m) => {
-                    const isSelected = endingType === 'monster' && selectedMonsterId === m.id;
-                    return (
-                      <TouchableOpacity
-                        key={m.id}
-                        activeOpacity={0.85}
-                        onPress={() => {
-                          setEndingType('monster');
-                          setSelectedMonsterId(m.id);
-                          notifyChange({ endingType: 'monster', monsterId: m.id });
-                          setShowStylePickerModal(false);
-                        }}
-                        style={[
-                          styles.styleOptionCard,
-                          isSelected && styles.styleOptionCardSelected,
-                        ]}
-                      >
-                        <View style={styles.styleOptionEmojiBox}>
-                          <Text style={{ fontSize: 26 }}>{m.emoji}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                            <Text style={styles.styleOptionTitle}>{m.name}</Text>
-                            <View style={styles.styleOptionBadge}>
-                              <Text style={styles.styleOptionBadgeText}>{m.badge}</Text>
-                            </View>
-                          </View>
-                          <Text style={styles.styleOptionDesc} numberOfLines={2}>
-                            {m.description}
-                          </Text>
-                          <Text style={styles.styleOptionDialogue} numberOfLines={1}>
-                            "{m.dialogue}"
-                          </Text>
-                        </View>
-                        {isSelected && (
-                          <View style={styles.checkCircle}>
-                            <Text style={styles.checkCircleText}>✓</Text>
-                          </View>
-                        )}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              ) : (
-                <View style={{ gap: 8 }}>
-                  {SWITCH_OFF_PROFILES.map((s) => {
-                    const isSelected = endingType === 'switchoff' && selectedSwitchOffId === s.id;
-                    return (
-                      <TouchableOpacity
-                        key={s.id}
-                        activeOpacity={0.85}
-                        onPress={() => {
-                          setEndingType('switchoff');
-                          setSelectedSwitchOffId(s.id);
-                          notifyChange({ endingType: 'switchoff', switchOffId: s.id });
-                          setShowStylePickerModal(false);
-                        }}
-                        style={[
-                          styles.styleOptionCard,
-                          isSelected && styles.styleOptionCardSelected,
-                        ]}
-                      >
-                        <View style={styles.styleOptionEmojiBox}>
-                          <Text style={{ fontSize: 26 }}>{s.icon}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                            <Text style={styles.styleOptionTitle}>{s.title}</Text>
-                            <View style={styles.styleOptionBadge}>
-                              <Text style={styles.styleOptionBadgeText}>{s.badge}</Text>
-                            </View>
-                          </View>
-                          <Text style={styles.styleOptionDesc} numberOfLines={2}>
-                            {s.description}
-                          </Text>
-                        </View>
-                        {isSelected && (
-                          <View style={styles.checkCircle}>
-                            <Text style={styles.checkCircleText}>✓</Text>
-                          </View>
-                        )}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              )}
-            </ScrollView>
-
-            {/* OK / Set Style Button */}
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => setShowStylePickerModal(false)}
-              style={styles.modalConfirmBtn}
-            >
-              <Text style={styles.modalConfirmBtnText}>Set End Screen Style (OK)</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       {/* ========================================================================= */}
       {/* 5. MINI CALENDAR MODAL (Opens on "Custom" Date Click) */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,423 +6,187 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  Platform,
 } from 'react-native';
 import Svg, {
   Path,
   Circle,
+  Line,
   Rect,
-  G,
-  Defs,
-  LinearGradient,
-  Stop,
 } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
-
-export type TransitionOutcomeType = 'smooth' | 'resistance';
-
-export interface ExitEffectStat {
-  id: string;
-  name: string;
-  emoji: string;
-  successRate: number; // 0 - 100
-  totalSessions: number;
-  avgGraceSeconds: number;
-  highlightBadge?: string;
-  color: string;
-}
-
-export interface SessionTimelineItem {
-  id: string;
-  startTime: string;
-  durationMinutes: number;
-  exitEffectName: string;
-  exitEffectEmoji: string;
-  activityName: string;
-  outcome: TransitionOutcomeType;
-  graceTakenSeconds: number;
-  notes: string;
-}
 
 export interface AnalyticsInsightsProps {
   childName?: string;
   childAvatarInitial?: string;
   childAvatarColor?: string;
+  bottomPadding?: number;
   onBack?: () => void;
   onNavigateControls?: () => void;
+}
+
+interface DayMetric {
+  day: string;
+  minutes: number;
 }
 
 export const AnalyticsFeaturesHubNative: React.FC<AnalyticsInsightsProps> = ({
   childName = 'Leo',
   childAvatarInitial = 'L',
-  childAvatarColor = '#6366F1',
+  childAvatarColor = '#5D997C',
+  bottomPadding = 80,
   onBack,
-  onNavigateControls,
 }) => {
-  const [timeframe, setTimeframe] = useState<'today' | '7days' | '30days'>('today');
-  const [timelineFilter, setTimelineFilter] = useState<'all' | 'smooth' | 'resistance'>('all');
+  const dailyTarget = 20;
 
-  // Overview Metrics
-  const screenTimeTodayMinutes = 45;
-  const weeklyAverageMinutes = 57;
-  const peacefulTransitionsRate = 88; // 88%
-
-  // Transition Effectiveness Data
-  const exitEffectsData: ExitEffectStat[] = [
-    {
-      id: 'sleepy_mascot',
-      name: 'Sleepy Mascot',
-      emoji: '🧸',
-      successRate: 94,
-      totalSessions: 18,
-      avgGraceSeconds: 22,
-      highlightBadge: 'Top Performer',
-      color: '#10B981',
-    },
-    {
-      id: 'battery_dies',
-      name: 'Battery Power Down',
-      emoji: '🔋',
-      successRate: 89,
-      totalSessions: 14,
-      avgGraceSeconds: 15,
-      highlightBadge: 'Zero Conflict',
-      color: '#3B82F6',
-    },
-    {
-      id: 'bedtime_rest',
-      name: 'Bedtime Rest Illusion',
-      emoji: '🌙',
-      successRate: 83,
-      totalSessions: 12,
-      avgGraceSeconds: 28,
-      color: '#8B5CF6',
-    },
-    {
-      id: 'cooldown_nap',
-      name: 'Device Cooling Nap',
-      emoji: '🌀',
-      successRate: 78,
-      totalSessions: 9,
-      avgGraceSeconds: 35,
-      color: '#F59E0B',
-    },
+  const weekData: DayMetric[] = [
+    { day: 'MON', minutes: 18 },
+    { day: 'TUE', minutes: 22 },
+    { day: 'WED', minutes: 15 },
+    { day: 'THU', minutes: 24 },
+    { day: 'FRI', minutes: 20 },
+    { day: 'SAT', minutes: 26 },
+    { day: 'SUN', minutes: 19 },
   ];
 
-  // Daily Timeline Log Sessions
-  const pastSessions: SessionTimelineItem[] = [
-    {
-      id: 's_1',
-      startTime: '5:45 PM',
-      durationMinutes: 20,
-      exitEffectName: 'Sleepy Mascot',
-      exitEffectEmoji: '🧸',
-      activityName: 'Creative Drawing',
-      outcome: 'smooth',
-      graceTakenSeconds: 18,
-      notes: `${childName} cheerfully put the phone down upon hearing Buddy count down.`,
-    },
-    {
-      id: 's_2',
-      startTime: '2:15 PM',
-      durationMinutes: 15,
-      exitEffectName: 'Battery Dies',
-      exitEffectEmoji: '🔋',
-      activityName: 'Kids Simulator',
-      outcome: 'smooth',
-      graceTakenSeconds: 12,
-      notes: 'Handed phone to mom saying "The phone is out of battery". No tears.',
-    },
-    {
-      id: 's_3',
-      startTime: '10:30 AM',
-      durationMinutes: 25,
-      exitEffectName: 'Bedtime Rest',
-      exitEffectEmoji: '🌙',
-      activityName: 'Educational Puzzles',
-      outcome: 'resistance',
-      graceTakenSeconds: 52,
-      notes: 'Needed extra reminder after grace countdown finished before letting go.',
-    },
-    {
-      id: 's_4',
-      startTime: 'Yesterday 6:00 PM',
-      durationMinutes: 30,
-      exitEffectName: 'Sleepy Mascot',
-      exitEffectEmoji: '🧸',
-      activityName: 'Storybook Animation',
-      outcome: 'smooth',
-      graceTakenSeconds: 24,
-      notes: 'Voluntary hand-off within 24s. Streak maintained.',
-    },
-  ];
-
-  const filteredSessions = pastSessions.filter((s) => {
-    if (timelineFilter === 'smooth') return s.outcome === 'smooth';
-    if (timelineFilter === 'resistance') return s.outcome === 'resistance';
-    return true;
-  });
+  const avgMinutes = Math.round(weekData.reduce((acc, d) => acc + d.minutes, 0) / weekData.length);
+  const maxMinutes = 35;
+  const complianceRate = 94;
 
   return (
     <View style={styles.container}>
-      {/* 1. Top Navigation & Header */}
+      {/* Top Header */}
       <View style={styles.header}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={onBack}
           style={styles.backButton}
-          accessibilityLabel="Go back"
+          accessibilityLabel="Back"
         >
-          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth={2.5}>
+          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#1A2436" strokeWidth={2.2}>
             <Path d="M19 12H5M12 19l-7-7 7-7" />
           </Svg>
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Analytics & Insights</Text>
-          <View style={styles.childSubtitleRow}>
-            <View style={[styles.childBadgeDot, { backgroundColor: childAvatarColor }]}>
-              <Text style={styles.childBadgeInitial}>{childAvatarInitial}</Text>
-            </View>
-            <Text style={styles.headerSubtitle}>Active Profile: {childName}</Text>
-          </View>
+          <Text style={styles.headerTitle}>Wellbeing Analytics</Text>
+          <Text style={styles.headerSubtitle}>{childName} • Weekly Overview</Text>
         </View>
 
-        <View style={{ width: 38 }} />
+        <View style={styles.headerRightPlaceholder} />
       </View>
 
-      {/* Main Scroll Area */}
       <ScrollView
         style={styles.scrollArea}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Timeframe Selector Pill Bar */}
-        <View style={styles.timeframeRow}>
-          {[
-            { id: 'today', label: 'Today' },
-            { id: '7days', label: 'Last 7 Days' },
-            { id: '30days', label: 'Last 30 Days' },
-          ].map((tf) => (
-            <TouchableOpacity
-              key={tf.id}
-              onPress={() => setTimeframe(tf.id as any)}
-              style={[styles.timeframeChip, timeframe === tf.id && styles.timeframeChipActive]}
+        {/* 3-Metric KPI Grid */}
+        <View style={styles.kpiRow}>
+          {/* Card 1: Daily Average */}
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>Daily Avg</Text>
+            <View style={styles.kpiValueRow}>
+              <Text style={styles.kpiMainValue}>{avgMinutes}</Text>
+              <Text style={styles.kpiUnit}>min</Text>
+            </View>
+            <Text style={styles.kpiSubText}>Target: {dailyTarget}m</Text>
+          </View>
+
+          {/* Card 2: Compliance */}
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>Compliance</Text>
+            <View style={styles.kpiValueRow}>
+              <Text style={styles.kpiMainValue}>{complianceRate}%</Text>
+            </View>
+            <Text style={styles.kpiSubText}>Peaceful wrap-up</Text>
+          </View>
+
+          {/* Card 3: Streak */}
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>Habit Streak</Text>
+            <View style={styles.kpiValueRow}>
+              <Text style={styles.kpiMainValue}>5</Text>
+              <Text style={styles.kpiUnit}>days</Text>
+            </View>
+            <Text style={styles.kpiSubText}>Zero conflict</Text>
+          </View>
+        </View>
+
+        {/* 7-Day Usage Bar Chart Card */}
+        <View style={styles.chartCard}>
+          <View style={styles.chartHeader}>
+            <View>
+              <Text style={styles.cardTitle}>Daily Screen Time Distribution</Text>
+              <Text style={styles.cardSubtitle}>Usage vs recommended 20m daily limit</Text>
+            </View>
+            <View style={styles.chartLegend}>
+              <View style={[styles.legendDot, { backgroundColor: '#5D997C' }]} />
+              <Text style={styles.legendText}>Actual</Text>
+            </View>
+          </View>
+
+          {/* Chart Columns Area */}
+          <View style={styles.chartContainer}>
+            {/* Target Guideline Line */}
+            <View
+              style={[
+                styles.targetGuideline,
+                { bottom: (dailyTarget / maxMinutes) * 110 },
+              ]}
             >
-              <Text style={[styles.timeframeText, timeframe === tf.id && styles.timeframeTextActive]}>
-                {tf.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* 2. Overview Metric Cards */}
-        <View style={styles.metricsGrid}>
-          {/* Card 1: Total Screen Time Today */}
-          <View style={styles.metricCard}>
-            <View style={styles.metricHeaderRow}>
-              <Text style={styles.metricLabel}>Total Screen Time</Text>
-              <View style={styles.metricIconBox}>
-                <Text style={{ fontSize: 13 }}>⏱️</Text>
-              </View>
+              <View style={styles.targetDashedLine} />
+              <Text style={styles.targetText}>{dailyTarget}m limit</Text>
             </View>
 
-            <View style={styles.metricValueRow}>
-              <Text style={styles.metricMainValue}>{screenTimeTodayMinutes}</Text>
-              <Text style={styles.metricUnit}>mins</Text>
-            </View>
-
-            <View style={styles.trendRow}>
-              <View style={styles.trendPill}>
-                <Text style={styles.trendIcon}>↓</Text>
-                <Text style={styles.trendText}>
-                  {weeklyAverageMinutes - screenTimeTodayMinutes}m less
-                </Text>
-              </View>
-              <Text style={styles.trendComparisonText}>vs. 7d avg ({weeklyAverageMinutes}m)</Text>
-            </View>
-          </View>
-
-          {/* Card 2: Peaceful Transitions Rate */}
-          <View style={styles.metricCard}>
-            <View style={styles.metricHeaderRow}>
-              <Text style={styles.metricLabel}>Peaceful Transitions</Text>
-              <View style={[styles.metricIconBox, { backgroundColor: '#ECFDF5' }]}>
-                <Text style={{ fontSize: 13 }}>💛</Text>
-              </View>
-            </View>
-
-            <View style={styles.metricValueRow}>
-              <Text style={[styles.metricMainValue, { color: '#059669' }]}>
-                {peacefulTransitionsRate}%
-              </Text>
-            </View>
-
-            <View style={styles.streakBadge}>
-              <Text style={styles.streakBadgeText}>5-Day Peace Streak ⭐</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* 3. Transition Effectiveness Section */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <View>
-              <Text style={styles.sectionTitle}>Exit Effect Effectiveness</Text>
-              <Text style={styles.sectionSubtitle}>
-                Which wrap-up cues help {childName} transition with zero resistance
-              </Text>
-            </View>
-          </View>
-
-          {/* Comparative Horizontal Breakdown Bars */}
-          <View style={styles.effectivenessList}>
-            {exitEffectsData.map((item) => (
-              <View key={item.id} style={styles.effectRow}>
-                <View style={styles.effectHeader}>
-                  <View style={styles.effectTitleGroup}>
-                    <Text style={styles.effectEmoji}>{item.emoji}</Text>
-                    <Text style={styles.effectName}>{item.name}</Text>
-                    {item.highlightBadge && (
-                      <View style={[styles.highlightPill, { backgroundColor: `${item.color}20` }]}>
-                        <Text style={[styles.highlightPillText, { color: item.color }]}>
-                          {item.highlightBadge}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={[styles.effectRateNumber, { color: item.color }]}>
-                    {item.successRate}%
-                  </Text>
-                </View>
-
-                {/* Progress Bar */}
-                <View style={styles.barTrack}>
-                  <View
-                    style={[
-                      styles.barFill,
-                      {
-                        width: `${item.successRate}%`,
-                        backgroundColor: item.color,
-                      },
-                    ]}
-                  />
-                </View>
-
-                <View style={styles.effectMetaRow}>
-                  <Text style={styles.effectMetaText}>
-                    {item.totalSessions} sessions logged
-                  </Text>
-                  <Text style={styles.effectMetaText}>
-                    avg {item.avgGraceSeconds}s wrap-up grace taken
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          {/* Pediatric Behavioral Insight Banner */}
-          <View style={styles.insightBanner}>
-            <Text style={styles.insightEmoji}>💡</Text>
-            <Text style={styles.insightText}>
-              <Text style={{ fontWeight: '900', color: '#1E293B' }}>Pediatric Insight: </Text>
-              {childName} complies 15% faster with the{' '}
-              <Text style={{ fontWeight: '800', color: '#059669' }}>Sleepy Mascot</Text> effect
-              because children mirror character tiredness naturally.
-            </Text>
-          </View>
-        </View>
-
-        {/* 4. Daily Timeline Log */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <View>
-              <Text style={styles.sectionTitle}>Daily Session Timeline</Text>
-              <Text style={styles.sectionSubtitle}>
-                Chronological activity log & transition outcomes
-              </Text>
-            </View>
-          </View>
-
-          {/* Timeline Filter Segmented Chips */}
-          <View style={styles.filterChipsRow}>
-            {[
-              { id: 'all', label: 'All Sessions' },
-              { id: 'smooth', label: '✅ Smooth Hand-offs' },
-              { id: 'resistance', label: '⚠️ Resistance Log' },
-            ].map((f) => (
-              <TouchableOpacity
-                key={f.id}
-                onPress={() => setTimelineFilter(f.id as any)}
-                style={[
-                  styles.filterChip,
-                  timelineFilter === f.id && styles.filterChipActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.filterChipText,
-                    timelineFilter === f.id && styles.filterChipTextActive,
-                  ]}
-                >
-                  {f.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Chronological Session Cards */}
-          <View style={styles.timelineList}>
-            {filteredSessions.map((session) => {
-              const isSmooth = session.outcome === 'smooth';
-              return (
-                <View key={session.id} style={styles.timelineCard}>
-                  <View style={styles.timelineTopRow}>
-                    <View style={styles.timelineTimeGroup}>
-                      <Text style={styles.timelineTimeText}>{session.startTime}</Text>
-                      <Text style={styles.timelineDurationText}>• {session.durationMinutes} mins</Text>
-                    </View>
-
+            <View style={styles.barsRow}>
+              {weekData.map((item) => {
+                const barHeight = Math.min(100, (item.minutes / maxMinutes) * 100);
+                const isOver = item.minutes > dailyTarget;
+                return (
+                  <View key={item.day} style={styles.barColumn}>
+                    <Text style={styles.barValueText}>{item.minutes}m</Text>
                     <View
                       style={[
-                        styles.outcomeBadge,
-                        isSmooth ? styles.outcomeBadgeSmooth : styles.outcomeBadgeResistance,
+                        styles.barPill,
+                        {
+                          height: barHeight,
+                          backgroundColor: isOver ? '#7A8E82' : '#5D997C',
+                        },
                       ]}
-                    >
-                      <Text
-                        style={[
-                          styles.outcomeBadgeText,
-                          isSmooth ? styles.outcomeTextSmooth : styles.outcomeTextResistance,
-                        ]}
-                      >
-                        {isSmooth ? '✓ Smooth Transition' : '⚠️ Mild Resistance'}
-                      </Text>
-                    </View>
+                    />
+                    <Text style={styles.barDayText}>{item.day}</Text>
                   </View>
+                );
+              })}
+            </View>
+          </View>
+        </View>
 
-                  {/* Middle Activity & Effect Pill */}
-                  <View style={styles.timelineActivityRow}>
-                    <View style={styles.activityChip}>
-                      <Text style={styles.activityChipText}>🎮 {session.activityName}</Text>
-                    </View>
-                    <View style={styles.effectChip}>
-                      <Text style={styles.effectChipText}>
-                        {session.exitEffectEmoji} {session.exitEffectName}
-                      </Text>
-                    </View>
-                    <Text style={styles.graceMetaText}>
-                      Grace: {session.graceTakenSeconds}s
-                    </Text>
-                  </View>
+        {/* Executive Summary Card */}
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryHeader}>
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.4}>
+              <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </Svg>
+            <Text style={styles.summaryTitle}>Weekly Behavioral Summary</Text>
+          </View>
 
-                  {/* Parent / Pediatric Observation Note */}
-                  <View style={styles.noteBox}>
-                    <Text style={styles.noteText}>{session.notes}</Text>
-                  </View>
-                </View>
-              );
-            })}
+          <Text style={styles.summaryBody}>
+            {childName}’s screen routines remained consistent across 6 of 7 monitored days.
+            Device wrap-ups concluded with calm cooperation, maintaining a {complianceRate}%
+            voluntary hand-off rate with zero recorded pushback.
+          </Text>
+
+          <View style={styles.summaryMetricsRow}>
+            <View style={styles.summaryMetricItem}>
+              <Text style={styles.summaryMetricLabel}>Average Hand-off</Text>
+              <Text style={styles.summaryMetricValue}>18 seconds</Text>
+            </View>
+            <View style={styles.summaryMetricItem}>
+              <Text style={styles.summaryMetricLabel}>Cooperation Level</Text>
+              <Text style={[styles.summaryMetricValue, { color: '#2D5441' }]}>Optimal</Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -436,25 +200,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAF8F5',
   },
   header: {
-    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingTop: Platform.OS === 'ios' ? 14 : 16,
-    paddingBottom: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#EAE5DE',
   },
   backButton: {
-    width: 38,
-    height: 38,
+    padding: 6,
     borderRadius: 12,
     backgroundColor: '#FAF8F5',
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   headerCenter: {
     alignItems: 'center',
@@ -463,39 +221,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
     color: '#1A2436',
-  },
-  childSubtitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginTop: 2,
-  },
-  childBadgeDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  childBadgeInitial: {
-    fontSize: 9,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    letterSpacing: -0.2,
   },
   headerSubtitle: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#718096',
+    color: '#5D997C',
+    marginTop: 1,
   },
-  controlsButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: '#FAF8F5',
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerRightPlaceholder: {
+    width: 32,
   },
   scrollArea: {
     flex: 1,
@@ -503,389 +238,214 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     gap: 14,
-    paddingBottom: 85,
   },
-  timeframeRow: {
-    flexDirection: 'row',
-    gap: 6,
-    backgroundColor: '#FFFFFF',
-    padding: 4,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#EAE5DE',
-  },
-  timeframeChip: {
-    flex: 1,
-    paddingVertical: 6,
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  timeframeChipActive: {
-    backgroundColor: '#5D997C',
-  },
-  timeframeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#718096',
-  },
-  timeframeTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '900',
-  },
-  metricsGrid: {
+  kpiRow: {
     flexDirection: 'row',
     gap: 10,
   },
-  metricCard: {
+  kpiCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 14,
-    borderWidth: 1.5,
+    borderRadius: 18,
+    padding: 12,
+    borderWidth: 1,
     borderColor: '#EAE5DE',
-    shadowColor: '#1A2436',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 3,
+    elevation: 1,
   },
-  metricHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  metricLabel: {
-    fontSize: 11,
+  kpiLabel: {
+    fontSize: 10,
     fontWeight: '800',
-    color: '#718096',
-    maxWidth: 90,
+    color: '#64748B',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
   },
-  metricIconBox: {
-    width: 24,
-    height: 24,
-    borderRadius: 8,
-    backgroundColor: '#EBF4EF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  metricValueRow: {
+  kpiValueRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 3,
-    marginBottom: 6,
-  },
-  metricMainValue: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: '#1A2436',
-    fontFamily: 'monospace',
-  },
-  metricUnit: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#718096',
-  },
-  trendRow: {
-    gap: 3,
-  },
-  trendPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 2,
   },
-  trendIcon: {
+  kpiMainValue: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1A2436',
+  },
+  kpiUnit: {
     fontSize: 11,
-    fontWeight: '900',
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  kpiSubText: {
+    fontSize: 10,
+    fontWeight: '700',
     color: '#5D997C',
+    marginTop: 4,
   },
-  trendText: {
-    fontSize: 10.5,
-    fontWeight: '800',
-    color: '#3E6B56',
-  },
-  trendComparisonText: {
-    fontSize: 9,
-    color: '#8C9AA8',
-    fontWeight: '600',
-  },
-  streakBadge: {
-    backgroundColor: '#FFF8DE',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#F6D878',
-  },
-  streakBadgeText: {
-    fontSize: 9.5,
-    fontWeight: '900',
-    color: '#7C5209',
-  },
-  sectionCard: {
+  chartCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 22,
     padding: 16,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#EAE5DE',
-    shadowColor: '#1A2436',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  sectionHeader: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 13.5,
-    fontWeight: '900',
-    color: '#1A2436',
-  },
-  sectionSubtitle: {
-    fontSize: 11,
-    color: '#718096',
-    marginTop: 2,
-  },
-  effectivenessList: {
-    gap: 12,
-  },
-  effectRow: {
-    gap: 4,
-  },
-  effectHeader: {
+  chartHeader: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginBottom: 8,
   },
-  effectTitleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  effectEmoji: {
-    fontSize: 16,
-  },
-  effectName: {
+  cardTitle: {
     fontSize: 12,
     fontWeight: '800',
     color: '#1A2436',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  highlightPill: {
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 6,
-  },
-  highlightPillText: {
-    fontSize: 8.5,
-    fontWeight: '900',
-  },
-  effectRateNumber: {
-    fontSize: 13,
-    fontWeight: '900',
-    fontFamily: 'monospace',
-  },
-  barTrack: {
-    height: 7,
-    backgroundColor: '#FAF8F5',
-    borderRadius: 3.5,
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    borderRadius: 3.5,
-  },
-  effectMetaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  cardSubtitle: {
+    fontSize: 10.5,
+    color: '#64748B',
     marginTop: 2,
   },
-  effectMetaText: {
-    fontSize: 9.5,
-    color: '#8C9AA8',
-    fontWeight: '600',
-  },
-  insightBanner: {
+  chartLegend: {
     flexDirection: 'row',
-    gap: 8,
-    backgroundColor: '#EBF4EF',
-    padding: 12,
-    borderRadius: 14,
-    marginTop: 14,
-    borderWidth: 1,
-    borderColor: '#CBE1D5',
+    alignItems: 'center',
+    gap: 5,
   },
-  insightEmoji: {
-    fontSize: 16,
+  legendDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
-  insightText: {
+  legendText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  chartContainer: {
+    height: 140,
+    marginTop: 8,
+    position: 'relative',
+    justifyContent: 'flex-end',
+  },
+  targetGuideline: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    zIndex: 1,
+  },
+  targetDashedLine: {
     flex: 1,
-    fontSize: 11,
-    color: '#3E6B56',
-    lineHeight: 16,
+    height: 1,
+    borderWidth: 0.8,
+    borderColor: '#CBD5E1',
+    borderStyle: 'dashed',
   },
-  filterChipsRow: {
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: 12,
+  targetText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#94A3B8',
+    marginLeft: 6,
   },
-  filterChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    backgroundColor: '#FAF8F5',
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-  },
-  filterChipActive: {
-    backgroundColor: '#5D997C',
-    borderColor: '#5D997C',
-  },
-  filterChipText: {
-    fontSize: 10.5,
-    fontWeight: '700',
-    color: '#718096',
-  },
-  filterChipTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '900',
-  },
-  timelineList: {
-    gap: 10,
-  },
-  timelineCard: {
-    backgroundColor: '#FAF8F5',
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-  },
-  timelineTopRow: {
+  barsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    height: 120,
+    zIndex: 2,
+    paddingBottom: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1EFEA',
+  },
+  barColumn: {
+    flex: 1,
     alignItems: 'center',
-    marginBottom: 6,
+    justifyContent: 'flex-end',
   },
-  timelineTimeGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  timelineTimeText: {
-    fontSize: 11.5,
-    fontWeight: '900',
-    color: '#1A2436',
-  },
-  timelineDurationText: {
-    fontSize: 11,
-    color: '#718096',
+  barValueText: {
+    fontSize: 9,
     fontWeight: '700',
+    color: '#94A3B8',
+    marginBottom: 4,
   },
-  outcomeBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
-    borderRadius: 8,
+  barPill: {
+    width: 18,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
-  outcomeBadgeSmooth: {
-    backgroundColor: '#EBF4EF',
-  },
-  outcomeBadgeResistance: {
-    backgroundColor: '#FFF8DE',
-  },
-  outcomeBadgeText: {
+  barDayText: {
     fontSize: 9.5,
-    fontWeight: '900',
-  },
-  outcomeTextSmooth: {
-    color: '#3E6B56',
-  },
-  outcomeTextResistance: {
-    color: '#7C5209',
-  },
-  timelineActivityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
-  },
-  activityChip: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-  },
-  activityChipText: {
-    fontSize: 10,
     fontWeight: '800',
-    color: '#1A2436',
+    color: '#64748B',
+    marginTop: 6,
   },
-  effectChip: {
+  summaryCard: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-  },
-  effectChipText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#1A2436',
-  },
-  graceMetaText: {
-    fontSize: 9.5,
-    color: '#8C9AA8',
-    fontWeight: '700',
-  },
-  noteBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#EAE5DE',
-  },
-  noteText: {
-    fontSize: 10.5,
-    color: '#718096',
-    lineHeight: 15,
-  },
-  controlsLinkCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#EBF4EF',
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 16,
-    borderWidth: 1.5,
-    borderColor: '#CBE1D5',
-  },
-  controlsLinkIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#CBE1D5',
-    shadowColor: '#5D997C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    borderColor: '#EAE5DE',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 1,
   },
-  controlsLinkTitle: {
+  summaryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
+  },
+  summaryTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#1A2436',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  summaryBody: {
+    fontSize: 12,
+    color: '#475569',
+    lineHeight: 18,
+  },
+  summaryMetricsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F1EFEA',
+  },
+  summaryMetricItem: {
+    flex: 1,
+    backgroundColor: '#FAF8F5',
+    padding: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#EAE5DE',
+  },
+  summaryMetricLabel: {
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  summaryMetricValue: {
     fontSize: 13,
     fontWeight: '900',
     color: '#1A2436',
-  },
-  controlsLinkSubtitle: {
-    fontSize: 10.5,
-    color: '#3E6B56',
-    marginTop: 1,
+    marginTop: 2,
   },
 });
 

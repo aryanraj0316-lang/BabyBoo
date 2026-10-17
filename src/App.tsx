@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { DeviceFrame } from './components/DeviceFrame/DeviceFrame';
-import { Home, BarChart3, Settings, UserPlus, Calendar } from 'lucide-react';
+import { Home, BarChart3, Settings, UserPlus, LayoutGrid } from 'lucide-react';
 import { SplashScreen } from './components/Screens/SplashScreen';
 import { AuthScreen } from './components/Screens/AuthScreen';
 import { AddChildProfileScreen } from './components/Screens/AddChildProfileScreen';
@@ -71,32 +71,47 @@ const AppContent: React.FC = () => {
       {showBottomNav && (
         <nav className="w-full bg-[#FAF8F5]/95 backdrop-blur-md border-t border-[#EAE5DE] py-2 px-3 flex items-center justify-between z-40 shadow-[0_-4px_18px_rgba(26,36,54,0.03)] shrink-0">
           {[
-            { id: 'parent_dashboard' as const, label: 'Home', icon: Home },
-            { id: 'schedule_automation' as const, label: 'Schedule', icon: Calendar },
             { id: 'add_child' as const, label: 'Add Child', icon: UserPlus },
+            { id: 'schedule_automation' as const, label: 'Widget', icon: LayoutGrid },
+            { id: 'parent_dashboard' as const, label: 'Home', icon: Home, isCenter: true },
             { id: 'weekly_stats' as const, label: 'Analytics', icon: BarChart3 },
             { id: 'settings' as const, label: 'Settings', icon: Settings },
           ].map((item) => {
             const isSelected = currentScreen === item.id;
+            if (item.isCenter) {
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => navigateTo(item.id)}
+                  className="flex flex-col items-center justify-center -top-3 relative cursor-pointer group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#5D997C] border-2 border-white flex items-center justify-center shadow-[0_3px_10px_rgba(93,153,124,0.35)] transition-transform group-hover:scale-105">
+                    <item.icon className="w-5 h-5 text-white stroke-[2.4]" />
+                  </div>
+                  <span className={`text-[10px] font-extrabold mt-1 tracking-tight ${isSelected ? 'text-[#5D997C]' : 'text-[#94A3B8]'}`}>
+                    {item.label}
+                  </span>
+                </button>
+              );
+            }
             return (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => navigateTo(item.id)}
-                className={`flex flex-col items-center gap-1 transition-all py-1 px-2 rounded-xl cursor-pointer ${
-                  isSelected
+                className={`flex flex-col items-center gap-1 transition-all py-1 px-2 rounded-xl cursor-pointer ${isSelected
                     ? 'text-[#5D997C] font-extrabold'
                     : 'text-[#94A3B8] hover:text-[#475569] font-medium'
-                }`}
+                  }`}
               >
                 <div
-                  className={`p-1.5 rounded-xl transition-all ${
-                    isSelected
+                  className={`p-1.5 rounded-xl transition-all ${isSelected
                       ? 'bg-[#EBF4EF] text-[#5D997C]'
                       : 'text-[#94A3B8] hover:bg-[#F5F2EB]'
-                  }`}
+                    }`}
                 >
-                  <item.icon className="w-5 h-5 stroke-[2.2]" />
+                                        <item.icon className="w-5 h-5 stroke-2" />
                 </div>
                 <span className="text-[10.5px] tracking-tight">{item.label}</span>
                 {isSelected && (

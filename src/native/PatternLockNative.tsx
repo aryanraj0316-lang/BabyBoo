@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Vibration, TextInput } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Vibration, TextInput, PanResponder } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 
 interface PatternLockNativeProps {
@@ -16,7 +16,7 @@ export const PatternLockNative: React.FC<PatternLockNativeProps> = ({
   onPinSuccess,
   onBypass,
   error = false,
-  helperText = 'Connect at least 3 dots or enter parent PIN',
+  helperText = 'Swipe capital "A" or enter parent PIN',
 }) => {
   const [authMode, setAuthMode] = useState<'pattern' | 'pin'>('pattern');
   const [selectedNodes, setSelectedNodes] = useState<number[]>([]);
@@ -48,6 +48,41 @@ export const PatternLockNative: React.FC<PatternLockNativeProps> = ({
       setSelectedNodes(next);
     }
   };
+
+  const checkSwipeNearNode = (x: number, y: number, current: number[]) => {
+    for (const node of nodeCoords) {
+      const dist = Math.hypot(node.x - x, node.y - y);
+      if (dist < 34 && !current.includes(node.idx)) {
+        const next = [...current, node.idx];
+        setSelectedNodes(next);
+        try {
+          Vibration.vibrate(12);
+        } catch {}
+        break;
+      }
+    }
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        setSelectedNodes([]);
+        checkSwipeNearNode(locationX, locationY, []);
+      },
+      onPanResponderMove: (evt) => {
+        const { locationX, locationY } = evt.nativeEvent;
+        checkSwipeNearNode(locationX, locationY, selectedNodes);
+      },
+      onPanResponderRelease: () => {
+        if (selectedNodes.length >= 3) {
+          onComplete(selectedNodes);
+        }
+      },
+    })
+  ).current;
 
   const handleConfirmPattern = () => {
     if (selectedNodes.length >= 3) {
@@ -84,7 +119,7 @@ export const PatternLockNative: React.FC<PatternLockNativeProps> = ({
     if (onBypass) {
       onBypass();
     } else {
-      onComplete([0, 3, 6, 7, 8]);
+      onComplete([6, 3, 1, 5, 8]);
     }
   };
 
@@ -117,8 +152,8 @@ export const PatternLockNative: React.FC<PatternLockNativeProps> = ({
             {error ? 'Incorrect pattern. Please try again.' : helperText}
           </Text>
 
-          {/* 3x3 Canvas Grid */}
-          <View style={[styles.gridBox, error && styles.gridBoxError]}>
+          {/* 3x3 Canvas Grid with PanResponder Swiping */}
+          <View style={[styles.gridBox, error && styles.gridBoxError]} {...panResponder.panHandlers}>
             <Svg style={StyleSheet.absoluteFill} width={260} height={260}>
               {selectedNodes.map((nodeIdx, i) => {
                 if (i === 0) return null;

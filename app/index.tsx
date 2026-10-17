@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,13 @@ import {
   Vibration,
   Dimensions,
   Alert,
+  Platform,
+  Switch,
+  Linking,
+  StatusBar,
 } from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
+import { useLocalSearchParams } from 'expo-router';
+import { SafeAreaView, SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, {
   Path,
   Circle,
@@ -30,9 +34,10 @@ import { OnboardingAssessmentNative, OnboardingChildData } from '../src/native/O
 import { ParentAnalyticsNative } from '../src/native/ParentAnalyticsNative';
 import { AnalyticsFeaturesHubNative } from '../src/native/AnalyticsFeaturesHubNative';
 import { ParentControlsSecurityNative } from '../src/native/ParentControlsSecurityNative';
-import { ChildProfileAutomationSection } from '../src/native/ChildProfileAutomationSection';
 import { SettingsDrawerHubNative } from '../src/native/SettingsDrawerHubNative';
 import { MONSTER_PROFILES, SWITCH_OFF_PROFILES } from '../src/data/researchCitations';
+import { HandoverNativeEngine } from '../modules/handover-native';
+import { ShutdownSimulationNative } from '../src/components/Simulation/ShutdownSimulationNative';
 
 const { width } = Dimensions.get('window');
 
@@ -71,6 +76,11 @@ interface Child {
 const ONBOARDING_COMPLETED_KEY = 'babyboo_onboarding_completed';
 const CHILDREN_STORAGE_KEY = 'babyboo_children_profiles';
 const ACTIVE_CHILD_ID_KEY = 'babyboo_active_child_id';
+const WIDGET_OPTIONS_KEY = 'babyboo_widget_timer_options';
+const WIDGET_DEFAULT_PRESET_ENABLED_KEY = 'babyboo_widget_default_preset_enabled';
+const WIDGET_DEFAULT_PRESET_MINUTES_KEY = 'babyboo_widget_default_preset_minutes';
+const WIDGET_INCLUDE_CUSTOM_KEY = 'babyboo_widget_include_custom';
+const WIDGET_INCLUDE_LOCK_KEY = 'babyboo_widget_include_lock';
 
 const memoryStorage: Record<string, string> = {};
 
@@ -79,7 +89,7 @@ const getStoredItem = (key: string): string | null => {
     if (typeof window !== 'undefined' && window.localStorage) {
       return window.localStorage.getItem(key);
     }
-  } catch {}
+  } catch { }
   return memoryStorage[key] ?? null;
 };
 
@@ -88,7 +98,7 @@ const setStoredItem = (key: string, val: string): void => {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.setItem(key, val);
     }
-  } catch {}
+  } catch { }
   memoryStorage[key] = val;
 };
 
@@ -136,9 +146,22 @@ const DEFAULT_FALLBACK_CHILD: Child = {
 };
 
 export default function App() {
+  const insets = useSafeAreaInsets();
+  const localParams = useLocalSearchParams<{ minutes?: string; widgetTrigger?: string; action?: string }>();
+  const bottomNavOffset = (insets.bottom || 0) + 10;
+  // Precise bottom padding: exactly clears the floating dock (64px + 2px protrusion) with a clean 8px gap
+  const contentBottomPadding = bottomNavOffset + 74;
+
   // Default to parent_dashboard so Expo Go immediately opens the complete dashboard
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('parent_dashboard');
   const [splashSlide, setSplashSlide] = useState(0);
+  const [nativeStatus, setNativeStatus] = useState<string>('Connecting to native engine...');
+
+  useEffect(() => {
+    HandoverNativeEngine.helloWorld()
+      .then((msg) => setNativeStatus(msg))
+      .catch((err) => setNativeStatus(`Native module: ${err?.message || 'Ready'}`));
+  }, []);
 
   // Profiles (loaded from storage, or seeded with rich demo profiles Leo & Maya)
   const [children, setChildren] = useState<Child[]>(() => {
@@ -147,7 +170,7 @@ export default function App() {
       try {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return DEMO_CHILDREN;
   });
@@ -156,8 +179,8 @@ export default function App() {
     return savedId || DEMO_CHILDREN[0].id;
   });
 
-  // Pattern Lock
-  const [patternLock, setPatternLock] = useState<number[]>([0, 3, 6, 7, 8]);
+  // Pattern Lock - Default: Capital "A" pattern
+  const [patternLock, setPatternLock] = useState<number[]>([6, 3, 1, 5, 8]);
   const [patternError, setPatternError] = useState(false);
   const [showPatternModal, setShowPatternModal] = useState(false);
   const [patternSuccessCallback, setPatternSuccessCallback] = useState<(() => void) | null>(null);
@@ -319,12 +342,96 @@ export default function App() {
   const [showNavModal, setShowNavModal] = useState(false);
   const [activeNavTab, setActiveNavTab] = useState<'home' | 'history' | 'insights' | 'profile'>('home');
 
-  // Quick Screen Time Widget State (Reflecting Actual Data & Hours/Minutes)
+  // Quick Screen Time Widget & Options Builder State
   const [quickWidgetMinutes, setQuickWidgetMinutes] = useState<number>(15);
   const [showQuickWidgetModal, setShowQuickWidgetModal] = useState<boolean>(false);
   const [tempWidgetHours, setTempWidgetHours] = useState<number>(0);
   const [tempWidgetMinutes, setTempWidgetMinutes] = useState<number>(15);
-  const [isWidgetAddedToHome, setIsWidgetAddedToHome] = useState<boolean>(false); // Actual data: not added until parent adds it
+  const [isWidgetAddedToHome, setIsWidgetAddedToHome] = useState<boolean>(true); // active widget on home
+
+  // Customizable Widget Time Options (User can set quantity and exact values)
+  const [widgetTimerOptions, setWidgetTimerOptions] = useState<number[]>(() => {
+    const saved = getStoredItem(WIDGET_OPTIONS_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return [15, 30, 45, 60];
+  });
+
+  // Load saved options from native SharedPreferences on mount
+  useEffect(() => {
+    HandoverNativeEngine.getWidgetOptions()
+      .then((opts) => {
+        if (opts && Array.isArray(opts) && opts.length > 0) {
+          setWidgetTimerOptions(opts);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Automatically sync widget options to Android SharedPreferences whenever modified
+  const isWidgetOptionsMounted = useRef(false);
+  useEffect(() => {
+    if (!isWidgetOptionsMounted.current) {
+      isWidgetOptionsMounted.current = true;
+      return;
+    }
+    HandoverNativeEngine.setWidgetOptions(widgetTimerOptions).catch(() => {});
+  }, [widgetTimerOptions]);
+
+  // Default Preset Mode (One-Tap Start vs Interactive Options Modal)
+  const [isWidgetDefaultPresetActive, setIsWidgetDefaultPresetActive] = useState<boolean>(() => {
+    const saved = getStoredItem(WIDGET_DEFAULT_PRESET_ENABLED_KEY);
+    return saved === null ? false : saved === 'true';
+  });
+
+  // Assigned Default Preset duration
+  const [widgetDefaultPresetMinutes, setWidgetDefaultPresetMinutes] = useState<number>(() => {
+    const saved = getStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY);
+    if (saved) {
+      const num = parseInt(saved, 10);
+      if (!isNaN(num) && num > 0) return num;
+    }
+    return 15;
+  });
+
+  const [widgetIncludeCustom, setWidgetIncludeCustom] = useState<boolean>(() => {
+    const saved = getStoredItem(WIDGET_INCLUDE_CUSTOM_KEY);
+    return saved === null ? true : saved === 'true';
+  });
+
+  const [widgetIncludeLock, setWidgetIncludeLock] = useState<boolean>(() => {
+    const saved = getStoredItem(WIDGET_INCLUDE_LOCK_KEY);
+    return saved === null ? true : saved === 'true';
+  });
+
+  // Interactive Quick-Select Modal / Overlay State
+  const [showWidgetQuickSelectModal, setShowWidgetQuickSelectModal] = useState<boolean>(false);
+
+  // Edit Option Modal State
+  const [editingOptionOriginalMinutes, setEditingOptionOriginalMinutes] = useState<number | null>(null);
+  const [editingOptionNewMinutes, setEditingOptionNewMinutes] = useState<string>('');
+  const [showEditOptionModal, setShowEditOptionModal] = useState<boolean>(false);
+
+  // Custom Option input on Widget Page
+  const [customWidgetOptionInput, setCustomWidgetOptionInput] = useState<string>('');
+
+  // Minimalist Daily Screen Cutoff State
+  const [dailyCutoffEnabled, setDailyCutoffEnabled] = useState<boolean>(() => {
+    const saved = getStoredItem('babyboo_daily_cutoff_enabled');
+    return saved === null ? true : saved === 'true';
+  });
+  const [dailyCutoffTime, setDailyCutoffTime] = useState<string>(() => {
+    const saved = getStoredItem('babyboo_daily_cutoff_time');
+    return saved || '8:00 PM';
+  });
+
+  // Simulator & feedback state
+  const [widgetSavedFeedback, setWidgetSavedFeedback] = useState<boolean>(false);
+  const [widgetSimulatedSessionMsg, setWidgetSimulatedSessionMsg] = useState<string | null>(null);
 
   const formatWidgetDuration = (totalMinutes: number): string => {
     const h = Math.floor(totalMinutes / 60);
@@ -340,6 +447,127 @@ export default function App() {
     setShowQuickWidgetModal(true);
   };
 
+  const handleCreateTimeOption = (mins: number) => {
+    if (!mins || isNaN(mins) || mins <= 0 || mins > 360) {
+      Alert.alert('Invalid Duration', 'Please enter a valid duration between 1 and 360 minutes.');
+      return;
+    }
+    if (widgetTimerOptions.includes(mins)) {
+      Alert.alert('Already Exists', `${formatWidgetDuration(mins)} is already in your widget options list.`);
+      return;
+    }
+    const next = [...widgetTimerOptions, mins].sort((a, b) => a - b);
+    setWidgetTimerOptions(next);
+    setStoredItem(WIDGET_OPTIONS_KEY, JSON.stringify(next));
+    HandoverNativeEngine.setWidgetOptions(next).catch(() => {});
+    setCustomWidgetOptionInput('');
+  };
+
+  const handleOpenEditOption = (mins: number) => {
+    setEditingOptionOriginalMinutes(mins);
+    setEditingOptionNewMinutes(String(mins));
+    setShowEditOptionModal(true);
+  };
+
+  const handleSaveEditedOption = () => {
+    if (!editingOptionOriginalMinutes) return;
+    const newMins = parseInt(editingOptionNewMinutes.trim(), 10);
+    if (!newMins || isNaN(newMins) || newMins <= 0 || newMins > 360) {
+      Alert.alert('Invalid Duration', 'Please enter a valid duration between 1 and 360 minutes.');
+      return;
+    }
+    if (newMins !== editingOptionOriginalMinutes && widgetTimerOptions.includes(newMins)) {
+      Alert.alert('Already Exists', `${formatWidgetDuration(newMins)} is already an option in your list.`);
+      return;
+    }
+    const next = widgetTimerOptions
+      .map((opt) => (opt === editingOptionOriginalMinutes ? newMins : opt))
+      .sort((a, b) => a - b);
+    setWidgetTimerOptions(next);
+    setStoredItem(WIDGET_OPTIONS_KEY, JSON.stringify(next));
+    HandoverNativeEngine.setWidgetOptions(next).catch(() => {});
+    if (widgetDefaultPresetMinutes === editingOptionOriginalMinutes) {
+      setWidgetDefaultPresetMinutes(newMins);
+      setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(newMins));
+    }
+    setShowEditOptionModal(false);
+    setEditingOptionOriginalMinutes(null);
+  };
+
+  const handleDeleteTimeOption = (mins: number) => {
+    if (widgetTimerOptions.length <= 1) {
+      Alert.alert('Minimum Option Required', 'You must keep at least one time option for your widget.');
+      return;
+    }
+    const next = widgetTimerOptions.filter((opt) => opt !== mins);
+    setWidgetTimerOptions(next);
+    setStoredItem(WIDGET_OPTIONS_KEY, JSON.stringify(next));
+    HandoverNativeEngine.setWidgetOptions(next).catch(() => {});
+    if (widgetDefaultPresetMinutes === mins) {
+      const fallback = next[0];
+      setWidgetDefaultPresetMinutes(fallback);
+      setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(fallback));
+    }
+  };
+
+  const handleSetDefaultPreset = (mins: number) => {
+    setWidgetDefaultPresetMinutes(mins);
+    setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(mins));
+  };
+
+  const handleToggleDefaultPresetMode = (enabled: boolean) => {
+    setIsWidgetDefaultPresetActive(enabled);
+    setStoredItem(WIDGET_DEFAULT_PRESET_ENABLED_KEY, String(enabled));
+    if (enabled && !widgetTimerOptions.includes(widgetDefaultPresetMinutes)) {
+      const fallback = widgetTimerOptions[0] || 15;
+      setWidgetDefaultPresetMinutes(fallback);
+      setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(fallback));
+    }
+  };
+
+  const handleApplyPresetBundle = (options: number[], defaultMin?: number) => {
+    setWidgetTimerOptions(options);
+    setStoredItem(WIDGET_OPTIONS_KEY, JSON.stringify(options));
+    HandoverNativeEngine.setWidgetOptions(options).catch(() => {});
+    const targetDefault = defaultMin && options.includes(defaultMin) ? defaultMin : options[0];
+    setWidgetDefaultPresetMinutes(targetDefault);
+    setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(targetDefault));
+  };
+
+  const handleWidgetClick = (isSimulator = false) => {
+    if (isWidgetDefaultPresetActive) {
+      if (isSimulator) {
+        handleSimulateWidgetTrigger(widgetDefaultPresetMinutes, true);
+      } else {
+        startNewSession(widgetDefaultPresetMinutes);
+      }
+    } else {
+      setShowWidgetQuickSelectModal(true);
+    }
+  };
+
+  const handleSimulateWidgetTrigger = (m: number, isInstantDefault = false) => {
+    setWidgetSimulatedSessionMsg(
+      isInstantDefault
+        ? `✓ One-Tap Preset Action Triggered: Started ${m}-minute screen time for ${activeChild.name}! 0 extra clicks needed • BabyBoo runs in background.`
+        : `✓ Selected Option Triggered: Started ${m}-minute screen time for ${activeChild.name}! Active via background intent • BabyBoo runs in background.`
+    );
+    setTimeout(() => {
+      setWidgetSimulatedSessionMsg(null);
+    }, 4500);
+  };
+
+  const handleSaveWidgetConfig = () => {
+    setStoredItem(WIDGET_OPTIONS_KEY, JSON.stringify(widgetTimerOptions));
+    setStoredItem(WIDGET_DEFAULT_PRESET_ENABLED_KEY, String(isWidgetDefaultPresetActive));
+    setStoredItem(WIDGET_DEFAULT_PRESET_MINUTES_KEY, String(widgetDefaultPresetMinutes));
+    setStoredItem(WIDGET_INCLUDE_CUSTOM_KEY, String(widgetIncludeCustom));
+    setStoredItem(WIDGET_INCLUDE_LOCK_KEY, String(widgetIncludeLock));
+    HandoverNativeEngine.setWidgetOptions(widgetTimerOptions).catch(() => {});
+    setWidgetSavedFeedback(true);
+    setTimeout(() => setWidgetSavedFeedback(false), 2500);
+  };
+
   const activeChild = children.find((c) => c.id === activeChildId) || children[0] || DEFAULT_FALLBACK_CHILD;
 
   // Persist children to storage
@@ -348,6 +576,42 @@ export default function App() {
       setStoredItem(CHILDREN_STORAGE_KEY, JSON.stringify(children));
     }
   }, [children]);
+
+  // Deep Link Listener for Android Native Home Screen Widget (babyboo://widget)
+  useEffect(() => {
+    const handleDeepLink = (event: { url: string }) => {
+      const url = event.url;
+      if (!url || !url.startsWith('babyboo://widget')) return;
+
+      try {
+        if (url.includes('minutes=')) {
+          const match = url.match(/minutes=(\d+)/);
+          if (match && match[1]) {
+            const mins = parseInt(match[1], 10);
+            if (!isNaN(mins) && mins > 0) {
+              startNewSession(mins);
+              return;
+            }
+          }
+        }
+
+        if (url.includes('action=start')) {
+          handleWidgetClick(false);
+        } else {
+          handleWidgetClick(false);
+        }
+      } catch {
+        handleWidgetClick(false);
+      }
+    };
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
+    const sub = Linking.addEventListener('url', handleDeepLink);
+    return () => sub.remove();
+  }, [isWidgetDefaultPresetActive, widgetDefaultPresetMinutes]);
 
   const handleOnboardingComplete = (childData?: OnboardingChildData) => {
     const name = childData?.name?.trim() || 'My Child';
@@ -509,6 +773,15 @@ export default function App() {
     setCurrentScreen('active_session');
   };
 
+  useEffect(() => {
+    if (localParams.widgetTrigger === 'true' && localParams.minutes) {
+      const mins = parseInt(localParams.minutes, 10);
+      if (!isNaN(mins) && mins > 0) {
+        startNewSession(mins);
+      }
+    }
+  }, [localParams.widgetTrigger, localParams.minutes]);
+
   const handleChildPutPhoneDown = () => {
     setSessionOutcome('voluntary_grace');
     setChildren((prev) =>
@@ -552,7 +825,7 @@ export default function App() {
     return (
       <View style={{ flex: 1, backgroundColor: '#FAF8F5' }}>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 85 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: contentBottomPadding }}
           showsVerticalScrollIndicator={false}
         >
           {/* 1. Header: Greeting */}
@@ -565,6 +838,14 @@ export default function App() {
                 Child Profiles
               </Text>
             </View>
+          </View>
+
+          {/* Native Engine Connection Status Pill */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#EBF4EF', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, marginBottom: 10, alignSelf: 'flex-start', borderWidth: 1, borderColor: '#5D997C' }}>
+            <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981' }} />
+            <Text style={{ fontSize: 11, fontWeight: '700', color: '#2D5A43' }}>
+              {nativeStatus}
+            </Text>
           </View>
 
           {/* All Children's Profiles Displayed on Top of the Home Page */}
@@ -589,13 +870,14 @@ export default function App() {
                     gap: 10,
                     backgroundColor: isSelected ? '#EBF4EF' : '#FFFFFF',
                     paddingLeft: 12,
-                    paddingRight: isSelected ? 34 : 14,
+                    paddingRight: 38,
                     paddingVertical: 9,
                     borderRadius: 20,
                     borderWidth: 1.5,
                     borderColor: isSelected ? '#5D997C' : '#EAE5DE',
                     alignSelf: 'flex-start',
                     position: 'relative',
+                    minWidth: 152,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.05,
@@ -627,7 +909,7 @@ export default function App() {
                     </Text>
                   </View>
 
-                  {/* Edit button on TOP RIGHT CORNER (Zero overlap with name due to dynamic right padding) */}
+                  {/* Edit button directly inside the reserved box size (Zero box extension/jump) */}
                   {isSelected && (
                     <TouchableOpacity
                       activeOpacity={0.8}
@@ -641,8 +923,9 @@ export default function App() {
                       }}
                       style={{
                         position: 'absolute',
-                        top: 6,
-                        right: 6,
+                        right: 8,
+                        top: '50%',
+                        marginTop: -11,
                         width: 22,
                         height: 22,
                         borderRadius: 11,
@@ -703,60 +986,179 @@ export default function App() {
                 </TouchableOpacity>
               </View>
 
-              {/* Tapping widget on phone home screen automatically starts the timer for the duration set on schedule page */}
+              {/* Tapping widget on phone home screen executes default preset directly or opens quick-select modal */}
               <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => startNewSession(quickWidgetMinutes)}
+                activeOpacity={0.88}
+                onPress={() => handleWidgetClick(false)}
+                onLongPress={() => setShowWidgetQuickSelectModal(true)}
+                delayLongPress={500}
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                   backgroundColor: '#FAF8F5',
-                  borderRadius: 16,
+                  borderRadius: 18,
                   padding: 12,
-                  borderWidth: 1,
-                  borderColor: '#EAE5DE',
+                  borderWidth: 1.5,
+                  borderColor: isWidgetDefaultPresetActive ? '#5D997C' : '#EAE5DE',
                 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
-                  <View
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 15,
-                      backgroundColor: '#EBF4EF',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 1,
-                      borderColor: '#5D997C',
-                    }}
-                  >
-                    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
-                      <Circle cx="12" cy="12" r="10" />
-                      <Polyline points="12 6 12 12 16 14" />
-                    </Svg>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                    <View
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 14,
+                        backgroundColor: isWidgetDefaultPresetActive ? '#EBF4EF' : '#FFFFFF',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: '#5D997C',
+                      }}
+                    >
+                      <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
+                        <Circle cx="12" cy="12" r="10" />
+                        <Polyline points="12 6 12 12 16 14" />
+                      </Svg>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
+                          {isWidgetDefaultPresetActive
+                            ? `★ ${formatWidgetDuration(widgetDefaultPresetMinutes)} Preset`
+                            : 'Quick-Select Widget'}
+                        </Text>
+                        <View
+                          style={{
+                            backgroundColor: isWidgetDefaultPresetActive ? '#FDF5E6' : '#EBF4EF',
+                            paddingHorizontal: 6,
+                            paddingVertical: 2,
+                            borderRadius: 6,
+                            borderWidth: 0.8,
+                            borderColor: isWidgetDefaultPresetActive ? '#F6C343' : '#5D997C',
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 9,
+                              fontWeight: '900',
+                              color: isWidgetDefaultPresetActive ? '#B37400' : '#2D5A43',
+                            }}
+                          >
+                            {isWidgetDefaultPresetActive ? '1-TAP ACTION' : `${widgetTimerOptions.length} OPTIONS`}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 2 }}>
+                        {isWidgetDefaultPresetActive
+                          ? `1-tap starts ${formatWidgetDuration(widgetDefaultPresetMinutes)} • Hold for options`
+                          : `Tapping opens ${widgetTimerOptions.map((o) => `${o}m`).join(' • ')} choices`}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 13, fontWeight: '800', color: '#1A2436' }}>
-                      {formatWidgetDuration(quickWidgetMinutes)} Screen Time
-                    </Text>
-                    <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 1 }}>
-                      Tap widget to start • Warning triggers when time ends
-                    </Text>
+
+                  {/* Actions: Primary action & Secondary Options Button */}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    {isWidgetDefaultPresetActive ? (
+                      <>
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          onPress={() => setShowWidgetQuickSelectModal(true)}
+                          style={{
+                            backgroundColor: '#FFFFFF',
+                            paddingHorizontal: 8,
+                            paddingVertical: 7,
+                            borderRadius: 11,
+                            borderWidth: 1,
+                            borderColor: '#CBD5E1',
+                          }}
+                          accessibilityLabel="Show all quick options"
+                        >
+                          <Text style={{ fontSize: 10.5, fontWeight: '800', color: '#475569' }}>⏱️ Options</Text>
+                        </TouchableOpacity>
+
+                        <View
+                          style={{
+                            backgroundColor: '#5D997C',
+                            paddingHorizontal: 11,
+                            paddingVertical: 7,
+                            borderRadius: 11,
+                          }}
+                        >
+                          <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>
+                            Start
+                          </Text>
+                        </View>
+                      </>
+                    ) : (
+                      <View
+                        style={{
+                          backgroundColor: '#5D997C',
+                          paddingHorizontal: 12,
+                          paddingVertical: 7,
+                          borderRadius: 11,
+                        }}
+                      >
+                        <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>
+                          ⏱️ Options
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </View>
 
+                {/* Sub-bar showing configured options */}
                 <View
                   style={{
-                    backgroundColor: '#5D997C',
-                    paddingHorizontal: 14,
-                    paddingVertical: 7,
-                    borderRadius: 12,
+                    marginTop: 8,
+                    paddingTop: 8,
+                    borderTopWidth: 1,
+                    borderTopColor: '#EAE5DE',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#FFFFFF' }}>
-                    Start
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap', flex: 1 }}>
+                    <Text style={{ fontSize: 10, fontWeight: '700', color: '#94A3B8' }}>Available:</Text>
+                    {widgetTimerOptions.map((opt) => (
+                      <View
+                        key={opt}
+                        style={{
+                          backgroundColor:
+                            isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
+                              ? '#EBF4EF'
+                              : '#FFFFFF',
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
+                          borderRadius: 6,
+                          borderWidth: 0.8,
+                          borderColor:
+                            isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
+                              ? '#5D997C'
+                              : '#E2E8F0',
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 9.5,
+                            fontWeight: '800',
+                            color:
+                              isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
+                                ? '#2D5A43'
+                                : '#64748B',
+                          }}
+                        >
+                          {opt === widgetDefaultPresetMinutes && isWidgetDefaultPresetActive ? `★ ${opt}m` : `${opt}m`}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => setCurrentScreen('schedule_automation')}
+                    style={{ paddingLeft: 6 }}
+                  >
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: '#5D997C' }}>Configure →</Text>
+                  </TouchableOpacity>
                 </View>
               </TouchableOpacity>
             </View>
@@ -980,7 +1382,6 @@ export default function App() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 8,
                 marginTop: 6,
                 shadowColor: '#5D997C',
                 shadowOffset: { width: 0, height: 3 },
@@ -990,140 +1391,10 @@ export default function App() {
               }}
             >
               <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800' }}>Start Timer</Text>
-              <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth={2.5}>
-                <Path d="M5 12h14M12 5l7 7-7 7" />
-              </Svg>
             </TouchableOpacity>
           </View>
 
-          {/* 3. Screen End Style Card */}
-          <View
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: 22,
-              padding: 16,
-              borderWidth: 1,
-              borderColor: '#EAE5DE',
-              marginBottom: 12,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.04,
-              shadowRadius: 3,
-              elevation: 1,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5D997C' }} />
-                <Text style={{ fontSize: 11, fontWeight: '800', color: '#1A2436', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                  Screen End Style
-                </Text>
-              </View>
-              <View style={{ backgroundColor: '#EBF4EF', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, borderWidth: 1, borderColor: 'rgba(93, 153, 124, 0.3)' }}>
-                <Text style={{ fontSize: 9.5, fontWeight: '800', color: '#2D5A43' }}>
-                  {selectedEndingType === 'monster' ? 'Monster Mode' : 'Switch-Off'}
-                </Text>
-              </View>
-            </View>
 
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => setShowEndingModal(true)}
-              style={{
-                width: '100%',
-                backgroundColor: '#FAF8F5',
-                paddingVertical: 13,
-                paddingHorizontal: 14,
-                borderRadius: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderWidth: 1,
-                borderColor: '#EAE5DE',
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-                <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EAE5DE', alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ fontSize: 24 }}>
-                    {selectedEndingType === 'monster' ? currentMonster.emoji : currentSwitchOff.icon}
-                  </Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '900', color: '#1A2436' }}>
-                    {selectedEndingType === 'monster' ? currentMonster.name : currentSwitchOff.title}
-                  </Text>
-                  <Text style={{ fontSize: 11.5, color: '#718096', marginTop: 1, fontWeight: '500' }} numberOfLines={1}>
-                    {selectedEndingType === 'monster' ? `"${currentMonster.dialogue}"` : currentSwitchOff.description}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#EBF4EF', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 }}>
-                <Text style={{ color: '#2D5A43', fontSize: 12, fontWeight: '900' }}>Change</Text>
-                <Text style={{ color: '#2D5A43', fontSize: 12 }}>→</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* 4. Schedule Automation Routine Shortcut Card */}
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => setCurrentScreen('schedule_automation')}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              backgroundColor: '#EBF4EF',
-              borderRadius: 20,
-              padding: 14,
-              borderWidth: 1,
-              borderColor: 'rgba(93, 153, 124, 0.3)',
-              marginBottom: 8,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 14,
-                  backgroundColor: '#FFFFFF',
-                  borderWidth: 1,
-                  borderColor: '#5D997C',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
-                  <Rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <Line x1="16" y1="2" x2="16" y2="6" stroke="#5D997C" strokeWidth={2.2} />
-                  <Line x1="8" y1="2" x2="8" y2="6" stroke="#5D997C" strokeWidth={2.2} />
-                  <Line x1="3" y1="10" x2="21" y2="10" stroke="#5D997C" strokeWidth={2.2} />
-                </Svg>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
-                  Schedule Automation
-                </Text>
-                <Text style={{ fontSize: 10.5, color: '#4A5568', fontWeight: '500', marginTop: 1 }}>
-                  Manage automated warnings & sleep routines
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 4,
-                backgroundColor: '#5D997C',
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 12,
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '900' }}>Configure</Text>
-              <Text style={{ color: '#FFFFFF', fontSize: 11 }}>→</Text>
-            </View>
-          </TouchableOpacity>
 
           {/* 5. Positive Reinforcement Streak Card */}
           <View
@@ -1648,18 +1919,11 @@ export default function App() {
   );
 
   const renderShutdownIllusion = () => (
-    <View style={styles.illusionContainer}>
-      <View style={styles.systemAlertCard}>
-        <Text style={styles.systemAlertTitle}>Low Battery</Text>
-        <Text style={styles.systemAlertText}>1% of battery remaining</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.finishRestBtn}
-        onPress={() => finishSession('required_shutdown')}
-      >
-        <Text style={styles.finishRestText}>Finish Rest</Text>
-      </TouchableOpacity>
-    </View>
+    <ShutdownSimulationNative
+      childName={activeChild.name}
+      onUnlocked={() => finishSession('required_shutdown')}
+      onInstantBypass={() => finishSession('required_shutdown')}
+    />
   );
 
   const renderPostSessionSummary = () => (
@@ -1681,6 +1945,7 @@ export default function App() {
       childName={activeChild.name}
       childAvatarInitial={activeChild.avatarInitial}
       childAvatarColor={activeChild.avatarColor}
+      bottomPadding={contentBottomPadding}
       onBack={() => setCurrentScreen('parent_dashboard')}
       onNavigateControls={() => setCurrentScreen('settings')}
     />
@@ -1689,6 +1954,7 @@ export default function App() {
   const renderSettings = () => (
     <SettingsDrawerHubNative
       activeChildName={activeChild.name}
+      bottomPadding={contentBottomPadding}
       onClose={() => setCurrentScreen('parent_dashboard')}
       onNavigateSchedule={() => setCurrentScreen('schedule_automation')}
       onNavigateAnalytics={() => setCurrentScreen('weekly_stats')}
@@ -1700,7 +1966,7 @@ export default function App() {
 
 
   const renderAddChild = () => (
-    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 85 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: contentBottomPadding }}>
       <View style={styles.topNavRow}>
         <TouchableOpacity onPress={() => setCurrentScreen('parent_dashboard')}>
           <Text style={styles.navBackText}>← Back to Dashboard</Text>
@@ -1790,21 +2056,7 @@ export default function App() {
           ))}
         </View>
 
-        {/* Schedule Automation Section */}
-        <ChildProfileAutomationSection
-          childName={newChildName.trim() || 'Child'}
-          initialConfig={{
-            automationEnabled: true,
-            repetitionMode: 'recurring_weekly',
-            selectedDays: [1, 2, 3, 4, 5],
-            triggerHour: 8,
-            triggerMinute: 0,
-            triggerPeriod: 'PM',
-            endingType: selectedEndingType,
-            monsterId: selectedMonsterId,
-            switchOffId: selectedSwitchOffId,
-          }}
-        />
+
 
         <TouchableOpacity
           style={[
@@ -1826,234 +2078,243 @@ export default function App() {
   const renderScheduleAutomation = () => (
     <View style={{ flex: 1, backgroundColor: '#FAF8F5' }}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 85 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: contentBottomPadding }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Header */}
-        <View style={[styles.topHeader, { marginBottom: 14 }]}>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: '#718096', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-              Screen Routines
-            </Text>
-            <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436', marginTop: 1 }}>
-              Schedule Automation
-            </Text>
-            <Text style={{ fontSize: 11, color: '#718096', marginTop: 2 }}>
-              Automated screen warnings & sleep routines for {activeChild.name}
-            </Text>
-          </View>
+        {/* Minimalist Top Header */}
+        <View style={{ marginBottom: 18 }}>
+          <Text style={{ fontSize: 11, fontWeight: '800', color: '#5D997C', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+            Widget Settings
+          </Text>
+          <Text style={{ fontSize: 20, fontWeight: '900', color: '#1A2436', marginTop: 2 }}>
+            Widget Quick-Select
+          </Text>
+          <Text style={{ fontSize: 11.5, color: '#718096', marginTop: 2 }}>
+            Customize one-tap & quick screen time limits for {activeChild.name}
+          </Text>
         </View>
 
-        {/* Quick Screen Time Widget Section with '+' Add Widget Sign */}
+        {/* Phone Widget Quick-Select Times Card */}
         <View
           style={{
             backgroundColor: '#FFFFFF',
-            borderRadius: 22,
-            padding: 15,
+            borderRadius: 20,
+            padding: 16,
             borderWidth: 1,
             borderColor: '#EAE5DE',
             marginBottom: 16,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.04,
-            shadowRadius: 3,
+            shadowRadius: 4,
             elevation: 1,
           }}
         >
+          {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <View style={{ flex: 1, marginRight: 8 }}>
-              <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
-                Quick Screen Time Widget
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 13.5, fontWeight: '900', color: '#1A2436' }}>
+                Phone Widget Times
               </Text>
-              <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 1 }}>
-                {isWidgetAddedToHome
-                  ? `Added to Home Screen • ${formatWidgetDuration(quickWidgetMinutes)} Timer`
-                  : 'Not added to Home Screen yet'}
+              <Text style={{ fontSize: 11, color: '#718096', marginTop: 2 }}>
+                Options shown when you tap the BabyBoo phone widget
               </Text>
             </View>
-            <View
+            <TouchableOpacity
+              onPress={() => setIsWidgetAddedToHome(!isWidgetAddedToHome)}
+              activeOpacity={0.8}
               style={{
                 backgroundColor: isWidgetAddedToHome ? '#EBF4EF' : '#FAF8F5',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-                borderRadius: 8,
+                paddingHorizontal: 9,
+                paddingVertical: 5,
+                borderRadius: 10,
                 borderWidth: 1,
                 borderColor: isWidgetAddedToHome ? '#5D997C' : '#EAE5DE',
               }}
             >
-              <Text style={{ fontSize: 9.5, fontWeight: '900', color: isWidgetAddedToHome ? '#2D5A43' : '#718096' }}>
-                {isWidgetAddedToHome ? '✓ Added to Home Screen' : 'Not Added to Home Screen'}
+              <Text style={{ fontSize: 10, fontWeight: '900', color: isWidgetAddedToHome ? '#2D5A43' : '#718096' }}>
+                {isWidgetAddedToHome ? '✓ Active on Phone' : '+ Add Widget'}
               </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 1-Tap Preset Mode Toggle */}
+          <View
+            style={{
+              backgroundColor: isWidgetDefaultPresetActive ? '#FDF8EC' : '#FAF8F5',
+              padding: 12,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: isWidgetDefaultPresetActive ? '#F6C343' : '#EAE5DE',
+              marginBottom: 14,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, marginRight: 10 }}>
+                <Text style={{ fontSize: 12, fontWeight: '900', color: '#1A2436' }}>
+                  1-Tap Instant Start
+                </Text>
+                <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 2 }}>
+                  {isWidgetDefaultPresetActive
+                    ? `Starts ${formatWidgetDuration(widgetDefaultPresetMinutes)} immediately without opening menu`
+                    : 'Shows your customized time choices in a popup menu'}
+                </Text>
+              </View>
+              <Switch
+                value={isWidgetDefaultPresetActive}
+                onValueChange={handleToggleDefaultPresetMode}
+                trackColor={{ false: '#CBD5E1', true: '#5D997C' }}
+                thumbColor="#FFFFFF"
+              />
             </View>
           </View>
 
-          {!isWidgetAddedToHome ? (
-            /* When NOT added: Plus '+' Add Widget Button Tile */
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={openEditWidgetModal}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#FAF8F5',
-                borderRadius: 18,
-                padding: 14,
-                borderWidth: 1.5,
-                borderColor: '#5D997C',
-                borderStyle: 'dashed',
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
-                {/* Plus '+' Add Widget Sign */}
+          {/* Active Time Options Grid */}
+          <Text style={{ fontSize: 10.5, fontWeight: '800', color: '#718096', textTransform: 'uppercase', marginBottom: 6 }}>
+            Tap an option to set default (★) or tap ✕ to delete:
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+            {widgetTimerOptions.map((opt) => {
+              const isDefault = isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes;
+              return (
                 <View
+                  key={opt}
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 22,
-                    backgroundColor: '#5D997C',
+                    flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    backgroundColor: isDefault ? '#FDF5E6' : '#FAF8F5',
+                    borderRadius: 12,
+                    borderWidth: 1.2,
+                    borderColor: isDefault ? '#F6C343' : '#EAE5DE',
+                    paddingLeft: 10,
+                    paddingRight: 6,
+                    paddingVertical: 6,
+                    gap: 6,
                   }}
                 >
-                  <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '900', lineHeight: 26, textAlign: 'center' }}>
-                    +
-                  </Text>
-                </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (!isWidgetDefaultPresetActive) {
+                        setIsWidgetDefaultPresetActive(true);
+                        setStoredItem(WIDGET_DEFAULT_PRESET_ENABLED_KEY, 'true');
+                      }
+                      handleSetDefaultPreset(opt);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: '900', color: isDefault ? '#8C5E00' : '#1A2436' }}>
+                      {isDefault ? '★ ' : ''}{formatWidgetDuration(opt)}
+                    </Text>
+                  </TouchableOpacity>
 
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
-                    Add Screen Time Widget (+)
-                  </Text>
-                  <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 2 }}>
-                    Tap '+' to set hours/minutes & add widget to parent's phone Home Screen
-                  </Text>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteTimeOption(opt)}
+                    hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+                    disabled={widgetTimerOptions.length <= 1}
+                    style={{ padding: 2, opacity: widgetTimerOptions.length <= 1 ? 0.3 : 0.7 }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '800', color: '#718096' }}>✕</Text>
+                  </TouchableOpacity>
                 </View>
-              </View>
+              );
+            })}
+          </View>
 
-              <View
+          {/* Minimalist Add Time Options: Common chips + custom minute input */}
+          <View style={{ paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F1EFEA', gap: 8 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
+              <Text style={{ fontSize: 10.5, fontWeight: '700', color: '#94A3B8' }}>Quick Add:</Text>
+              {[10, 15, 20, 30, 45, 60].map((m) => {
+                const has = widgetTimerOptions.includes(m);
+                return (
+                  <TouchableOpacity
+                    key={m}
+                    onPress={() => !has && handleCreateTimeOption(m)}
+                    disabled={has}
+                    style={{
+                      paddingHorizontal: 8,
+                      paddingVertical: 3.5,
+                      borderRadius: 8,
+                      backgroundColor: has ? '#F1EFEA' : '#EBF4EF',
+                      opacity: has ? 0.4 : 1,
+                    }}
+                  >
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: has ? '#94A3B8' : '#2D5A43' }}>
+                      +{m}m
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {/* Custom Input */}
+            <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+              <TextInput
+                value={customWidgetOptionInput}
+                onChangeText={setCustomWidgetOptionInput}
+                keyboardType="numeric"
+                placeholder="Other minutes (e.g. 25)"
+                placeholderTextColor="#A0AEC0"
+                style={{
+                  flex: 1,
+                  backgroundColor: '#FAF8F5',
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: '#EAE5DE',
+                  paddingHorizontal: 12,
+                  paddingVertical: 7,
+                  fontSize: 11.5,
+                  fontWeight: '700',
+                  color: '#1A2436',
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  const num = parseInt(customWidgetOptionInput.trim(), 10);
+                  handleCreateTimeOption(num);
+                }}
+                activeOpacity={0.8}
                 style={{
                   backgroundColor: '#5D997C',
                   paddingHorizontal: 12,
-                  paddingVertical: 7,
-                  borderRadius: 12,
+                  paddingVertical: 8,
+                  borderRadius: 10,
                 }}
               >
                 <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>
-                  + Add Widget
+                  + Add
                 </Text>
-              </View>
-            </TouchableOpacity>
-          ) : (
-            /* When ADDED: Shows active widget info with EDIT TIMER button */
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#FAF8F5',
-                borderRadius: 18,
-                padding: 14,
-                borderWidth: 1,
-                borderColor: '#EAE5DE',
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
-                <View
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 14,
-                    backgroundColor: '#EBF4EF',
-                    borderWidth: 1,
-                    borderColor: '#5D997C',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
-                    <Circle cx="12" cy="12" r="10" />
-                    <Polyline points="12 6 12 12 16 14" />
-                  </Svg>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
-                    {formatWidgetDuration(quickWidgetMinutes)} Timer Widget
-                  </Text>
-                  <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 2 }}>
-                    Active on phone Home Screen • 1-tap start
-                  </Text>
-                </View>
-              </View>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={openEditWidgetModal}
-                  style={{
-                    backgroundColor: '#5D997C',
-                    paddingHorizontal: 12,
-                    paddingVertical: 7,
-                    borderRadius: 11,
-                  }}
-                >
-                  <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>Edit Timer</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => setIsWidgetAddedToHome(false)}
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    paddingHorizontal: 8,
-                    paddingVertical: 7,
-                    borderRadius: 11,
-                    borderWidth: 1,
-                    borderColor: '#EAE5DE',
-                  }}
-                >
-                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#718096' }}>Remove</Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             </View>
-          )}
-        </View>
+          </View>
 
-        {/* The Whole Enable Schedule Automation Box */}
-        <ChildProfileAutomationSection
-          childName={activeChild.name}
-          initialConfig={{
-            automationEnabled: true,
-            repetitionMode: 'one_time',
-            oneTimeOption: 'Today',
-            selectedDays: [1, 2, 3, 4, 5],
-            triggerHour: 8,
-            triggerMinute: 0,
-            triggerPeriod: 'PM',
-            endingType: selectedEndingType,
-            monsterId: selectedMonsterId,
-            switchOffId: selectedSwitchOffId,
-          }}
-          onChangeConfig={(cfg) => {
-            if (cfg.endingType) {
-              setSelectedEndingType(cfg.endingType);
-            }
-            if (cfg.monsterId) {
-              setSelectedMonsterId(cfg.monsterId);
-            }
-            if (cfg.switchOffId) {
-              setSelectedSwitchOffId(cfg.switchOffId);
-            }
-          }}
-        />
+          {/* Test Action */}
+          <TouchableOpacity
+            onPress={() => handleWidgetClick(false)}
+            activeOpacity={0.8}
+            style={{
+              marginTop: 12,
+              paddingVertical: 9,
+              borderRadius: 12,
+              backgroundColor: '#FAF8F5',
+              borderWidth: 1,
+              borderColor: '#EAE5DE',
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 11, fontWeight: '800', color: '#5D997C' }}>
+              ▶ Test Widget Action ({isWidgetDefaultPresetActive ? `1-Tap: ${widgetDefaultPresetMinutes}m` : 'Open Menu'})
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.root}>
-        <StatusBar style="dark" />
+      <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
+        <StatusBar barStyle="dark-content" />
 
         {/* Screen Router */}
         {currentScreen === 'splash' && renderSplash()}
@@ -2083,39 +2344,44 @@ export default function App() {
             <View
               style={{
                 position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
+                bottom: bottomNavOffset,
+                left: 14,
+                right: 14,
                 height: 64,
                 backgroundColor: '#FAF8F5',
-                borderTopWidth: 1,
-                borderTopColor: '#EAE5DE',
+                borderRadius: 24,
+                borderWidth: 1.5,
+                borderColor: '#EAE5DE',
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-around',
-                paddingBottom: 6,
-                paddingTop: 6,
+                paddingHorizontal: 8,
+                paddingBottom: 2,
+                paddingTop: 2,
                 zIndex: 50,
                 shadowColor: '#000',
-                shadowOffset: { width: 0, height: -2 },
-                shadowOpacity: 0.04,
-                shadowRadius: 4,
-                elevation: 4,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.12,
+                shadowRadius: 10,
+                elevation: 8,
               }}
             >
-              {/* 1. Home Dashboard (First option from left) */}
+              {/* 1. Add Child (First option from left) */}
               <TouchableOpacity
                 onPress={() => {
-                  setActiveNavTab('home');
-                  setCurrentScreen('parent_dashboard');
+                  setCurrentScreen('add_child');
                 }}
                 style={{ alignItems: 'center', gap: 3, flex: 1 }}
+                accessibilityLabel="Add Child Profile"
               >
-                <Svg width={20} height={20} viewBox="0 0 24 24" fill={currentScreen === 'parent_dashboard' ? '#5D997C' : '#94A3B8'}>
-                  <Path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={currentScreen === 'add_child' ? '#5D997C' : '#94A3B8'} strokeWidth={2.2}>
+                  <Path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <Circle cx="9" cy="7" r="4" />
+                  <Line x1="19" y1="8" x2="19" y2="14" />
+                  <Line x1="22" y1="11" x2="16" y2="11" />
                 </Svg>
-                <Text style={{ fontSize: 9.5, fontWeight: '800', color: currentScreen === 'parent_dashboard' ? '#5D997C' : '#94A3B8' }}>
-                  Home
+                <Text style={{ fontSize: 9.5, fontWeight: '800', color: currentScreen === 'add_child' ? '#5D997C' : '#94A3B8' }}>
+                  Add Child
                 </Text>
               </TouchableOpacity>
 
@@ -2137,11 +2403,14 @@ export default function App() {
                 </Text>
               </TouchableOpacity>
 
-              {/* 3. CENTER AGILE BUTTON: Add Child (+) in the exact center */}
+              {/* 3. CENTER AGILE BUTTON: Home in the exact center */}
               <TouchableOpacity
-                onPress={() => setCurrentScreen('add_child')}
+                onPress={() => {
+                  setActiveNavTab('home');
+                  setCurrentScreen('parent_dashboard');
+                }}
                 style={{ alignItems: 'center', justifyContent: 'center', top: -10 }}
-                accessibilityLabel="Add Child Profile"
+                accessibilityLabel="Home Dashboard"
               >
                 <View
                   style={{
@@ -2160,10 +2429,12 @@ export default function App() {
                     elevation: 4,
                   }}
                 >
-                  <Text style={{ fontSize: 24, fontWeight: '900', color: '#FFFFFF', lineHeight: 26 }}>+</Text>
+                  <Svg width={22} height={22} viewBox="0 0 24 24" fill="#FFFFFF">
+                    <Path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                  </Svg>
                 </View>
-                <Text style={{ fontSize: 9, fontWeight: '800', color: currentScreen === 'add_child' ? '#5D997C' : '#94A3B8', marginTop: 2 }}>
-                  Add Child
+                <Text style={{ fontSize: 9, fontWeight: '800', color: currentScreen === 'parent_dashboard' ? '#5D997C' : '#94A3B8', marginTop: 2 }}>
+                  Home
                 </Text>
               </TouchableOpacity>
 
@@ -2198,9 +2469,9 @@ export default function App() {
                     justifyContent: 'center',
                   }}
                 >
-                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={currentScreen === 'settings' ? '#5D997C' : '#94A3B8'} strokeWidth={2.2}>
+                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={currentScreen === 'settings' ? '#5D997C' : '#94A3B8'} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                     <Circle cx="12" cy="12" r="3" />
-                    <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </Svg>
                 </View>
                 <Text style={{ fontSize: 9.5, fontWeight: '800', color: currentScreen === 'settings' ? '#5D997C' : '#94A3B8' }}>
@@ -2807,6 +3078,315 @@ export default function App() {
             </View>
           </Modal>
         ) : null}
+
+        {/* 1. Interactive Widget Quick-Select Times Modal / Overlay */}
+        {showWidgetQuickSelectModal ? (
+          <Modal transparent animationType="fade" visible={showWidgetQuickSelectModal}>
+            <View style={styles.modalBackdrop}>
+              <View style={[styles.addChildModalCard, { maxWidth: 350, padding: 20 }]}>
+                {/* Header */}
+                <View style={styles.addChildModalHeader}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                    <View
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: 12,
+                        backgroundColor: '#EBF4EF',
+                        borderWidth: 1,
+                        borderColor: '#5D997C',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
+                        <Circle cx="12" cy="12" r="10" />
+                        <Polyline points="12 6 12 12 16 14" />
+                      </Svg>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.addChildModalTitle}>Start Screen Time</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 1 }}>
+                        <Text style={{ fontSize: 10.5, fontWeight: '800', color: '#5D997C' }}>
+                          {activeChild.name}
+                        </Text>
+                        <Text style={{ fontSize: 10, color: '#94A3B8' }}>•</Text>
+                        <Text style={{ fontSize: 10, fontWeight: '800', color: '#B45309' }}>
+                          5 🔥 Day Streak
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.addChildModalCloseBtn}
+                    onPress={() => setShowWidgetQuickSelectModal(false)}
+                    accessibilityLabel="Close overlay"
+                  >
+                    <Text style={styles.addChildModalCloseText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={{ fontSize: 11.5, color: '#64748B', marginTop: 4, marginBottom: 12 }}>
+                  Tap any time limit to immediately start phone screen time:
+                </Text>
+
+                {/* Options Grid */}
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                  {widgetTimerOptions.map((opt) => {
+                    const isDefault = isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes;
+                    return (
+                      <TouchableOpacity
+                        key={opt}
+                        activeOpacity={0.82}
+                        onPress={() => {
+                          setShowWidgetQuickSelectModal(false);
+                          startNewSession(opt);
+                        }}
+                        style={{
+                          flexBasis: widgetTimerOptions.length <= 4 ? '48%' : '31%',
+                          flexGrow: 1,
+                          backgroundColor: isDefault ? '#FDF5E6' : '#FAF8F5',
+                          borderRadius: 14,
+                          paddingVertical: 12,
+                          paddingHorizontal: 10,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderWidth: 1.5,
+                          borderColor: isDefault ? '#F6C343' : '#EAE5DE',
+                        }}
+                      >
+                        {isDefault && (
+                          <View
+                            style={{
+                              backgroundColor: '#F6C343',
+                              paddingHorizontal: 6,
+                              paddingVertical: 1.5,
+                              borderRadius: 5,
+                              marginBottom: 4,
+                            }}
+                          >
+                            <Text style={{ fontSize: 8, fontWeight: '900', color: '#452B00' }}>
+                              ★ DEFAULT PRESET
+                            </Text>
+                          </View>
+                        )}
+                        <Text style={{ fontSize: 16, fontWeight: '900', color: '#1A2436' }}>
+                          {formatWidgetDuration(opt)}
+                        </Text>
+                        <Text style={{ fontSize: 9.5, color: '#718096', marginTop: 2 }}>
+                          Tap to start
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                {/* Optional Action Shortcuts */}
+                {(widgetIncludeCustom || widgetIncludeLock) && (
+                  <View style={{ gap: 6, marginBottom: 14, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#EAE5DE' }}>
+                    {widgetIncludeCustom && (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                          setShowWidgetQuickSelectModal(false);
+                          openEditWidgetModal();
+                        }}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                          backgroundColor: '#FAF8F5',
+                          borderRadius: 12,
+                          paddingVertical: 9,
+                          borderWidth: 1,
+                          borderColor: '#EAE5DE',
+                        }}
+                      >
+                        <Text style={{ fontSize: 11, fontWeight: '800', color: '#475569' }}>
+                          ⌨️ Other Custom Duration...
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {widgetIncludeLock && (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                          setShowWidgetQuickSelectModal(false);
+                          setCurrentScreen('shutdown_illusion');
+                        }}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                          backgroundColor: '#FFF5F5',
+                          borderRadius: 12,
+                          paddingVertical: 9,
+                          borderWidth: 1,
+                          borderColor: '#FEB2B2',
+                        }}
+                      >
+                        <Text style={{ fontSize: 11, fontWeight: '800', color: '#C53030' }}>
+                          🔒 Lock Phone Screen Immediately
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+
+                {/* Footer Link to Customize Options */}
+                <View style={{ alignItems: 'center', paddingTop: 6, borderTopWidth: 1, borderTopColor: '#EAE5DE' }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowWidgetQuickSelectModal(false);
+                      setCurrentScreen('schedule_automation');
+                    }}
+                    style={{ paddingVertical: 4 }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '800', color: '#5D997C' }}>
+                      ⚙️ Customize Options & Default Preset →
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
+
+        {/* 2. Edit Widget Time Option Modal */}
+        {showEditOptionModal && editingOptionOriginalMinutes ? (
+          <Modal transparent animationType="fade" visible={showEditOptionModal}>
+            <View style={styles.modalBackdrop}>
+              <View style={[styles.addChildModalCard, { maxWidth: 330, padding: 20 }]}>
+                <View style={styles.addChildModalHeader}>
+                  <Text style={styles.addChildModalTitle}>Edit Widget Time Limit</Text>
+                  <TouchableOpacity
+                    style={styles.addChildModalCloseBtn}
+                    onPress={() => {
+                      setShowEditOptionModal(false);
+                      setEditingOptionOriginalMinutes(null);
+                    }}
+                  >
+                    <Text style={styles.addChildModalCloseText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={{ fontSize: 11.5, color: '#718096', marginTop: 3, marginBottom: 12 }}>
+                  Modify the {editingOptionOriginalMinutes}-minute option to any duration:
+                </Text>
+
+                {/* Numeric Input */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 12 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const cur = parseInt(editingOptionNewMinutes, 10) || editingOptionOriginalMinutes || 15;
+                      setEditingOptionNewMinutes(String(Math.max(5, cur - 5)));
+                    }}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      backgroundColor: '#EAE5DE',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436' }}>-</Text>
+                  </TouchableOpacity>
+
+                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+                    <TextInput
+                      value={editingOptionNewMinutes}
+                      onChangeText={setEditingOptionNewMinutes}
+                      keyboardType="numeric"
+                      style={{
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 12,
+                        borderWidth: 1.5,
+                        borderColor: '#5D997C',
+                        paddingHorizontal: 16,
+                        paddingVertical: 6,
+                        fontSize: 22,
+                        fontWeight: '900',
+                        color: '#1A2436',
+                        textAlign: 'center',
+                        minWidth: 80,
+                      }}
+                    />
+                    <Text style={{ fontSize: 13, fontWeight: '800', color: '#718096' }}>mins</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      const cur = parseInt(editingOptionNewMinutes, 10) || editingOptionOriginalMinutes || 15;
+                      setEditingOptionNewMinutes(String(Math.min(360, cur + 5)));
+                    }}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      backgroundColor: '#EAE5DE',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436' }}>+</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Quick Presets for editing */}
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 14 }}>
+                  {[10, 15, 20, 30, 45, 60, 90, 120].map((m) => (
+                    <TouchableOpacity
+                      key={m}
+                      onPress={() => setEditingOptionNewMinutes(String(m))}
+                      style={{
+                        paddingHorizontal: 9,
+                        paddingVertical: 5,
+                        borderRadius: 8,
+                        backgroundColor: editingOptionNewMinutes === String(m) ? '#5D997C' : '#FAF8F5',
+                        borderWidth: 1,
+                        borderColor: editingOptionNewMinutes === String(m) ? '#5D997C' : '#EAE5DE',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10.5,
+                          fontWeight: '800',
+                          color: editingOptionNewMinutes === String(m) ? '#FFFFFF' : '#475569',
+                        }}
+                      >
+                        {formatWidgetDuration(m)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Action Buttons */}
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <TouchableOpacity
+                    style={[styles.addChildCancelBtn, { flex: 1 }]}
+                    onPress={() => {
+                      setShowEditOptionModal(false);
+                      setEditingOptionOriginalMinutes(null);
+                    }}
+                  >
+                    <Text style={styles.addChildCancelBtnText}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.addChildSubmitBtn, { flex: 1, marginTop: 0 }]}
+                    onPress={handleSaveEditedOption}
+                  >
+                    <Text style={styles.addChildSubmitBtnText}>Save Option</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        ) : null}
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -2820,7 +3400,7 @@ const styles = StyleSheet.create({
   exactDashboardContent: {
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 90,
+    paddingBottom: 84,
     backgroundColor: '#FAF8F5',
   },
   exactTopBar: {

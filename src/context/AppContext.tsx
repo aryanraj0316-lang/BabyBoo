@@ -22,6 +22,7 @@ import {
   DEMO_CHILDREN,
 } from '../utils/storage';
 import { soundEngine } from '../utils/audio';
+import { HandoverNativeEngine } from '../../modules/handover-native';
 
 interface ActiveSessionState {
   config: SessionConfig | null;
@@ -64,6 +65,12 @@ interface AppContextType {
   setQuickWidgetMinutes: (m: number) => void;
   isWidgetAddedToHome: boolean;
   setIsWidgetAddedToHome: (b: boolean) => void;
+  widgetTimerOptions: number[];
+  setWidgetTimerOptions: React.Dispatch<React.SetStateAction<number[]>>;
+  isWidgetDefaultPresetActive: boolean;
+  setIsWidgetDefaultPresetActive: React.Dispatch<React.SetStateAction<boolean>>;
+  widgetDefaultPresetMinutes: number;
+  setWidgetDefaultPresetMinutes: React.Dispatch<React.SetStateAction<number>>;
   completeOnboarding: (profile?: { name?: string; ageGroup?: any; dailyMinutes?: number; preferredStyle?: any }) => void;
   loadDemoProfiles: () => void;
   resetOnboarding: () => void;
@@ -106,12 +113,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  const [widgetTimerOptions, setWidgetTimerOptions] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem('babyboo_widget_timer_options');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [15, 30, 45, 60];
+  });
+
+  const [isWidgetDefaultPresetActive, setIsWidgetDefaultPresetActive] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('babyboo_widget_default_preset_enabled');
+      return saved === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const [widgetDefaultPresetMinutes, setWidgetDefaultPresetMinutes] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('babyboo_widget_default_preset_minutes');
+      if (saved) {
+        const num = parseInt(saved, 10);
+        if (!isNaN(num) && num > 0) return num;
+      }
+    } catch {}
+    return 15;
+  });
+
+  useEffect(() => {
+    HandoverNativeEngine.getWidgetOptions()
+      .then((opts) => {
+        if (opts && Array.isArray(opts) && opts.length > 0) {
+          setWidgetTimerOptions(opts);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const isWidgetMounted = useRef(false);
   useEffect(() => {
     try {
-      localStorage.setItem('babyboo_quick_widget_minutes', quickWidgetMinutes.toString());
-      localStorage.setItem('babyboo_widget_on_home', isWidgetAddedToHome.toString());
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('babyboo_quick_widget_minutes', quickWidgetMinutes.toString());
+        localStorage.setItem('babyboo_widget_on_home', isWidgetAddedToHome.toString());
+        localStorage.setItem('babyboo_widget_timer_options', JSON.stringify(widgetTimerOptions));
+        localStorage.setItem('babyboo_widget_default_preset_enabled', isWidgetDefaultPresetActive.toString());
+        localStorage.setItem('babyboo_widget_default_preset_minutes', widgetDefaultPresetMinutes.toString());
+      }
     } catch {}
-  }, [quickWidgetMinutes, isWidgetAddedToHome]);
+
+    if (!isWidgetMounted.current) {
+      isWidgetMounted.current = true;
+      return;
+    }
+    HandoverNativeEngine.setWidgetOptions(widgetTimerOptions).catch(() => {});
+  }, [quickWidgetMinutes, isWidgetAddedToHome, widgetTimerOptions, isWidgetDefaultPresetActive, widgetDefaultPresetMinutes]);
 
   const [activeSession, setActiveSession] = useState<ActiveSessionState>({
     config: null,
@@ -486,6 +546,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setQuickWidgetMinutes,
         isWidgetAddedToHome,
         setIsWidgetAddedToHome,
+        widgetTimerOptions,
+        setWidgetTimerOptions,
+        isWidgetDefaultPresetActive,
+        setIsWidgetDefaultPresetActive,
+        widgetDefaultPresetMinutes,
+        setWidgetDefaultPresetMinutes,
         completeOnboarding,
         loadDemoProfiles,
         resetOnboarding,

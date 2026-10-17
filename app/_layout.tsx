@@ -1,7 +1,15 @@
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+export { ErrorBoundary } from 'expo-router';
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }} />
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="widget" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+      </Stack>
+    </SafeAreaProvider>
   );
 }

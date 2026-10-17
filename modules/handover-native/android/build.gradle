@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+if (!project.plugins.hasPlugin("org.jetbrains.kotlin.android") && project.extensions.findByName("kotlin") == null) {
+  apply plugin: 'org.jetbrains.kotlin.android'
+}
+
+group = 'expo.modules.handovernative'
+version = '0.1.0'
+
+def expoModulesCorePlugin = new File(project(":expo-modules-core").projectDir.absolutePath, "ExpoModulesCorePlugin.gradle")
+apply from: expoModulesCorePlugin
+applyKotlinExpoModulesCorePlugin()
+useCoreDependencies()
+useExpoPublishing()
+
+android {
+  compileSdkVersion Integer.parseInt(findProperty('android.compileSdkVersion') ?: '37')
+  namespace "expo.modules.handovernative"
+  defaultConfig {
+    minSdkVersion 26
+    targetSdkVersion 35
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib"
+}

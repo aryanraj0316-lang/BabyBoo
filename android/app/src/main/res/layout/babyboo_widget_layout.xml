@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 1. COLLAPSED VIEW: Very small compact icon widget (Default State) -->
+    <LinearLayout
+        android:id="@+id/widget_collapsed_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/widget_icon_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp">
+
+        <ImageView
+            android:id="@+id/widget_collapsed_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="BabyBoo Widget Icon"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/widget_collapsed_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="BabyBoo"
+            android:textColor="#1A2436"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_countdown_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/widget_countdown_badge_bg"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:text="00:00"
+            android:textColor="#FFFFFF"
+            android:textSize="10.5sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Chronometer
+            android:id="@+id/widget_chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/widget_countdown_badge_bg"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- 2. EXPANDED VIEW: Expands into selectable options card on click -->
+    <LinearLayout
+        android:id="@+id/widget_expanded_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/widget_bg"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <!-- Top Header: Icon + Title + Close Button -->
+        <LinearLayout
+            android:id="@+id/widget_expanded_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:contentDescription="BabyBoo App Icon"
+                android:src="@mipmap/ic_launcher" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BabyBoo Screen Time"
+                    android:textColor="#1A2436"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/widget_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tap timing to start"
+                    android:textColor="#64748B"
+                    android:textSize="9.5sp" />
+            </LinearLayout>
+
+            <!-- Close / Collapse Button -->
+            <TextView
+                android:id="@+id/widget_close_btn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="@drawable/widget_close_bg"
+                android:gravity="center"
+                android:text="✕"
+                android:textColor="#475569"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Bottom Row: Selectable Timings (10m, 15m, 30m, 45m, 60m) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_opt_10"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill_bg"
+                android:gravity="center"
+                android:text="10m"
+                android:textColor="#1A2436"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_opt_15"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill_bg"
+                android:gravity="center"
+                android:text="15m"
+                android:textColor="#1A2436"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_opt_30"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill_bg"
+                android:gravity="center"
+                android:text="30m"
+                android:textColor="#1A2436"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_opt_45"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill_bg"
+                android:gravity="center"
+                android:text="45m"
+                android:textColor="#1A2436"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_opt_60"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill_bg"
+                android:gravity="center"
+                android:text="60m"
+                android:textColor="#1A2436"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

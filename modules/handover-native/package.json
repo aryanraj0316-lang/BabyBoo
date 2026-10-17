@@ -1,0 +1,7 @@
+{
+  "name": "handover-native",
+  "version": "0.1.0",
+  "description": "Native Android engine for BabyBoo child-handover timer",
+  "main": "index.ts",
+  "types": "index.ts"
+}

@@ -381,7 +381,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
           onPress={handleFinishOnboarding}
           accessibilityLabel="Development Only: Skip Onboarding"
         >
-          <Text style={styles.devSkipBtnText}>⚡ Skip to Dashboard →</Text>
+          <Text style={styles.devSkipBtnText}>⚡ Skip to Dashboard</Text>
         </TouchableOpacity>
       </View>
 
@@ -412,7 +412,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
                 activeOpacity={0.8}
                 onPress={() => setCurrentStep(6)}
               >
-                <Text style={styles.skipBtnText}>Skip Context →</Text>
+                <Text style={styles.skipBtnText}>Skip Context</Text>
               </TouchableOpacity>
             ) : (
               <Text style={styles.stepCounterText}>Step 0{currentStep} / 05</Text>
@@ -570,10 +570,6 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
                   <Text style={{ fontSize: 20 }}>⭐</Text>
                 </View>
                 <Text style={styles.cardNotSureTitle}>Not sure yet?</Text>
-                <Text style={styles.cardNotSureDesc}>We'll help you personalize later</Text>
-                <View style={styles.notSureArrowBtn}>
-                  <Text style={{ color: '#78350F', fontSize: 12, fontWeight: '900' }}>→</Text>
-                </View>
               </TouchableOpacity>
             </View>
 
@@ -583,7 +579,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
               activeOpacity={0.8}
               onPress={() => setCurrentStep(2)}
             >
-              <Text style={styles.continueBtnText}>Continue →</Text>
+              <Text style={styles.continueBtnText}>Continue</Text>
             </TouchableOpacity>
 
             <View style={styles.privacyGuaranteeRow}>
@@ -659,7 +655,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
               onPress={() => setShowEstimatorModal(true)}
             >
               <Text style={styles.estimatorHelperTitle}>🕒 Not sure about total hours?</Text>
-              <Text style={styles.estimatorHelperAction}>Help me estimate →</Text>
+              <Text style={styles.estimatorHelperAction}>Help me estimate</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -668,7 +664,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
               activeOpacity={0.8}
               onPress={() => setCurrentStep(3)}
             >
-              <Text style={styles.continueBtnText}>Next →</Text>
+              <Text style={styles.continueBtnText}>Next</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -740,7 +736,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
               activeOpacity={0.8}
               onPress={() => setCurrentStep(4)}
             >
-              <Text style={styles.continueBtnText}>Continue →</Text>
+              <Text style={styles.continueBtnText}>Continue</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -802,7 +798,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
               activeOpacity={0.8}
               onPress={() => setCurrentStep(5)}
             >
-              <Text style={styles.continueBtnText}>Continue →</Text>
+              <Text style={styles.continueBtnText}>Continue</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -1043,7 +1039,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
                   activeOpacity={0.8}
                   onPress={() => setShowResearchModal(true)}
                 >
-                  <Text style={styles.researchLinkBtnText}>📖 Learn research →</Text>
+                  <Text style={styles.researchLinkBtnText}>📖 Learn research</Text>
                 </TouchableOpacity>
               </View>
               <Text style={styles.reportCardTitle}>What could this pattern influence?</Text>
@@ -1182,7 +1178,7 @@ export const OnboardingAssessmentNative: React.FC<OnboardingAssessmentNativeProp
                 onPress={handleFinishOnboarding}
               >
                 <Text style={styles.actionPlanBtnText}>
-                  Create {childName.trim() ? `${childName.trim()}'s` : "My Child's"} Screen Plan →
+                  Create {childName.trim() ? `${childName.trim()}'s` : "My Child's"} Screen Plan
                 </Text>
               </TouchableOpacity>
 

@@ -3,21 +3,31 @@
     "name": "BabyBoo",
     "slug": "babyboo",
     "version": "1.0.0",
-    "sdkVersion": "57.0.0",
+    "sdkVersion": "58.0.0",
     "orientation": "portrait",
-    "icon": "./public/favicon.svg",
+    "icon": "./assets/icon.png",
     "scheme": "babyboo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "backgroundColor": "#4F46E5",
+      "backgroundColor": "#FAF8F5",
       "resizeMode": "contain"
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 5000,
+      "url": "https://u.expo.dev/52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.babyboo.app",
       "infoPlist": {
         "UIBackgroundModes": [
+          "fetch",
+          "processing",
+          "remote-notification",
           "fetch",
           "processing",
           "remote-notification"
@@ -28,28 +38,52 @@
     "android": {
       "package": "com.babyboo.app",
       "versionCode": 1,
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
       "adaptiveIcon": {
-        "backgroundColor": "#4F46E5"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAF8F5"
       },
       "permissions": [
         "SYSTEM_ALERT_WINDOW",
-        "PACKAGE_USAGE_STATS",
         "RECEIVE_BOOT_COMPLETED",
         "FOREGROUND_SERVICE",
         "FOREGROUND_SERVICE_SPECIAL_USE",
-        "WAKE_LOCK",
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "SYSTEM_ALERT_WINDOW",
+        "RECEIVE_BOOT_COMPLETED",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_SPECIAL_USE",
         "VIBRATE",
         "POST_NOTIFICATIONS"
       ]
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./public/favicon.svg"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      "expo-updates",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26,
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
+      }
+    }
   }
 }

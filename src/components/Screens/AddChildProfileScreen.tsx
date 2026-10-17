@@ -129,31 +129,6 @@ export const AddChildProfileScreen: React.FC = () => {
           />
         </div>
 
-        {/* Default Grace Period */}
-        <div className="bg-white p-4 rounded-2xl border border-[#EAE5DE] shadow-xs">
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-xs font-bold text-[#1A2436]">Warning Grace Period</label>
-            <span className="text-xs font-bold text-[#7A6216] bg-[#FEF9E7] border border-[#F9ECC0] px-2.5 py-0.5 rounded-full">
-              {defaultGraceSeconds} seconds
-            </span>
-          </div>
-          <div className="grid grid-cols-4 gap-2">
-            {[30, 60, 90, 120].map((secs) => (
-              <button
-                key={secs}
-                type="button"
-                onClick={() => setDefaultGraceSeconds(secs)}
-                className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  defaultGraceSeconds === secs
-                    ? 'bg-[#F6D878] text-[#1A2436] border border-[#E8C55A] font-extrabold shadow-xs'
-                    : 'bg-[#FAF8F5] border border-[#EAE5DE] text-[#475569] hover:bg-[#F5F2EB]'
-                }`}
-              >
-                {secs}s
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Preferred Shutdown Style */}
         <div>

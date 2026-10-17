@@ -73,7 +73,13 @@ export const ParentDashboardScreen: React.FC = () => {
     quickWidgetMinutes,
     isWidgetAddedToHome,
     setIsWidgetAddedToHome,
+    widgetTimerOptions,
+    isWidgetDefaultPresetActive,
+    widgetDefaultPresetMinutes,
   } = useApp();
+
+  // Widget Quick-Select Modal State
+  const [showWidgetQuickSelectModal, setShowWidgetQuickSelectModal] = useState<boolean>(false);
 
   // Edit child modal state
   const [showEditChildModal, setShowEditChildModal] = useState<boolean>(false);
@@ -224,10 +230,16 @@ export const ParentDashboardScreen: React.FC = () => {
                         {c.name[0].toUpperCase()}
                       </div>
                       <div className="whitespace-nowrap">
-                        <span className="text-sm font-extrabold text-[#1A2436] block tracking-tight">
-                          {c.name}
-                        </span>
-                        <span className={`text-[10px] font-semibold block -mt-0.5 ${isSelected ? 'text-[#2D5441]' : 'text-[#64748B]'}`}>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-extrabold text-[#1A2436] block tracking-tight">
+                            {c.name}
+                          </span>
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[#FFF7ED] border border-[#FED7AA] text-[10px] font-black text-[#C2410C]">
+                            <span className="text-[10px] leading-none">🔥</span>
+                            <span className="leading-none">{c.streakDays || (c as any).streak || 5}</span>
+                          </span>
+                        </div>
+                        <span className={`text-[10px] font-semibold block mt-0.5 ${isSelected ? 'text-[#2D5441]' : 'text-[#64748B]'}`}>
                           {formatAgeGroupDisplay(c.ageGroup)} • {c.dailyLimitMinutes || 20}m limit
                         </span>
                       </div>
@@ -280,32 +292,124 @@ export const ParentDashboardScreen: React.FC = () => {
 
             <div
               onClick={() => {
-                startSession({
-                  childId: activeChild.id,
-                  durationMinutes: quickWidgetMinutes,
-                  gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
-                  shutdownStyle: 'low_battery',
-                });
-                navigateTo('active_session');
+                if (isWidgetDefaultPresetActive) {
+                  startSession({
+                    childId: activeChild.id,
+                    durationMinutes: widgetDefaultPresetMinutes,
+                    gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
+                    shutdownStyle: 'low_battery',
+                  });
+                  navigateTo('active_session');
+                } else {
+                  setShowWidgetQuickSelectModal(true);
+                }
               }}
-              className="p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F5F2EB] border border-[#EAE5DE] transition-all cursor-pointer flex items-center justify-between gap-3"
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
+                isWidgetDefaultPresetActive
+                  ? 'bg-[#FAF8F5] hover:bg-[#F5F2EB] border-[#5D997C]'
+                  : 'bg-[#FAF8F5] hover:bg-[#F5F2EB] border-[#EAE5DE]'
+              }`}
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-[#5D997C] flex items-center justify-center text-white font-black shadow-xs shrink-0">
-                  <Play className="w-5 h-5 fill-white ml-0.5" />
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black shadow-xs shrink-0 ${
+                      isWidgetDefaultPresetActive
+                        ? 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
+                        : 'bg-[#5D997C] text-white'
+                    }`}
+                  >
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-sm font-extrabold text-[#1A2436] truncate">
+                        {isWidgetDefaultPresetActive
+                          ? `★ ${formatWidgetDuration(widgetDefaultPresetMinutes)} Preset`
+                          : 'Quick-Select Widget'}
+                      </h4>
+                      <span
+                        className={`text-[8.5px] font-black px-1.5 py-0.2 rounded ${
+                          isWidgetDefaultPresetActive
+                            ? 'bg-[#FDF5E6] text-[#B37400] border border-[#F6C343]'
+                            : 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
+                        }`}
+                      >
+                        {isWidgetDefaultPresetActive ? '1-TAP ACTION' : `${widgetTimerOptions.length} OPTIONS`}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#64748B] truncate mt-0.5">
+                      {isWidgetDefaultPresetActive
+                        ? `1-tap starts immediately • Click "Options" for other choices`
+                        : `Click to choose from ${widgetTimerOptions.map((o) => `${o}m`).join(' • ')}`}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h4 className="text-sm font-extrabold text-[#1A2436] truncate">
-                    {formatWidgetDuration(quickWidgetMinutes)} Screen Time
-                  </h4>
-                  <p className="text-[11px] text-[#64748B] truncate">
-                    Tap widget to start automatically • Warning triggers when time ends
-                  </p>
+
+                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                  {isWidgetDefaultPresetActive ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setShowWidgetQuickSelectModal(true)}
+                        className="py-1.5 px-2.5 rounded-xl bg-white hover:bg-slate-100 border border-[#CBD5E1] text-[10.5px] font-extrabold text-[#475569] shadow-xs cursor-pointer"
+                      >
+                        ⏱️ Options
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          startSession({
+                            childId: activeChild.id,
+                            durationMinutes: widgetDefaultPresetMinutes,
+                            gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
+                            shutdownStyle: 'low_battery',
+                          });
+                          navigateTo('active_session');
+                        }}
+                        className="py-2 px-3.5 rounded-xl bg-[#5D997C] hover:bg-[#51876D] text-white font-bold text-xs shadow-xs cursor-pointer"
+                      >
+                        Start
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowWidgetQuickSelectModal(true)}
+                      className="py-2 px-3.5 rounded-xl bg-[#5D997C] hover:bg-[#51876D] text-white font-bold text-xs shadow-xs cursor-pointer"
+                    >
+                      ⏱️ Options
+                    </button>
+                  )}
                 </div>
               </div>
 
-              <div className="py-2 px-3.5 rounded-full bg-[#5D997C] hover:bg-[#51876D] text-white font-bold text-xs shrink-0 shadow-xs">
-                Start
+              {/* Sub-bar showing configured options */}
+              <div className="mt-2.5 pt-2 border-t border-[#EAE5DE] flex items-center justify-between text-[10px]">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[#94A3B8] font-bold">Available:</span>
+                  {widgetTimerOptions.map((opt) => (
+                    <span
+                      key={opt}
+                      className={`px-1.5 py-0.5 rounded text-[9.5px] font-black ${
+                        isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
+                          ? 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
+                          : 'bg-white text-[#64748B] border border-[#E2E8F0]'
+                      }`}
+                    >
+                      {opt === widgetDefaultPresetMinutes && isWidgetDefaultPresetActive ? `★ ${opt}m` : `${opt}m`}
+                    </span>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('schedule_automation')}
+                  className="text-[#5D997C] font-extrabold hover:underline"
+                >
+                  Configure →
+                </button>
               </div>
             </div>
           </section>
@@ -439,73 +543,8 @@ export const ParentDashboardScreen: React.FC = () => {
           </div>
         </section>
 
-        {/* ========================================================================= */}
-        {/* 3. SCREEN END STYLE - Warm Rounded Card with Soft Lavender Accents */}
-        {/* ========================================================================= */}
-        <section className="rounded-[24px] bg-white border border-[#EAE5DE] p-4 space-y-2.5 shadow-[0_2px_14px_rgba(26,36,54,0.04)] text-[#1A2436]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#5B3F9B]" />
-              <span className="text-xs font-bold uppercase tracking-wider text-[#5B3F9B]">
-                Screen End Style
-              </span>
-            </div>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#F5F2FF] border border-[#E5DCFC] text-[10.5px] font-bold text-[#5B3F9B]">
-              {selectedEndingType === 'monster' ? '👾 Monster Mode' : '🔋 Switch-Off Style'}
-            </span>
-          </div>
 
-          {/* Big Rounded Button */}
-          <button
-            type="button"
-            onClick={() => setShowEndingModal(true)}
-            className="w-full py-3 px-4 rounded-2xl bg-[#FAF8F5] hover:bg-[#F5F2EB] text-[#1A2436] border border-[#EAE5DE] active:scale-[0.99] transition-all flex items-center justify-between group/endbtn text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white border border-[#EAE5DE] flex items-center justify-center text-2xl shadow-xs shrink-0">
-                {selectedEndingType === 'monster' ? currentMonster.emoji : currentSwitchOff.icon}
-              </div>
-              <div>
-                <span className="text-sm font-extrabold text-[#1A2436] block leading-tight">
-                  {selectedEndingType === 'monster' ? currentMonster.name : currentSwitchOff.title}
-                </span>
-                <span className="text-[11px] text-[#64748B] font-medium block mt-0.5 line-clamp-1">
-                  {selectedEndingType === 'monster' ? `"${currentMonster.dialogue}"` : currentSwitchOff.description}
-                </span>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-1.5 bg-white hover:bg-[#FBF9F4] px-3 py-1.5 rounded-full border border-[#EAE5DE] text-xs font-bold text-[#1A2436] shadow-xs shrink-0">
-              <span>Change</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#64748B] transition-transform group-hover/endbtn:translate-x-0.5" />
-            </div>
-          </button>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 4. SCHEDULE AUTOMATION ROUTINE CARD */}
-        {/* ========================================================================= */}
-        <button
-          type="button"
-          onClick={() => navigateTo('schedule_automation')}
-          className="w-full p-4 rounded-[24px] bg-white border border-[#EAE5DE] flex items-center justify-between text-left hover:border-[#D1C9BE] transition-all active:scale-[0.99] shadow-[0_2px_14px_rgba(26,36,54,0.04)] cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EBF4EF] border border-[#D1E6DA] flex items-center justify-center text-[#2D5441]">
-              <Calendar className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-extrabold text-[#1A2436]">Schedule Automation</h4>
-              <p className="text-[11px] text-[#64748B] font-medium">
-                Manage automated screen warnings & sleep routines
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 bg-[#FAF8F5] hover:bg-[#F5F2EB] border border-[#EAE5DE] px-3 py-1.5 rounded-full text-xs font-bold text-[#1A2436]">
-            <span>Configure</span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#64748B]" />
-          </div>
-        </button>
 
         {/* ========================================================================= */}
         {/* 5. POSITIVE REINFORCEMENT STREAK CARD */}
@@ -697,198 +736,7 @@ export const ParentDashboardScreen: React.FC = () => {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* MODAL 2: ENDING EXPERIENCE SELECTOR (Monster / Switch-Off) */}
-      {/* ========================================================================= */}
-      {showEndingModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white border border-[#EAE5DE] text-[#1A2436] rounded-3xl p-5 max-w-md w-full max-h-[88vh] overflow-y-auto shadow-2xl animate-scale-up">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#5B3F9B]">
-                Screen End Style Selector
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowEndingModal(false)}
-                className="p-1 text-[#94A3B8] hover:text-[#1A2436] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
 
-            <p className="text-xs text-[#64748B] mb-4">
-              Choose how the screen gracefully turns off when {activeChild.name}'s time expires.
-            </p>
-
-            {/* Ending Category Segmented Control */}
-            <div className="flex p-1 bg-[#FAF8F5] rounded-2xl mb-4 border border-[#EAE5DE]">
-              <button
-                type="button"
-                onClick={() => setSelectedEndingType('monster')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  selectedEndingType === 'monster'
-                    ? 'bg-[#5D997C] text-white shadow-xs'
-                    : 'text-[#64748B] hover:text-[#1A2436]'
-                }`}
-              >
-                <span>👾</span>
-                <span>Sleepy Monsters</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedEndingType('switchoff')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  selectedEndingType === 'switchoff'
-                    ? 'bg-[#5D997C] text-white shadow-xs'
-                    : 'text-[#64748B] hover:text-[#1A2436]'
-                }`}
-              >
-                <span>🔋</span>
-                <span>System Rest</span>
-              </button>
-            </div>
-
-            {/* Monsters List */}
-            {selectedEndingType === 'monster' ? (
-              <div className="space-y-2 mb-4">
-                {MONSTER_PROFILES.map((monster) => {
-                  const isSelected = selectedMonsterId === monster.id;
-                  return (
-                    <div
-                      key={monster.id}
-                      onClick={() => setSelectedMonsterId(monster.id)}
-                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? 'bg-[#EBF4EF] border-2 border-[#5D997C] shadow-xs'
-                          : 'bg-white hover:bg-[#FAF8F5] border-[#EAE5DE] text-[#475569]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{monster.emoji}</span>
-                        <div>
-                          <p className="text-xs font-extrabold text-[#1A2436]">{monster.name}</p>
-                          <p className="text-[10.5px] text-[#64748B] italic line-clamp-1">
-                            "{monster.dialogue}"
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPreviewItem({ type: 'monster', id: monster.id });
-                          }}
-                          className="p-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#F5F2EB] text-[#475569] border border-[#EAE5DE] cursor-pointer"
-                          title="Preview"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        {isSelected && <Check className="w-4 h-4 text-[#5D997C] font-bold" />}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="space-y-2 mb-4">
-                {SWITCH_OFF_PROFILES.map((switchOff) => {
-                  const isSelected = selectedSwitchOffId === switchOff.id;
-                  return (
-                    <div
-                      key={switchOff.id}
-                      onClick={() => setSelectedSwitchOffId(switchOff.id)}
-                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? 'bg-[#EBF4EF] border-2 border-[#5D997C] shadow-xs'
-                          : 'bg-white hover:bg-[#FAF8F5] border-[#EAE5DE] text-[#475569]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{switchOff.icon}</span>
-                        <div>
-                          <p className="text-xs font-extrabold text-[#1A2436]">{switchOff.title}</p>
-                          <p className="text-[10.5px] text-[#64748B] line-clamp-1">
-                            {switchOff.description}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPreviewItem({ type: 'switchoff', id: switchOff.id });
-                          }}
-                          className="p-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#F5F2EB] text-[#475569] border border-[#EAE5DE] cursor-pointer"
-                          title="Preview"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        {isSelected && <Check className="w-4 h-4 text-[#5D997C] font-bold" />}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setShowEndingModal(false)}
-              className="w-full py-3.5 bg-[#5D997C] hover:bg-[#51876D] text-white text-xs font-extrabold rounded-full shadow-xs transition-all cursor-pointer"
-            >
-              Confirm Selection
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL 3: LIVE PREVIEW MODAL */}
-      {/* ========================================================================= */}
-      {previewItem && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#EAE5DE] text-[#1A2436] rounded-3xl p-6 max-w-xs w-full text-center shadow-2xl animate-scale-up">
-            {previewItem.type === 'monster' ? (
-              <div>
-                <div className="text-5xl mb-3 animate-bounce-gentle">
-                  {MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.emoji || '👾'}
-                </div>
-                <h4 className="text-base font-extrabold text-[#1A2436] mb-1">
-                  {MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.name}
-                </h4>
-                <div className="p-3 rounded-2xl bg-[#F5F2FF] border border-[#E5DCFC] text-xs text-[#5B3F9B] italic my-3 leading-relaxed">
-                  "{MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.dialogue}"
-                </div>
-                <p className="text-[10px] text-[#64748B]">
-                  Sound effect: {MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.soundEffect}
-                </p>
-              </div>
-            ) : (
-              <div>
-                <div className="text-5xl mb-3 animate-pulse">
-                  {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.icon || '🔋'}
-                </div>
-                <h4 className="text-base font-extrabold text-[#1A2436] mb-1">
-                  {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.title}
-                </h4>
-                <p className="text-xs text-[#64748B] my-3 leading-relaxed">
-                  {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.description}
-                </p>
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setPreviewItem(null)}
-              className="w-full mt-4 py-2.5 bg-[#FAF8F5] hover:bg-[#F5F2EB] text-[#1A2436] text-xs font-bold rounded-full border border-[#EAE5DE] cursor-pointer"
-            >
-              Close Preview
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ========================================================================= */}
       {/* MODAL 4: CUSTOM COUNTDOWN TIME (KEYBOARD NUMBER INPUT) */}
@@ -1189,6 +1037,94 @@ export const ParentDashboardScreen: React.FC = () => {
             >
               Close Calendar
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* INTERACTIVE WIDGET QUICK-SELECT TIMES MODAL / OVERLAY */}
+      {showWidgetQuickSelectModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-[#EAE5DE] text-[#1A2436] rounded-3xl p-5 max-w-sm w-full shadow-2xl animate-scale-up space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#EAE5DE]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#EBF4EF] border border-[#D1E6DA] flex items-center justify-center text-[#2D5441]">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1A2436]">Start Screen Time</h3>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-[11px] font-bold text-[#5D997C]">{activeChild.name}</span>
+                    <span className="text-[10px] text-[#94A3B8]">•</span>
+                    <span className="text-[10.5px] font-extrabold text-amber-600">5 🔥 Day Streak</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWidgetQuickSelectModal(false)}
+                className="p-1 rounded-full text-[#94A3B8] hover:text-[#1A2436] cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-[11.5px] text-[#64748B]">
+              Tap any time limit to immediately start phone screen time:
+            </p>
+
+            {/* Options Grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {widgetTimerOptions.map((opt) => {
+                const isDefault = isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      setShowWidgetQuickSelectModal(false);
+                      startSession({
+                        childId: activeChild.id,
+                        durationMinutes: opt,
+                        gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
+                        shutdownStyle: 'low_battery',
+                      });
+                      navigateTo('active_session');
+                    }}
+                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                      isDefault
+                        ? 'bg-[#FDF5E6] border-[#F6C343] shadow-xs'
+                        : 'bg-[#FAF8F5] border-[#EAE5DE] hover:bg-[#F5F2EB]'
+                    }`}
+                  >
+                    {isDefault && (
+                      <span className="inline-block text-[8px] font-black bg-[#F6C343] text-[#452B00] px-1.5 py-0.2 rounded mb-1">
+                        ★ DEFAULT PRESET
+                      </span>
+                    )}
+                    <span className="block text-base font-black text-[#1A2436]">
+                      {formatWidgetDuration(opt)}
+                    </span>
+                    <span className="block text-[10px] text-[#718096] mt-0.5">
+                      Tap to start
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Link to Configure */}
+            <div className="pt-2 border-t border-[#EAE5DE] text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowWidgetQuickSelectModal(false);
+                  navigateTo('schedule_automation');
+                }}
+                className="text-xs font-bold text-[#5D997C] hover:underline cursor-pointer"
+              >
+                ⚙️ Customize Options & Default Preset →
+              </button>
+            </div>
           </div>
         </div>
       )}
