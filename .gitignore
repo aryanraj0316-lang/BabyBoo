@@ -28,3 +28,5 @@ dist-ssr
 
 expo-env.d.ts
 # @end expo-cli
+# Native module build output
+modules/handover-native/android/build/

@@ -1,4 +1,4 @@
-import { EventEmitter, Subscription, requireNativeModule } from 'expo-modules-core';
+import { requireOptionalNativeModule } from 'expo';
 import type {
   HandoverNative,
   NativeSessionConfig,
@@ -7,18 +7,14 @@ import type {
   PermissionSettingType,
 } from './HandoverNative.types';
 
+// Returns null only when the native module really isn't there (Expo Go / web).
+// Note: don't wrap it in `new EventEmitter(...)` — on Expo SDK 52+ that throws, and the old
+// try/catch then threw away the working native module, so every call silently used the JS mock.
 let nativeModule: any = null;
-let emitter: any = null;
-
 try {
-  nativeModule = requireNativeModule('HandoverNative');
-  if (nativeModule) {
-    emitter = new EventEmitter(nativeModule);
-  }
+  nativeModule = requireOptionalNativeModule('HandoverNative');
 } catch {
-  // Gracefully fallback when running in Expo Go or web
   nativeModule = null;
-  emitter = null;
 }
 
 let mockState: NativeSessionState = {
@@ -113,11 +109,16 @@ export const HandoverNativeEngine: HandoverNative = {
     // No-op simulation in Expo Go
   },
   addStateChangeListener(listener: (state: NativeSessionState) => void): { remove: () => void } {
-    if (nativeModule && emitter) {
-      const subscription: Subscription = emitter.addListener('onHandoverStateChange', listener);
-      return {
-        remove: () => subscription.remove(),
-      };
+    if (nativeModule && typeof nativeModule.addListener === 'function') {
+      // Expo modules are event emitters themselves on SDK 52+
+      try {
+        const subscription = nativeModule.addListener('onHandoverStateChange', listener);
+        return {
+          remove: () => subscription?.remove?.(),
+        };
+      } catch {
+        return { remove: () => {} };
+      }
     }
     mockListeners.add(listener);
     return {

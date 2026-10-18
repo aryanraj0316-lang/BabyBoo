@@ -1,9 +1,13 @@
 package expo.modules.handovernative
 
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -47,7 +51,7 @@ class HandoverNativeModule : Module() {
         "endAt" to 0L,
         "graceEndAt" to 0L
       )
-      val minutes = (config["minutes"] as? Number)?.toInt() ?: 0
+      val minutes = ((config["durationMinutes"] ?: config["minutes"]) as? Number)?.toInt() ?: 0
       if (minutes > 0) {
         val serviceIntent = Intent().apply {
           component = ComponentName(context.packageName, "com.babyboo.app.ScreenTimeBackgroundService")
@@ -101,23 +105,50 @@ class HandoverNativeModule : Module() {
     }
 
     AsyncFunction("getPermissionStatus") {
-      mapOf(
-        "overlayGranted" to false,
-        "notificationsGranted" to false,
-        "exactAlarmsGranted" to false,
-        "batteryOptimizationIgnored" to false
-      )
+      val context = appContext.reactContext
+      if (context == null) {
+        mapOf(
+          "overlayGranted" to false,
+          "notificationsGranted" to false,
+          "exactAlarmsGranted" to false,
+          "batteryOptimizationIgnored" to false
+        )
+      } else {
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val nm = context.getSystemService(NotificationManager::class.java)
+        mapOf(
+          "overlayGranted" to Settings.canDrawOverlays(context),
+          "notificationsGranted" to (nm?.areNotificationsEnabled() ?: false),
+          "exactAlarmsGranted" to true,
+          "batteryOptimizationIgnored" to pm.isIgnoringBatteryOptimizations(context.packageName)
+        )
+      }
     }
 
     AsyncFunction("openPermissionSettings") { permissionType: String ->
-      // Stub for Phase 0
+      val context = appContext.reactContext ?: return@AsyncFunction
+      val pkgUri = Uri.parse("package:${context.packageName}")
+      val intent = when (permissionType) {
+        "overlay" -> Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, pkgUri)
+        "notifications" -> Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+          .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        "battery" -> Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+        else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri)
+      }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      try {
+        context.startActivity(intent)
+      } catch (_: Exception) {
+        context.startActivity(
+          Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+      }
     }
 
     // Widget Timer Options Management
     AsyncFunction("setWidgetOptionsCsv") { optionsCsv: String ->
       val context = appContext.reactContext ?: return@AsyncFunction false
       val prefs = context.getSharedPreferences("babyboo_widget_prefs", Context.MODE_PRIVATE)
-      prefs.edit().putString("babyboo_widget_timer_options", optionsCsv).apply()
+      prefs.edit().putString("babyboo_widget_timer_options", optionsCsv).commit()
       try {
         val updateIntent = Intent("android.appwidget.action.APPWIDGET_UPDATE").apply {
           setPackage(context.packageName)
@@ -127,11 +158,13 @@ class HandoverNativeModule : Module() {
       true
     }
 
-    AsyncFunction("setWidgetOptions") { options: List<Number> ->
+    // NOTE: must be List<Double>, not List<Number> — Expo has no converter for Number and the
+    // whole module then fails to load (JS silently falls back to its mock).
+    AsyncFunction("setWidgetOptions") { options: List<Double> ->
       val context = appContext.reactContext ?: return@AsyncFunction false
-      val intList = options.map { it.toInt() }.filter { it > 0 }
+      val intList = options.map { Math.round(it).toInt() }.filter { it > 0 }
       val prefs = context.getSharedPreferences("babyboo_widget_prefs", Context.MODE_PRIVATE)
-      prefs.edit().putString("babyboo_widget_timer_options", intList.joinToString(",")).apply()
+      prefs.edit().putString("babyboo_widget_timer_options", intList.joinToString(",")).commit()
       try {
         val updateIntent = Intent("android.appwidget.action.APPWIDGET_UPDATE").apply {
           setPackage(context.packageName)

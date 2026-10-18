@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -15,17 +16,21 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 
 /**
- * ScreenTimeBackgroundService — Android Foreground Service that runs a continuous
- * countdown timer independently of the React Native app's JavaScript thread.
+ * ScreenTimeBackgroundService — Android Foreground Service that runs the countdown independently
+ * of the React Native app (works on the home screen, inside YouTube, with BabyBoo closed…).
  *
- * When the timer reaches zero, it launches ShutdownSimulationActivity as a full-screen
- * overlay on top of whatever app or screen the child is currently using.
+ * The countdown is wall-clock based (timer_end_at in SharedPreferences), so it stays correct even
+ * if ticks are delayed or the service is restarted by the system.
+ *
+ * When it reaches zero, SimulationController draws the battery-death simulation over whatever
+ * app is on screen. The service stays in the foreground until the parent unlocks with "A".
  */
 class ScreenTimeBackgroundService : Service() {
 
     companion object {
         const val ACTION_START_TIMER = "com.babyboo.app.ACTION_START_TIMER"
         const val ACTION_CANCEL_TIMER = "com.babyboo.app.ACTION_CANCEL_TIMER"
+        const val ACTION_SIMULATION_FINISHED = "com.babyboo.app.ACTION_SIMULATION_FINISHED"
         const val EXTRA_MINUTES = "extra_minutes"
 
         const val CHANNEL_ID = "babyboo_timer_channel"
@@ -40,29 +45,20 @@ class ScreenTimeBackgroundService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var endTimeMillis: Long = 0L
-    private var totalSeconds: Int = 0
     private var wakeLock: PowerManager.WakeLock? = null
 
     private val tickRunnable = object : Runnable {
         override fun run() {
-            val now = System.currentTimeMillis()
-            val remaining = ((endTimeMillis - now) / 1000).toInt()
-
-            if (remaining <= 0) {
-                // Timer hit zero! Reset widget and launch shutdown simulation
-                BabyBooWidgetProvider.updateAllWidgets(this@ScreenTimeBackgroundService, 0)
+            val remainingMillis = endTimeMillis - System.currentTimeMillis()
+            if (remainingMillis <= 0) {
                 onTimerExpired()
                 return
             }
-
-            // Update the notification with remaining time
-            updateNotification(remaining)
-
-            // Update the home screen widget with the live countdown
+            val remaining = ((remainingMillis + 999) / 1000).toInt()
+            updateNotification(buildCountdownNotification(remaining))
             BabyBooWidgetProvider.updateAllWidgets(this@ScreenTimeBackgroundService, remaining)
-
-            // Tick again in 1 second
-            handler.postDelayed(this, 1000)
+            // Re-align to the next whole second
+            handler.postDelayed(this, (remainingMillis % 1000).let { if (it == 0L) 1000L else it })
         }
     }
 
@@ -70,222 +66,248 @@ class ScreenTimeBackgroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        createNotificationChannels()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START_TIMER -> {
                 val minutes = intent.getIntExtra(EXTRA_MINUTES, 0)
-                if (minutes > 0) {
-                    startCountdown(minutes)
-                }
+                if (minutes > 0) startCountdown(minutes) else stopIfIdle()
             }
-            ACTION_CANCEL_TIMER -> {
-                cancelCountdown()
+            ACTION_CANCEL_TIMER -> cancelCountdown()
+            ACTION_SIMULATION_FINISHED -> {
+                getSystemService(NotificationManager::class.java)?.cancel(SIMULATION_NOTIFICATION_ID)
+                stopForegroundCompat()
+                stopSelf()
             }
+            else -> resumeFromPrefs() // Restarted by the system (START_STICKY) with a null intent
         }
         return START_STICKY
     }
 
     private fun startCountdown(minutes: Int) {
-        // Stop any existing countdown
-        handler.removeCallbacks(tickRunnable)
-
-        totalSeconds = minutes * 60
-        endTimeMillis = System.currentTimeMillis() + (totalSeconds * 1000L)
-
-        // Persist timer state to SharedPreferences
+        val totalSeconds = minutes * 60
+        // The popup may already have stored an end time a few ms ago; reuse it so both agree.
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val now = System.currentTimeMillis()
+        val storedEnd = prefs.getLong(KEY_TIMER_END_AT, 0L)
+        val storedTotal = prefs.getInt(KEY_TIMER_TOTAL_SECONDS, 0)
+        endTimeMillis = if (prefs.getBoolean(KEY_TIMER_ACTIVE, false) && storedTotal == totalSeconds &&
+            storedEnd > now && storedEnd - now <= totalSeconds * 1000L + 5000L
+        ) storedEnd else now + totalSeconds * 1000L
+
         prefs.edit()
             .putLong(KEY_TIMER_END_AT, endTimeMillis)
             .putInt(KEY_TIMER_TOTAL_SECONDS, totalSeconds)
             .putBoolean(KEY_TIMER_ACTIVE, true)
             .commit()
 
-        // Acquire partial wake lock to keep timer alive
-        try {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
-                "BabyBoo::ScreenTimeTimer"
-            ).apply {
-                acquire(totalSeconds * 1000L + 60000L) // Extra minute safety
-            }
-        } catch (_: Exception) { }
+        // Must happen promptly after startForegroundService()
+        goForeground(buildCountdownNotification(totalSeconds))
+        runCountdown()
+    }
 
-        // Immediately update the widget to show the starting countdown
-        BabyBooWidgetProvider.updateAllWidgets(this, totalSeconds)
-
-        // Show foreground notification and start ticking
-        try {
-            val notification = buildNotification(totalSeconds)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startForeground(NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-            } else {
-                startForeground(NOTIFICATION_ID, notification)
-            }
-        } catch (_: Exception) {}
+    private fun runCountdown() {
+        handler.removeCallbacks(tickRunnable)
+        acquireWakeLock(endTimeMillis - System.currentTimeMillis() + 60_000L)
+        BabyBooWidgetProvider.updateAllWidgets(this)
         handler.post(tickRunnable)
+    }
+
+    private fun resumeFromPrefs() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val now = System.currentTimeMillis()
+        val endAt = prefs.getLong(KEY_TIMER_END_AT, 0L)
+        when {
+            prefs.getBoolean(SimulationController.KEY_SIMULATION_ACTIVE, false) -> {
+                goForeground(buildSimulationNotification())
+                SimulationController.start(this, resume = true)
+            }
+            prefs.getBoolean(KEY_TIMER_ACTIVE, false) && endAt > now -> {
+                endTimeMillis = endAt
+                goForeground(buildCountdownNotification(((endAt - now) / 1000).toInt()))
+                runCountdown()
+            }
+            prefs.getBoolean(KEY_TIMER_ACTIVE, false) -> {
+                // Expired while we were dead — trigger the simulation now
+                endTimeMillis = endAt
+                goForeground(buildSimulationNotification())
+                onTimerExpired()
+            }
+            else -> stopIfIdle()
+        }
+    }
+
+    private fun stopIfIdle() {
+        goForeground(buildCountdownNotification(0))
+        stopForegroundCompat()
+        stopSelf()
     }
 
     private fun cancelCountdown() {
         handler.removeCallbacks(tickRunnable)
         releaseWakeLock()
 
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
             .putBoolean(KEY_TIMER_ACTIVE, false)
             .remove(KEY_TIMER_END_AT)
-            .apply()
+            .commit()
 
-        // Reset widget to idle
         BabyBooWidgetProvider.updateAllWidgets(this, 0)
-
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        if (!SimulationController.isActive()) {
+            stopForegroundCompat()
+            stopSelf()
+        }
     }
 
     private fun onTimerExpired() {
         handler.removeCallbacks(tickRunnable)
         releaseWakeLock()
 
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
             .putBoolean(KEY_TIMER_ACTIVE, false)
             .remove(KEY_TIMER_END_AT)
-            .apply()
+            .commit()
 
-        // Reset widget to idle
         BabyBooWidgetProvider.updateAllWidgets(this, 0)
+        updateNotification(buildSimulationNotification())
 
-        // Wake screen up if locked/sleeping
+        // Wake the screen if it is off
         try {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             @Suppress("DEPRECATION")
-            val screenWakeLock = pm.newWakeLock(
+            pm.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
                 "BabyBoo::ShutdownWakeLock"
-            )
-            screenWakeLock.acquire(10000L)
-        } catch (_: Exception) {}
+            ).acquire(10_000L)
+        } catch (_: Exception) { }
 
-        // Prepare simulation intent
-        val simulationIntent = Intent(this, ShutdownSimulationActivity::class.java).apply {
-            addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            )
+        SimulationController.start(this)
+
+        // Without "Display over other apps", Android blocks background activity starts; a
+        // full-screen-intent notification is the only remaining way in (works when locked).
+        if (!SimulationController.canDrawOverlays(this)) {
+            postFullScreenFallback()
         }
+    }
 
-        // 1. High-Priority FullScreenIntent Notification (Reliable on Android 10+ background)
+    private fun postFullScreenFallback() {
         try {
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                this,
-                1002,
-                simulationIntent,
+            val intent = Intent(this, ShutdownSimulationActivity::class.java).apply {
+                putExtra(ShutdownSimulationActivity.EXTRA_MODE, ShutdownSimulationActivity.MODE_HOST)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            }
+            val pi = PendingIntent.getActivity(
+                this, 1002, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-
-            val fullScreenNotification = NotificationCompat.Builder(this, CHANNEL_ALARM_ID)
-                .setSmallIcon(applicationInfo.icon)
-                .setContentTitle("BabyBoo Screen Time Reached")
-                .setContentText("Screen time session complete.")
+            val n = NotificationCompat.Builder(this, CHANNEL_ALARM_ID)
+                .setSmallIcon(R.drawable.ic_stat_babyboo)
+                .setContentTitle("Battery critically low")
+                .setContentText("Phone is shutting down")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setFullScreenIntent(pi, true)
+                .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build()
+            getSystemService(NotificationManager::class.java)?.notify(SIMULATION_NOTIFICATION_ID, n)
+        } catch (_: Exception) { }
+    }
 
-            val nm = getSystemService(NotificationManager::class.java)
-            nm?.notify(SIMULATION_NOTIFICATION_ID, fullScreenNotification)
-        } catch (_: Exception) {}
-
-        // 2. Direct startActivity attempt
+    private fun goForeground(notification: Notification) {
         try {
-            startActivity(simulationIntent)
-        } catch (_: Exception) {}
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+            }
+        } catch (_: Exception) { }
+    }
 
-        // Stop the foreground service
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+    private fun stopForegroundCompat() {
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) { }
+    }
+
+    private fun acquireWakeLock(timeoutMillis: Long) {
+        releaseWakeLock()
+        try {
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "BabyBoo::ScreenTimeTimer").apply {
+                acquire(timeoutMillis.coerceAtLeast(60_000L))
+            }
+        } catch (_: Exception) { }
     }
 
     private fun releaseWakeLock() {
         try {
-            wakeLock?.let {
-                if (it.isHeld) it.release()
-            }
-            wakeLock = null
+            wakeLock?.let { if (it.isHeld) it.release() }
         } catch (_: Exception) { }
+        wakeLock = null
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val nm = getSystemService(NotificationManager::class.java)
-
-            // Low priority channel for continuous countdown notification
-            val countdownChannel = NotificationChannel(
-                CHANNEL_ID,
-                "BabyBoo Screen Time",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
+    private fun createNotificationChannels() {
+        val nm = getSystemService(NotificationManager::class.java) ?: return
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL_ID, "BabyBoo Screen Time", NotificationManager.IMPORTANCE_LOW).apply {
                 description = "Active screen time countdown"
                 setShowBadge(false)
             }
-            nm?.createNotificationChannel(countdownChannel)
-
-            // High priority channel for full-screen alarm trigger when timer hits zero
-            val alarmChannel = NotificationChannel(
-                CHANNEL_ALARM_ID,
-                "BabyBoo Session Complete",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
+        )
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL_ALARM_ID, "BabyBoo Session Complete", NotificationManager.IMPORTANCE_HIGH).apply {
                 description = "Full screen battery drainage simulation trigger"
-                setShowBadge(true)
                 enableVibration(true)
             }
-            nm?.createNotificationChannel(alarmChannel)
-        }
+        )
     }
 
-    private fun buildNotification(remainingSeconds: Int): Notification {
-        val m = remainingSeconds / 60
-        val s = remainingSeconds % 60
-        val timeStr = String.format("%02d:%02d", m, s)
+    private fun openPopupPendingIntent(): PendingIntent = PendingIntent.getActivity(
+        this, 1003,
+        Intent(this, WidgetPopupActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 
-        // Cancel action
-        val cancelIntent = Intent(this, ScreenTimeBackgroundService::class.java).apply {
-            action = ACTION_CANCEL_TIMER
-        }
+    private fun buildCountdownNotification(remainingSeconds: Int): Notification {
         val cancelPendingIntent = PendingIntent.getService(
-            this, 0, cancelIntent,
+            this, 0,
+            Intent(this, ScreenTimeBackgroundService::class.java).apply { action = ACTION_CANCEL_TIMER },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("BabyBoo Screen Time Active")
-            .setContentText("Time remaining: $timeStr")
-            .setSmallIcon(applicationInfo.icon)
+            .setContentText("Time remaining: ${WidgetPopupActivity.formatClock(remainingSeconds)}")
+            .setSmallIcon(R.drawable.ic_stat_babyboo)
             .setOngoing(true)
             .setSilent(true)
+            .setOnlyAlertOnce(true)
+            .setContentIntent(openPopupPendingIntent())
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .addAction(applicationInfo.icon, "Cancel", cancelPendingIntent)
+            .addAction(0, "Cancel", cancelPendingIntent)
             .build()
     }
 
-    private fun updateNotification(remainingSeconds: Int) {
-        val notification = buildNotification(remainingSeconds)
-        val nm = getSystemService(NotificationManager::class.java)
-        nm?.notify(NOTIFICATION_ID, notification)
+    private fun buildSimulationNotification(): Notification =
+        NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("BabyBoo")
+            .setContentText("Screen time is over")
+            .setSmallIcon(R.drawable.ic_stat_babyboo)
+            .setOngoing(true)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .build()
+
+    private fun updateNotification(notification: Notification) {
+        try {
+            getSystemService(NotificationManager::class.java)?.notify(NOTIFICATION_ID, notification)
+        } catch (_: Exception) { }
     }
 
     override fun onDestroy() {
         handler.removeCallbacks(tickRunnable)
         releaseWakeLock()
-        BabyBooWidgetProvider.updateAllWidgets(this, 0)
+        BabyBooWidgetProvider.updateAllWidgets(this)
         super.onDestroy()
     }
 }
