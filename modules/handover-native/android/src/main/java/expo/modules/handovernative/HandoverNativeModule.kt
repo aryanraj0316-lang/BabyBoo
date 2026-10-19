@@ -116,11 +116,17 @@ class HandoverNativeModule : Module() {
       } else {
         val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val nm = context.getSystemService(NotificationManager::class.java)
+        val enabledA11y = Settings.Secure.getString(
+          context.contentResolver,
+          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: ""
+        val isA11yGranted = enabledA11y.contains(context.packageName)
         mapOf(
           "overlayGranted" to Settings.canDrawOverlays(context),
           "notificationsGranted" to (nm?.areNotificationsEnabled() ?: false),
           "exactAlarmsGranted" to true,
-          "batteryOptimizationIgnored" to pm.isIgnoringBatteryOptimizations(context.packageName)
+          "batteryOptimizationIgnored" to pm.isIgnoringBatteryOptimizations(context.packageName),
+          "accessibilityGranted" to isA11yGranted
         )
       }
     }
@@ -133,14 +139,25 @@ class HandoverNativeModule : Module() {
         "notifications" -> Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
           .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         "battery" -> Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+        "accessibility" -> Intent("com.babyboo.app.ACTION_ACCESSIBILITY_DISCLOSURE").apply {
+          setPackage(context.packageName)
+        }
         else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri)
       }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       try {
         context.startActivity(intent)
       } catch (_: Exception) {
-        context.startActivity(
-          Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+        if (permissionType == "accessibility") {
+          try {
+            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+          } catch (_: Exception) {
+            context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+          }
+        } else {
+          context.startActivity(
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+          )
+        }
       }
     }
 

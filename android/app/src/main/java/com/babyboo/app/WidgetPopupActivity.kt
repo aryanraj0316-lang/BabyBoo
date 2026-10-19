@@ -535,19 +535,23 @@ class WidgetPopupActivity : Activity() {
             }
 
             AlertDialog.Builder(this)
-                .setTitle("Step 2 of 2: Prevent Kid Bypass")
-                .setMessage("To cover the status bar and navigation buttons during the low-battery simulation so kids cannot exit, turn ON \"BabyBoo\" in Accessibility.\n\nTap BabyBoo on the next screen → switch it ON.")
+                .setTitle("BabyBoo uses Android's Accessibility Service")
+                .setMessage("BabyBoo watches for app changes so it can show a full-screen blackout and hold the device locked. It does not collect or share personal data.")
                 .setCancelable(false)
-                .setPositiveButton("Turn ON") { _, _ ->
+                .setPositiveButton("Enable in Settings") { _, _ ->
                     awaitingAccessibilityReturn = true
                     openSettings(Settings.ACTION_ACCESSIBILITY_SETTINGS, null)
                 }
-                .setNeutralButton("Skip for Now") { _, _ ->
+                .setNeutralButton("Learn more") { _, _ ->
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://babyboo.app/privacy")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    } catch (_: Exception) {}
+                    // Keep dialog flow alive
+                    checkAndProceedPermissionFlow(minutes)
+                }
+                .setNegativeButton("Not now") { _, _ ->
                     requestNotificationPermissionIfNeeded()
                     startTimerDirectly(minutes)
-                }
-                .setNegativeButton("Cancel") { _, _ ->
-                    pendingTimerMinutes = 0
                 }
                 .show()
             return

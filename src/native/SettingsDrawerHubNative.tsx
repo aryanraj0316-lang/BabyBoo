@@ -14,6 +14,7 @@ import Svg, {
   Line,
   Polyline,
 } from 'react-native-svg';
+import { AccessibilityDisclosureScreen } from './AccessibilityDisclosureScreen';
 
 export interface UserProfile {
   name: string;
@@ -52,6 +53,7 @@ export const SettingsDrawerHubNative: React.FC<SettingsDrawerHubProps> = ({
 }) => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [hapticsEnabled, setHapticsEnabled] = useState<boolean>(true);
+  const [showA11yDisclosure, setShowA11yDisclosure] = useState<boolean>(false);
 
   return (
     <View style={styles.container}>
@@ -192,6 +194,27 @@ export const SettingsDrawerHubNative: React.FC<SettingsDrawerHubProps> = ({
           </Text>
         </View>
 
+        {/* Accessibility Service Disclosure (Google Play Compliance) */}
+        <TouchableOpacity
+          onPress={() => setShowA11yDisclosure(true)}
+          style={styles.a11yDisclosureBtn}
+          activeOpacity={0.8}
+          accessibilityLabel="View Accessibility Service Disclosure"
+        >
+          <View style={styles.a11yDisclosureLeft}>
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+              <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </Svg>
+            <View style={{ marginLeft: 8 }}>
+              <Text style={styles.a11yDisclosureTitle}>Accessibility Service Disclosure</Text>
+              <Text style={styles.a11yDisclosureSub}>Learn how BabyBoo protects lockout sessions</Text>
+            </View>
+          </View>
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M9 18l6-6-6-6" />
+          </Svg>
+        </TouchableOpacity>
+
         {/* Sign Out / Exit Action */}
         <TouchableOpacity
           onPress={onClose}
@@ -216,6 +239,12 @@ export const SettingsDrawerHubNative: React.FC<SettingsDrawerHubProps> = ({
           </TouchableOpacity>
         )}
       </ScrollView>
+
+      {/* Prominent Accessibility Disclosure Modal */}
+      <AccessibilityDisclosureScreen
+        visible={showA11yDisclosure}
+        onClose={() => setShowA11yDisclosure(false)}
+      />
     </View>
   );
 };
@@ -423,5 +452,31 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#94A3B8',
     textDecorationLine: 'underline',
+  },
+  a11yDisclosureBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+    borderRadius: 16,
+    padding: 12,
+  },
+  a11yDisclosureLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  a11yDisclosureTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#3730A3',
+  },
+  a11yDisclosureSub: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#4F46E5',
+    marginTop: 1,
   },
 });

@@ -39,6 +39,17 @@
     </activity>
     <activity android:name=".WidgetPopupActivity" android:exported="false" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:excludeFromRecents="true" android:taskAffinity="" android:launchMode="singleInstance" android:configChanges="orientation|screenSize"/>
     <activity android:name=".ShutdownSimulationActivity" android:exported="false" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:excludeFromRecents="true" android:launchMode="singleInstance" android:taskAffinity=".simulation" android:showWhenLocked="true" android:turnScreenOn="true" android:screenOrientation="portrait" android:configChanges="orientation|screenSize"/>
+    <activity
+        android:name=".AccessibilityDisclosureActivity"
+        android:exported="true"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        android:excludeFromRecents="true"
+        android:launchMode="singleTop">
+      <intent-filter>
+        <action android:name="com.babyboo.app.ACTION_ACCESSIBILITY_DISCLOSURE" />
+        <category android:name="android.intent.category.DEFAULT" />
+      </intent-filter>
+    </activity>
     <service android:name=".ScreenTimeBackgroundService" android:exported="false" android:foregroundServiceType="specialUse">
       <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Screen time countdown timer for child device handover"/>
     </service>

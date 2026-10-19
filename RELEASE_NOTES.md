@@ -180,5 +180,38 @@
 - [x] Service remains properly declared in `AndroidManifest.xml`
 - [x] Build and manifest merger verified clean
 
+---
+
+## Phase 4: Prominent In-App Disclosure
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Display Google Play-mandated prominent in-app disclosure before redirecting users to Android Accessibility Settings.
+
+### 1. Changes Made
+- Created native `AccessibilityDisclosureActivity.kt` (`com.babyboo.app.AccessibilityDisclosureActivity`):
+  - Displays modal card with verbatim required copy:
+    - **Title:** `BabyBoo uses Android's Accessibility Service`
+    - **Body:** `BabyBoo watches for app changes so it can show a full-screen blackout and hold the device locked. It does not collect or share personal data. [Learn more]`
+    - **Buttons:** `Enable in Settings` (deep-links to `Settings.ACTION_ACCESSIBILITY_SETTINGS`) and `Not now`.
+    - Clickable `[Learn more]` span links to `https://babyboo.app/privacy`.
+- Registered `AccessibilityDisclosureActivity` in `android/app/src/main/AndroidManifest.xml` with intent filter `com.babyboo.app.ACTION_ACCESSIBILITY_DISCLOSURE`.
+- Updated `WidgetPopupActivity.kt` to present this exact verbatim disclosure before redirecting to accessibility settings.
+- Created React Native `AccessibilityDisclosureScreen.tsx` (`src/native/AccessibilityDisclosureScreen.tsx`) for the React Native navigation flow.
+- Integrated accessibility status checking and persistent settings access via `SettingsDrawerHubNative.tsx` so parents can view the disclosure anytime.
+- Updated `HandoverNativeModule.kt` to report `accessibilityGranted` status and route accessibility requests to the disclosure activity.
+- Preserved visual asset and video documentation playbook at `docs/DISCLOSURE_DEMO.md` (`docs/disclosure-demo.jpg` and `docs/disclosure-demo.mp4`).
+
+### 2. Verification
+- `.\gradlew.bat assembleDebug` succeeded with exit code 0.
+- Manifest merger verified clean.
+
+### 3. Phase 4 Definition of Done Checklist
+- [x] Prominent disclosure surface implemented natively and in React Native
+- [x] Verbatim required copy and `[Learn more]` link implemented
+- [x] `Enable in Settings` and `Not now` actions wired to system intents
+- [x] Accessible from setup flow and persistently from settings drawer
+- [x] Disclosure demo asset and playbook created in `docs/`
+
+
 
 
