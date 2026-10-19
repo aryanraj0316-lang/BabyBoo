@@ -83,3 +83,41 @@
 - [x] Baseline values recorded for SDKs, versioning, permissions, and services
 - [x] Accessibility config XML filename and contents confirmed
 - [x] Baseline `gradlew.bat :app:assembleDebug` completed successfully with exit code 0
+
+---
+
+## Phase 1: Raise SDK Targets to API 36
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Meet Google Play's August 31, 2026 requirement and target Android 16 (API 36).
+
+### 1. Changes Made
+- In `android/build.gradle`:
+  - `targetSdkVersion` set to `36` (Android 16).
+  - `buildToolsVersion` set to `"36.0.0"`.
+  - `compileSdkVersion` set to `37` (retained at 37 to satisfy Expo SDK 58 precompiled AAR dependencies which mandate `minCompileSdk = 37`).
+  - `minSdkVersion` maintained at `26` (Android 8.0 Oreo, required by Expo modules and local `[:handover-native]` library to prevent manifest merger failure).
+- In `android/gradle.properties`:
+  - `android.targetSdkVersion=36`
+  - `android.buildToolsVersion=36.0.0`
+  - `android.compileSdkVersion=37`
+  - `android.minSdkVersion=26`
+- In `modules/handover-native/android/build.gradle`:
+  - Updated `targetSdkVersion` dynamically to `findProperty('android.targetSdkVersion') ?: '36'`.
+  - Updated `minSdkVersion` dynamically to `findProperty('android.minSdkVersion') ?: '26'`.
+
+### 2. Verification
+- Manifest inspection of merged debug manifest (`android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml`):
+  ```xml
+  <uses-sdk
+      android:minSdkVersion="26"
+      android:targetSdkVersion="36" />
+  ```
+- `.\gradlew.bat assembleDebug` succeeded with exit code 0.
+
+### 3. Phase 1 Definition of Done Checklist
+- [x] `targetSdk` raised to 36
+- [x] `buildToolsVersion` set to `36.0.0`
+- [x] Manifest merger and compile errors resolved
+- [x] `gradlew.bat assembleDebug` succeeds with no errors
+

@@ -16,8 +16,8 @@ android {
   compileSdkVersion Integer.parseInt(findProperty('android.compileSdkVersion') ?: '37')
   namespace "expo.modules.handovernative"
   defaultConfig {
-    minSdkVersion 26
-    targetSdkVersion 35
+    minSdkVersion Integer.parseInt(findProperty('android.minSdkVersion') ?: '26')
+    targetSdkVersion Integer.parseInt(findProperty('android.targetSdkVersion') ?: '36')
     versionCode 1
     versionName "0.1.0"
   }
