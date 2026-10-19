@@ -17,3 +17,8 @@ app/src/main/java/inline/
 
 # Bundle artifacts
 *.jsbundle
+
+# Keystores and secret properties
+*.jks
+*.keystore
+keystore.properties

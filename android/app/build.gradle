@@ -102,6 +102,23 @@ android {
             buildStagingDirectory = new File("E:/b/cxx")
         }
     }
+    def keystorePropertiesFile = rootProject.file("../keystore.properties")
+    def keystoreProperties = new Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
+    def uploadStoreFile = keystoreProperties.getProperty('BABYBOO_UPLOAD_STORE_FILE') ?: (findProperty('BABYBOO_UPLOAD_STORE_FILE') ?: 'C:/keys/babyboo-upload.jks')
+    def uploadStorePassword = keystoreProperties.getProperty('BABYBOO_UPLOAD_STORE_PASSWORD')
+    if (!uploadStorePassword || uploadStorePassword == 'CHANGE_ME') {
+        uploadStorePassword = (findProperty('BABYBOO_UPLOAD_STORE_PASSWORD') ?: '')
+    }
+    def uploadKeyAlias = keystoreProperties.getProperty('BABYBOO_UPLOAD_KEY_ALIAS') ?: (findProperty('BABYBOO_UPLOAD_KEY_ALIAS') ?: 'babyboo-upload')
+    def uploadKeyPassword = keystoreProperties.getProperty('BABYBOO_UPLOAD_KEY_PASSWORD')
+    if (!uploadKeyPassword || uploadKeyPassword == 'CHANGE_ME') {
+        uploadKeyPassword = (findProperty('BABYBOO_UPLOAD_KEY_PASSWORD') ?: '')
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -109,18 +126,21 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file(uploadStoreFile)
+            storePassword uploadStorePassword
+            keyAlias uploadKeyAlias
+            keyPassword uploadKeyPassword
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
-            shrinkResources enableShrinkResources.toBoolean()
-            minifyEnabled enableMinifyInReleaseBuilds
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             def enablePngCrunchInRelease = findProperty('android.enablePngCrunchInReleaseBuilds') ?: 'true'
             crunchPngs enablePngCrunchInRelease.toBoolean()

@@ -242,6 +242,74 @@
 - [x] Screening service properly bound and declared with `BIND_SCREENING_SERVICE`
 - [x] Build verified clean
 
+---
+
+## Phase 6: Production Keystore & Release Signing
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Stop shipping debug-signed builds and sign production release builds with a dedicated PKCS12 upload keystore and R8 optimization.
+
+### 1. Keystore Generation & Git Protection
+- Upload keystore generated at `C:\keys\babyboo-upload.jks`:
+  - Format: PKCS12
+  - Alias: `babyboo-upload`
+  - Key Algorithm: RSA 2048-bit
+  - Validity: 10,000 days (~27 years)
+  - Signer SHA-256: `56:E4:8B:C9:45:9B:93:2D:2D:A1:EF:52:B3:55:CA:EF:4F:21:29:6C:09:1E:12:7B:A1:64:CE:DE:FD:CE:68:E5`
+- Secrets isolation:
+  - Keystore file `babyboo-upload.jks` placed outside repository (`C:\keys\`).
+  - `.gitignore` and `android/.gitignore` updated with `*.jks`, `*.keystore`, and `keystore.properties`.
+  - Credentials preserved in git-ignored `keystore.properties` in project root.
+  - Public repository placeholders placed in `android/gradle.properties`:
+    ```properties
+    BABYBOO_UPLOAD_STORE_FILE=C:/keys/babyboo-upload.jks
+    BABYBOO_UPLOAD_KEY_ALIAS=babyboo-upload
+    BABYBOO_UPLOAD_STORE_PASSWORD=CHANGE_ME
+    BABYBOO_UPLOAD_KEY_PASSWORD=CHANGE_ME
+    ```
+
+### 2. Gradle & Proguard Configuration
+- In `android/app/build.gradle`:
+  - Added release signing configuration reading from `keystore.properties` (or project properties fallback):
+    ```groovy
+    signingConfigs {
+        release {
+            storeFile file(uploadStoreFile)
+            storePassword uploadStorePassword
+            keyAlias uploadKeyAlias
+            keyPassword uploadKeyPassword
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            def enablePngCrunchInRelease = findProperty('android.enablePngCrunchInReleaseBuilds') ?: 'true'
+            crunchPngs enablePngCrunchInRelease.toBoolean()
+        }
+    }
+    ```
+- In `android/app/proguard-rules.pro`:
+  - Added keep rules for `com.babyboo.app.**` and `com.babyboo.handover.**` to ensure all native services, receivers, activities, and reflection handlers remain un-stripped during R8 shrinking and obfuscation.
+
+### 3. Verification
+- `.\gradlew.bat assembleRelease` succeeded with exit code 0.
+- Output: `android/app/build/outputs/apk/release/app-release.apk` (43.9 MB).
+- APK signature verified with Android SDK 36.0.0 `apksigner`:
+  - `Verified using v2 scheme (APK Signature Scheme v2): true`
+  - `Signer #1 certificate DN: CN=BabyBoo Release, OU=Mobile, O=BabyBoo, L=San Francisco, ST=California, C=US`
+  - `Signer #1 certificate SHA-256 digest: 56e48bc9459b932d2da1ef52b355caef4f21296c091e127ba164cedefdce68e5`
+
+### 4. Phase 6 Definition of Done Checklist
+- [x] Upload keystore generated and stored outside git tree
+- [x] Passwords isolated in git-ignored `keystore.properties` with placeholders in `gradle.properties`
+- [x] `android/app/build.gradle` configured with production `signingConfigs.release` and R8 optimization
+- [x] Proguard keep rules protect BabyBoo services and native modules
+- [x] `gradlew.bat assembleRelease` succeeds and produces APK verified signed with upload certificate
+
+
 
 
 

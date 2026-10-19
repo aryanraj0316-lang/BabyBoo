@@ -13,3 +13,11 @@
 
 # Add any project specific keep options here:
 -keep class com.babyboo.app.BabyBooWidgetProvider { *; }
+
+# Preserve BabyBoo core activities, services, receivers, and controller components
+-keep class com.babyboo.app.** { *; }
+-keepclassmembers class com.babyboo.app.** { *; }
+
+# Preserve Handover native package
+-keep class com.babyboo.handover.** { *; }
+-keepclassmembers class com.babyboo.handover.** { *; }
