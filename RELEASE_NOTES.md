@@ -155,4 +155,30 @@
 - [x] `versionCode 1` and `versionName "1.0.0"` confirmed in `android/app/build.gradle` and `app.json`
 - [x] Versioning convention fully documented
 
+---
+
+## Phase 3: Accessibility Service Declaration Flag
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Explicitly declare to Google Play that this service is not a disability-tool claim, enabling the Play Console Parental Control / Child Wellbeing declaration review pathway.
+
+### 1. Changes Made
+- In `android/app/src/main/res/xml/blackout_accessibility_config.xml`:
+  - Added `android:isAccessibilityTool="false"`.
+  - Preserved all existing attributes: `description`, `summary`, `accessibilityFeedbackType`, `accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"`, `canRetrieveWindowContent="false"`, `notificationTimeout="100"`.
+- In `android/app/src/main/AndroidManifest.xml`:
+  - Verified `<service android:name=".BlackoutAccessibilityService">` retains:
+    - `android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"`
+    - `<action android:name="android.accessibilityservice.AccessibilityService" />`
+    - `<meta-data android:name="android.accessibilityservice" android:resource="@xml/blackout_accessibility_config" />`
+
+### 2. Verification
+- `.\gradlew.bat assembleDebug` succeeded with no errors or manifest merger warnings.
+
+### 3. Phase 3 Definition of Done Checklist
+- [x] `android:isAccessibilityTool="false"` flag present in `blackout_accessibility_config.xml`
+- [x] Service remains properly declared in `AndroidManifest.xml`
+- [x] Build and manifest merger verified clean
+
+
 

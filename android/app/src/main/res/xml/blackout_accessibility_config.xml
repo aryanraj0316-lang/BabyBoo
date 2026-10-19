@@ -2,6 +2,7 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/blackout_a11y_description"
     android:summary="@string/blackout_a11y_summary"
+    android:isAccessibilityTool="false"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"
     android:canRetrieveWindowContent="false"
