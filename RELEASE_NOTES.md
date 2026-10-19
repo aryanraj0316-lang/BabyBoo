@@ -121,3 +121,38 @@
 - [x] Manifest merger and compile errors resolved
 - [x] `gradlew.bat assembleDebug` succeeds with no errors
 
+---
+
+## Phase 2: Versioning
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Give the build a shippable identity and establish production release versioning rules.
+
+### 1. Version Settings
+- `android/app/build.gradle`:
+  ```groovy
+  defaultConfig {
+      applicationId 'com.babyboo.app'
+      minSdkVersion rootProject.ext.minSdkVersion
+      targetSdkVersion rootProject.ext.targetSdkVersion
+      versionCode 1
+      versionName "1.0.0"
+  }
+  ```
+- `app.json`:
+  - `"version": "1.0.0"`
+  - `"android.versionCode": 1`
+
+### 2. Versioning Convention
+- **`versionCode` (Integer):** Monotonically increasing positive integer. **Must be bumped by +1 for every single upload to Google Play Console** (`1` -> `2` -> `3`). Google Play strictly rejects uploads where `versionCode` is lower than or equal to any previous build.
+- **`versionName` (String):** Follows Semantic Versioning (`MAJOR.MINOR.PATCH`):
+  - `1.0.0`: Initial Google Play production release candidate.
+  - `1.0.1+`: Bug fixes, hotfixes, policy adjustments.
+  - `1.1.0+`: New user-facing features or major simulation enhancements.
+  - `2.0.0+`: Breaking architectural changes.
+
+### 3. Phase 2 Definition of Done Checklist
+- [x] `versionCode 1` and `versionName "1.0.0"` confirmed in `android/app/build.gradle` and `app.json`
+- [x] Versioning convention fully documented
+
+
