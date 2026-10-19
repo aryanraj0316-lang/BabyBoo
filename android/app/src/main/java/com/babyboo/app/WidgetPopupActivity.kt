@@ -2,6 +2,7 @@ package com.babyboo.app
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,13 +29,13 @@ import android.widget.TextView
 /**
  * WidgetPopupActivity — floating popup shown when the home screen widget is tapped.
  *
- * - Idle: shows the timer options configured in the BabyBoo app (Schedule tab). Tapping one starts
- *   ScreenTimeBackgroundService right here — the BabyBoo app is never opened.
- * - Running: shows the live countdown (remaining, elapsed, total) with Stop / Done.
- *
- * The UI is rebuilt from SharedPreferences every time the popup comes to the front (onResume),
- * because this activity is singleInstance and Android reuses an existing instance when the widget
- * is tapped again — building only in onCreate showed stale options and hid a running countdown.
+ * - Idle: shows timer options. Tapping one starts an automated setup wizard if permissions
+ *   are missing, or starts ScreenTimeBackgroundService immediately.
+ * - Automatic Setup Wizard:
+ *   1. Step 1: Overlay permission ("Display over other apps") -> redirects directly to BabyBoo's toggle.
+ *   2. Step 2: Accessibility permission ("Prevent Kid Bypass") -> redirects to Accessibility settings.
+ *   When the user returns from settings, the timer starts automatically without manual back-and-forth!
+ * - Running: shows live countdown with Stop / Done buttons.
  */
 class WidgetPopupActivity : Activity() {
 
@@ -75,13 +76,29 @@ class WidgetPopupActivity : Activity() {
         }
     }
 
+    private var pendingTimerMinutes = 0
+    private var awaitingOverlayReturn = false
+    private var awaitingAccessibilityReturn = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            pendingTimerMinutes = savedInstanceState.getInt("pending_timer_minutes", 0)
+            awaitingOverlayReturn = savedInstanceState.getBoolean("awaiting_overlay_return", false)
+            awaitingAccessibilityReturn = savedInstanceState.getBoolean("awaiting_accessibility_return", false)
+        }
         window.apply {
             setBackgroundDrawableResource(android.R.color.transparent)
             addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             setDimAmount(0.40f)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("pending_timer_minutes", pendingTimerMinutes)
+        outState.putBoolean("awaiting_overlay_return", awaitingOverlayReturn)
+        outState.putBoolean("awaiting_accessibility_return", awaitingAccessibilityReturn)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -91,13 +108,22 @@ class WidgetPopupActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        if (SimulationController.isActive()) {
+        if (SimulationController.isOverlayShowing()) {
             finish()
             return
         }
         renderPopupUI()
         handler.removeCallbacks(tickRunnable)
         handler.post(tickRunnable)
+
+        // If user was in the middle of granting permissions for a selected timer:
+        if (pendingTimerMinutes > 0 && remainingSeconds() <= 0) {
+            handler.postDelayed({
+                if (!isFinishing && !isDestroyed && pendingTimerMinutes > 0) {
+                    checkAndProceedPermissionFlow(pendingTimerMinutes)
+                }
+            }, 300)
+        }
     }
 
     override fun onPause() {
@@ -130,7 +156,7 @@ class WidgetPopupActivity : Activity() {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
-            setOnClickListener { finish() } // Dismiss on outside tap
+            setOnClickListener { finish() }
         }
 
         val card = LinearLayout(this).apply {
@@ -144,13 +170,10 @@ class WidgetPopupActivity : Activity() {
                 cornerRadius = dpToPx(24).toFloat()
             }
             elevation = dpToPx(12).toFloat()
-            setOnClickListener { /* consume clicks inside the card */ }
+            setOnClickListener { }
         }
 
         card.addView(buildHeader())
-        if (!SimulationController.canDrawOverlays(this)) {
-            card.addView(buildOverlayPermissionBanner())
-        }
 
         val remaining = remainingSeconds()
         showingActive = remaining > 0
@@ -195,32 +218,18 @@ class WidgetPopupActivity : Activity() {
         return headerRow
     }
 
-    /** Without this permission Android will not let the battery screen appear over other apps. */
-    private fun buildOverlayPermissionBanner(): View = TextView(this).apply {
-        text = "⚠ One-time setup: tap here and turn ON \"Display over other apps\" for BabyBoo, " +
-            "otherwise the battery screen cannot appear over YouTube or games."
-        setTextColor(Color.parseColor("#92400E"))
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f)
-        typeface = Typeface.DEFAULT_BOLD
-        setPadding(dpToPx(12), dpToPx(10), dpToPx(12), dpToPx(10))
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dpToPx(12) }
-        background = GradientDrawable().apply {
-            setColor(Color.parseColor("#FEF3C7"))
-            cornerRadius = dpToPx(12).toFloat()
-            setStroke(dpToPx(1), Color.parseColor("#F59E0B"))
-        }
-        setOnClickListener {
+    private fun openSettings(action: String, data: Uri?) {
+        try {
+            startActivity(Intent(action).apply {
+                if (data != null) this.data = data
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
+        } catch (_: Exception) {
             try {
-                startActivity(
-                    Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
+                startActivity(Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             } catch (_: Exception) {
                 try {
-                    startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 } catch (_: Exception) { }
             }
         }
@@ -332,6 +341,30 @@ class WidgetPopupActivity : Activity() {
         }
 
     private fun buildIdleSection(card: LinearLayout) {
+        val needsSetup = !SimulationController.canDrawOverlays(this) || !BlackoutAccessibilityService.isEnabled(this)
+        if (needsSetup) {
+            card.addView(TextView(this).apply {
+                text = "⚡ Tap any time below to begin 1-time setup"
+                setTextColor(Color.parseColor("#0284C7"))
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f)
+                typeface = Typeface.DEFAULT_BOLD
+                setPadding(dpToPx(10), dpToPx(6), dpToPx(10), dpToPx(6))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = dpToPx(10)
+                    bottomMargin = dpToPx(2)
+                }
+                background = GradientDrawable().apply {
+                    setColor(Color.parseColor("#F0F9FF"))
+                    cornerRadius = dpToPx(10).toFloat()
+                    setStroke(dpToPx(1), Color.parseColor("#BAE6FD"))
+                }
+                gravity = Gravity.CENTER
+            })
+        }
+
         card.addView(TextView(this).apply {
             text = "Tap a time to start the countdown:"
             setTextColor(Color.parseColor("#64748B"))
@@ -340,8 +373,8 @@ class WidgetPopupActivity : Activity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                topMargin = dpToPx(12)
-                bottomMargin = dpToPx(10)
+                topMargin = dpToPx(10)
+                bottomMargin = dpToPx(8)
             }
         })
 
@@ -360,7 +393,6 @@ class WidgetPopupActivity : Activity() {
                 }
             }
             for (mins in rowItems) row.addView(createTimerPill(mins))
-            // Keep pills the same width on a short last row
             repeat(perRow - rowItems.size) {
                 row.addView(View(this).apply {
                     layoutParams = LinearLayout.LayoutParams(0, dpToPx(42), 1f).apply {
@@ -385,7 +417,7 @@ class WidgetPopupActivity : Activity() {
     }
 
     private fun updateLiveCountdownDisplay() {
-        if (SimulationController.isActive()) {
+        if (SimulationController.isOverlayShowing()) {
             finish()
             return
         }
@@ -394,7 +426,6 @@ class WidgetPopupActivity : Activity() {
             activeCountdownText?.text = formatClock(remaining)
             activeElapsedText?.text = elapsedLine(remaining)
         } else if ((remaining > 0) != showingActive) {
-            // Timer started/stopped/finished elsewhere (notification, app) — switch views
             renderPopupUI()
         }
     }
@@ -431,8 +462,110 @@ class WidgetPopupActivity : Activity() {
     }
 
     private fun onTimerOptionSelected(minutes: Int) {
-        vibrateBriefly()
+        pendingTimerMinutes = minutes
+        checkAndProceedPermissionFlow(minutes)
+    }
+
+    /**
+     * Sequential automated setup wizard:
+     * Guides parent through each switch, redirecting directly to the toggle page.
+     * When user returns, automatically advances or starts the timer!
+     */
+    private fun checkAndProceedPermissionFlow(minutes: Int) {
+        if (isFinishing || isDestroyed) return
+
+        // 1. Overlay Permission: Required to display the shutdown screen over YouTube/games
+        if (!SimulationController.canDrawOverlays(this)) {
+            if (awaitingOverlayReturn) {
+                // User came back from settings without enabling it
+                awaitingOverlayReturn = false
+                AlertDialog.Builder(this)
+                    .setTitle("Permission Needed")
+                    .setMessage("Overlay permission was not turned on. BabyBoo cannot take over the screen when time runs out without this switch enabled.")
+                    .setCancelable(false)
+                    .setPositiveButton("Try Again") { _, _ ->
+                        awaitingOverlayReturn = true
+                        openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        pendingTimerMinutes = 0
+                    }
+                    .show()
+                return
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle("Step 1 of 2: Allow Display Over Apps")
+                .setMessage("To allow BabyBoo to lock the screen over YouTube and other apps when time is up, switch ON \"Allow display over other apps\" on the next screen.\n\nThen press Back to continue.")
+                .setCancelable(false)
+                .setPositiveButton("Turn ON") { _, _ ->
+                    awaitingOverlayReturn = true
+                    openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+                }
+                .setNegativeButton("Cancel") { _, _ ->
+                    pendingTimerMinutes = 0
+                }
+                .show()
+            return
+        }
+        awaitingOverlayReturn = false
+
+        // 2. Accessibility Permission: Prevents kids from pulling down status bar or pressing Home
+        if (!BlackoutAccessibilityService.isEnabled(this)) {
+            if (awaitingAccessibilityReturn) {
+                // User came back from accessibility settings without enabling it
+                awaitingAccessibilityReturn = false
+                AlertDialog.Builder(this)
+                    .setTitle("Accessibility Not Enabled")
+                    .setMessage("BabyBoo will still take over the screen with low battery! Do you want to start the timer now without status bar protection?")
+                    .setCancelable(false)
+                    .setPositiveButton("Start Timer Now") { _, _ ->
+                        requestNotificationPermissionIfNeeded()
+                        startTimerDirectly(minutes)
+                    }
+                    .setNeutralButton("Try Again") { _, _ ->
+                        awaitingAccessibilityReturn = true
+                        openSettings(Settings.ACTION_ACCESSIBILITY_SETTINGS, null)
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        pendingTimerMinutes = 0
+                    }
+                    .show()
+                return
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle("Step 2 of 2: Prevent Kid Bypass")
+                .setMessage("To cover the status bar and navigation buttons during the low-battery simulation so kids cannot exit, turn ON \"BabyBoo\" in Accessibility.\n\nTap BabyBoo on the next screen → switch it ON.")
+                .setCancelable(false)
+                .setPositiveButton("Turn ON") { _, _ ->
+                    awaitingAccessibilityReturn = true
+                    openSettings(Settings.ACTION_ACCESSIBILITY_SETTINGS, null)
+                }
+                .setNeutralButton("Skip for Now") { _, _ ->
+                    requestNotificationPermissionIfNeeded()
+                    startTimerDirectly(minutes)
+                }
+                .setNegativeButton("Cancel") { _, _ ->
+                    pendingTimerMinutes = 0
+                }
+                .show()
+            return
+        }
+        awaitingAccessibilityReturn = false
+
+        // 3. Notification permission check
         requestNotificationPermissionIfNeeded()
+
+        // All ready! Start the countdown directly!
+        startTimerDirectly(minutes)
+    }
+
+    private fun startTimerDirectly(minutes: Int) {
+        pendingTimerMinutes = 0
+        awaitingOverlayReturn = false
+        awaitingAccessibilityReturn = false
+        vibrateBriefly()
 
         val totalSecs = minutes * 60
         prefs().edit()
@@ -446,18 +579,22 @@ class WidgetPopupActivity : Activity() {
             putExtra(ScreenTimeBackgroundService.EXTRA_MINUTES, minutes)
         }
         try {
-            startForegroundService(serviceIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
         } catch (_: Exception) {
             try { startService(serviceIntent) } catch (_: Exception) { }
         }
 
         BabyBooWidgetProvider.updateAllWidgets(this, totalSecs)
-        // Show the live countdown right here in the popup
         renderPopupUI()
     }
 
     private fun onStopTimerSelected() {
         vibrateBriefly()
+        pendingTimerMinutes = 0
         prefs().edit()
             .putBoolean(ScreenTimeBackgroundService.KEY_TIMER_ACTIVE, false)
             .remove(ScreenTimeBackgroundService.KEY_TIMER_END_AT)

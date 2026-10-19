@@ -30,3 +30,13 @@ expo-env.d.ts
 # @end expo-cli
 # Native module build output
 modules/handover-native/android/build/
+
+# Android build artifacts and release keys
+*.apk
+*.aab
+*.jks
+*.keystore
+keystore.properties
+/android/.gradle/
+/android/app/build/
+

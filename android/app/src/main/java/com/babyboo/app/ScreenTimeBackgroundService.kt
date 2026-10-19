@@ -19,11 +19,10 @@ import androidx.core.app.NotificationCompat
  * ScreenTimeBackgroundService — Android Foreground Service that runs the countdown independently
  * of the React Native app (works on the home screen, inside YouTube, with BabyBoo closed…).
  *
- * The countdown is wall-clock based (timer_end_at in SharedPreferences), so it stays correct even
- * if ticks are delayed or the service is restarted by the system.
- *
- * When it reaches zero, SimulationController draws the battery-death simulation over whatever
- * app is on screen. The service stays in the foreground until the parent unlocks with "A".
+ * Fixes auto-trigger bug:
+ * - Stale timers from hours or days ago on reboot or service restart are strictly discarded rather
+ *   than firing an unexpected blackout.
+ * - Service runs START_NOT_STICKY when idle so Android does not randomly revive it.
  */
 class ScreenTimeBackgroundService : Service() {
 
@@ -57,7 +56,6 @@ class ScreenTimeBackgroundService : Service() {
             val remaining = ((remainingMillis + 999) / 1000).toInt()
             updateNotification(buildCountdownNotification(remaining))
             BabyBooWidgetProvider.updateAllWidgets(this@ScreenTimeBackgroundService, remaining)
-            // Re-align to the next whole second
             handler.postDelayed(this, (remainingMillis % 1000).let { if (it == 0L) 1000L else it })
         }
     }
@@ -73,22 +71,36 @@ class ScreenTimeBackgroundService : Service() {
         when (intent?.action) {
             ACTION_START_TIMER -> {
                 val minutes = intent.getIntExtra(EXTRA_MINUTES, 0)
-                if (minutes > 0) startCountdown(minutes) else stopIfIdle()
+                if (minutes > 0) {
+                    startCountdown(minutes)
+                    return START_STICKY
+                } else {
+                    stopIfIdle()
+                    return START_NOT_STICKY
+                }
             }
-            ACTION_CANCEL_TIMER -> cancelCountdown()
+            ACTION_CANCEL_TIMER -> {
+                cancelCountdown()
+                return START_NOT_STICKY
+            }
             ACTION_SIMULATION_FINISHED -> {
                 getSystemService(NotificationManager::class.java)?.cancel(SIMULATION_NOTIFICATION_ID)
                 stopForegroundCompat()
                 stopSelf()
+                return START_NOT_STICKY
             }
-            else -> resumeFromPrefs() // Restarted by the system (START_STICKY) with a null intent
+            else -> {
+                resumeFromPrefs()
+                val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                val isTimer = prefs.getBoolean(KEY_TIMER_ACTIVE, false)
+                val isSim = prefs.getBoolean(SimulationController.KEY_SIMULATION_ACTIVE, false)
+                return if (isTimer || isSim) START_STICKY else START_NOT_STICKY
+            }
         }
-        return START_STICKY
     }
 
     private fun startCountdown(minutes: Int) {
         val totalSeconds = minutes * 60
-        // The popup may already have stored an end time a few ms ago; reuse it so both agree.
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val now = System.currentTimeMillis()
         val storedEnd = prefs.getLong(KEY_TIMER_END_AT, 0L)
@@ -103,7 +115,6 @@ class ScreenTimeBackgroundService : Service() {
             .putBoolean(KEY_TIMER_ACTIVE, true)
             .commit()
 
-        // Must happen promptly after startForegroundService()
         goForeground(buildCountdownNotification(totalSeconds))
         runCountdown()
     }
@@ -121,7 +132,6 @@ class ScreenTimeBackgroundService : Service() {
         val endAt = prefs.getLong(KEY_TIMER_END_AT, 0L)
         when {
             prefs.getBoolean(SimulationController.KEY_SIMULATION_ACTIVE, false) -> {
-                goForeground(buildSimulationNotification())
                 SimulationController.start(this, resume = true)
             }
             prefs.getBoolean(KEY_TIMER_ACTIVE, false) && endAt > now -> {
@@ -130,10 +140,20 @@ class ScreenTimeBackgroundService : Service() {
                 runCountdown()
             }
             prefs.getBoolean(KEY_TIMER_ACTIVE, false) -> {
-                // Expired while we were dead — trigger the simulation now
-                endTimeMillis = endAt
-                goForeground(buildSimulationNotification())
-                onTimerExpired()
+                // Fix auto-trigger: only trigger if expired very recently (within 15 seconds)
+                val elapsedSinceExpiry = now - endAt
+                if (endAt > 0L && elapsedSinceExpiry in 0..15_000L) {
+                    endTimeMillis = endAt
+                    onTimerExpired()
+                } else {
+                    // Stale timer — clear out cleanly and do not trigger unexpected blackout
+                    prefs.edit()
+                        .putBoolean(KEY_TIMER_ACTIVE, false)
+                        .remove(KEY_TIMER_END_AT)
+                        .commit()
+                    BabyBooWidgetProvider.updateAllWidgets(this, 0)
+                    stopIfIdle()
+                }
             }
             else -> stopIfIdle()
         }
@@ -171,9 +191,17 @@ class ScreenTimeBackgroundService : Service() {
             .commit()
 
         BabyBooWidgetProvider.updateAllWidgets(this, 0)
-        updateNotification(buildSimulationNotification())
 
-        // Wake the screen if it is off
+        // Strict: NO spoiler notifications when timer reaches zero.
+        // Dismiss the ongoing countdown notification immediately.
+        try {
+            stopForegroundCompat()
+            val nm = getSystemService(NotificationManager::class.java)
+            nm?.cancel(NOTIFICATION_ID)
+            nm?.cancel(SIMULATION_NOTIFICATION_ID)
+        } catch (_: Exception) { }
+
+        // Wake screen if display is off
         try {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             @Suppress("DEPRECATION")
@@ -184,36 +212,6 @@ class ScreenTimeBackgroundService : Service() {
         } catch (_: Exception) { }
 
         SimulationController.start(this)
-
-        // Without "Display over other apps", Android blocks background activity starts; a
-        // full-screen-intent notification is the only remaining way in (works when locked).
-        if (!SimulationController.canDrawOverlays(this)) {
-            postFullScreenFallback()
-        }
-    }
-
-    private fun postFullScreenFallback() {
-        try {
-            val intent = Intent(this, ShutdownSimulationActivity::class.java).apply {
-                putExtra(ShutdownSimulationActivity.EXTRA_MODE, ShutdownSimulationActivity.MODE_HOST)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            }
-            val pi = PendingIntent.getActivity(
-                this, 1002, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            val n = NotificationCompat.Builder(this, CHANNEL_ALARM_ID)
-                .setSmallIcon(R.drawable.ic_stat_babyboo)
-                .setContentTitle("Battery critically low")
-                .setContentText("Phone is shutting down")
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setFullScreenIntent(pi, true)
-                .setContentIntent(pi)
-                .setAutoCancel(true)
-                .build()
-            getSystemService(NotificationManager::class.java)?.notify(SIMULATION_NOTIFICATION_ID, n)
-        } catch (_: Exception) { }
     }
 
     private fun goForeground(notification: Notification) {
@@ -287,16 +285,6 @@ class ScreenTimeBackgroundService : Service() {
             .addAction(0, "Cancel", cancelPendingIntent)
             .build()
     }
-
-    private fun buildSimulationNotification(): Notification =
-        NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("BabyBoo")
-            .setContentText("Screen time is over")
-            .setSmallIcon(R.drawable.ic_stat_babyboo)
-            .setOngoing(true)
-            .setSilent(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
 
     private fun updateNotification(notification: Notification) {
         try {

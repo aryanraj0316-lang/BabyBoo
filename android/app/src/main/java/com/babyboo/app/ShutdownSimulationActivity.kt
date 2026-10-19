@@ -38,6 +38,11 @@ class ShutdownSimulationActivity : Activity() {
         super.onCreate(savedInstanceState)
         configureFullScreen()
 
+        window.decorView.setOnApplyWindowInsetsListener { v, insets ->
+            hideSystemBars()
+            v.onApplyWindowInsets(insets)
+        }
+
         // Opened late (e.g. from the notification) after the parent already unlocked
         if (!SimulationController.isActive()) {
             finish()
@@ -59,7 +64,15 @@ class ShutdownSimulationActivity : Activity() {
         // In backdrop mode the overlay normally covers this view entirely. It still listens for
         // the "A" in case the overlay is hidden (e.g. behind the lock screen) so the parent is
         // never stuck on a black screen that ignores input.
-        hostedView = ShutdownSimulationView(this, startInBlackout = mode == MODE_BACKDROP) {
+        // MODE_HOST: this activity is the visible simulation, so it dims its own window at blackout.
+        // MODE_BACKDROP: the overlay window on top drives the visuals and the dimming, so this
+        // backdrop stays passive (dimming it here would darken the bright battery-drain animation).
+        val dimCallback: () -> Unit = if (mode == MODE_HOST) ({ dimToLowest() }) else ({})
+        hostedView = ShutdownSimulationView(
+            this,
+            startInBlackout = mode == MODE_BACKDROP,
+            onBlackout = dimCallback
+        ) {
             SimulationController.finish(this)
         }
         setContentView(hostedView)
@@ -79,6 +92,35 @@ class ShutdownSimulationActivity : Activity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         window.decorView.setBackgroundColor(Color.BLACK)
         hideSystemBars()
+    }
+
+    /** Lowest backlight once the screen is fully black; auto-restores when the window goes away. */
+    private fun dimToLowest() {
+        try {
+            window.attributes = window.attributes.apply {
+                screenBrightness = 0.004f
+            }
+        } catch (_: Exception) { }
+    }
+
+    // Android lets a deliberate edge swipe reveal the bars for a moment. Re-hide them the instant
+    // that happens (and keep re-asserting), so they are gone again within a frame or two.
+    private val keepBarsHidden = object : Runnable {
+        override fun run() {
+            hideSystemBars()
+            handler.postDelayed(this, 150)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handler.removeCallbacks(keepBarsHidden)
+        handler.post(keepBarsHidden)
+    }
+
+    override fun onPause() {
+        handler.removeCallbacks(keepBarsHidden)
+        super.onPause()
     }
 
     private fun hideSystemBars() {

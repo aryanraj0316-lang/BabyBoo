@@ -10,14 +10,13 @@ import android.view.View
 import android.widget.RemoteViews
 
 /**
- * BabyBooWidgetProvider — The home screen widget.
+ * BabyBooWidgetProvider — Home screen widget.
  *
  * Behavior:
- * - Collapsed state: Shows a small compact 1×1 icon.
- * - When idle: Shows "BabyBoo" badge.
- * - When active (timer selected): Shows the live countdown directly on the widget (e.g. 02:00, 01:59).
- * - When tapped: Launches WidgetPopupActivity (floating popup with timer options)
- *   directly over the home screen — NO app opening, no deep link routing.
+ * - Collapsed state: Shows compact 1×1 icon.
+ * - When idle: Shows "BabyBoo" badge, chronometer stopped.
+ * - When active (timer running): Shows live countdown directly on the widget.
+ * - When tapped: Launches WidgetPopupActivity (floating popup) without opening the main app.
  */
 class BabyBooWidgetProvider : AppWidgetProvider() {
 
@@ -48,7 +47,6 @@ class BabyBooWidgetProvider : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, R.layout.babyboo_widget_layout)
 
-            // Always show collapsed view (compact 1x1 icon)
             views.setViewVisibility(R.id.widget_collapsed_view, View.VISIBLE)
             views.setViewVisibility(R.id.widget_expanded_view, View.GONE)
 
@@ -61,7 +59,6 @@ class BabyBooWidgetProvider : AppWidgetProvider() {
             }
 
             if (isActive && remaining > 0) {
-                // Show live ticking chronometer on home screen
                 views.setViewVisibility(R.id.widget_collapsed_badge, View.GONE)
                 views.setViewVisibility(R.id.widget_countdown_badge, View.GONE)
                 views.setViewVisibility(R.id.widget_chronometer, View.VISIBLE)
@@ -73,14 +70,14 @@ class BabyBooWidgetProvider : AppWidgetProvider() {
                     views.setChronometerCountDown(R.id.widget_chronometer, true)
                 }
             } else {
-                // Show idle badge, hide countdown chronometer
+                // Ensure chronometer is stopped and hidden, show idle badge
+                views.setChronometer(R.id.widget_chronometer, 0L, "%s", false)
                 views.setViewVisibility(R.id.widget_chronometer, View.GONE)
                 views.setViewVisibility(R.id.widget_countdown_badge, View.GONE)
                 views.setViewVisibility(R.id.widget_collapsed_badge, View.VISIBLE)
                 views.setTextViewText(R.id.widget_collapsed_badge, "BabyBoo")
             }
 
-            // Tapping the widget icon launches the WidgetPopupActivity (floating popup)
             val popupIntent = Intent(context, WidgetPopupActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                         Intent.FLAG_ACTIVITY_CLEAR_TOP or
