@@ -121,12 +121,17 @@ class HandoverNativeModule : Module() {
           Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         ) ?: ""
         val isA11yGranted = enabledA11y.contains(context.packageName)
+        val isCallScreeningHeld = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          val rm = context.getSystemService(android.app.role.RoleManager::class.java)
+          rm?.isRoleHeld(android.app.role.RoleManager.ROLE_CALL_SCREENING) ?: false
+        } else true
         mapOf(
           "overlayGranted" to Settings.canDrawOverlays(context),
           "notificationsGranted" to (nm?.areNotificationsEnabled() ?: false),
           "exactAlarmsGranted" to true,
           "batteryOptimizationIgnored" to pm.isIgnoringBatteryOptimizations(context.packageName),
-          "accessibilityGranted" to isA11yGranted
+          "accessibilityGranted" to isA11yGranted,
+          "callScreeningRoleHeld" to isCallScreeningHeld
         )
       }
     }
@@ -139,11 +144,17 @@ class HandoverNativeModule : Module() {
         "notifications" -> Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
           .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         "battery" -> Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+        "call_screening" -> {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val rm = context.getSystemService(android.app.role.RoleManager::class.java)
+            rm?.createRequestRoleIntent(android.app.role.RoleManager.ROLE_CALL_SCREENING)
+          } else null
+        }
         "accessibility" -> Intent("com.babyboo.app.ACTION_ACCESSIBILITY_DISCLOSURE").apply {
           setPackage(context.packageName)
         }
         else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri)
-      }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      }?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) ?: return@AsyncFunction
       try {
         context.startActivity(intent)
       } catch (_: Exception) {

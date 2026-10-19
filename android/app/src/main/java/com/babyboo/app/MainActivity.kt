@@ -12,12 +12,37 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
+  companion object {
+    private const val REQ_CALL_SCREENING = 4022
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
     super.onCreate(null)
+  }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+    requestCallScreeningRoleIfNeeded()
+  }
+
+  private fun requestCallScreeningRoleIfNeeded() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      val rm = getSystemService(android.app.role.RoleManager::class.java)
+      if (rm != null && rm.isRoleAvailable(android.app.role.RoleManager.ROLE_CALL_SCREENING) &&
+          !rm.isRoleHeld(android.app.role.RoleManager.ROLE_CALL_SCREENING)) {
+        try {
+          @Suppress("DEPRECATION")
+          startActivityForResult(
+            rm.createRequestRoleIntent(android.app.role.RoleManager.ROLE_CALL_SCREENING),
+            REQ_CALL_SCREENING
+          )
+        } catch (_: Exception) {}
+      }
+    }
   }
 
   override fun onNewIntent(intent: Intent) {

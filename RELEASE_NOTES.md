@@ -212,6 +212,37 @@
 - [x] Accessible from setup flow and persistently from settings drawer
 - [x] Disclosure demo asset and playbook created in `docs/`
 
+---
+
+## Phase 5: Call-Screening Role Request
+
+- **Date / Timestamp:** 2026-10-19
+- **Goal:** Request Android system `ROLE_CALL_SCREENING` at runtime instead of relying on sensitive Play permissions declaration.
+
+### 1. Changes Made
+- In `android/app/src/main/java/com/babyboo/app/MainActivity.kt`:
+  - Added runtime system role request in `onPostCreate()` via `RoleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)` when `!rm.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)`.
+- In `android/app/src/main/AndroidManifest.xml`:
+  - Verified `BabyBooCallScreeningService` retains:
+    - `android:permission="android.permission.BIND_SCREENING_SERVICE"`
+    - `<action android:name="android.telecom.CallScreeningService" />`
+- In `modules/handover-native/android/src/main/java/expo/modules/handovernative/HandoverNativeModule.kt`:
+  - Added `"callScreeningRoleHeld"` check to `getPermissionStatus()`.
+  - Added `"call_screening"` intent launcher to `openPermissionSettings()`.
+- Policy & Declaration decision:
+  - No Play Console declaration required for Call Screening when utilizing standard Android `RoleManager.ROLE_CALL_SCREENING`.
+  - Data safety documentation records that incoming call handling is processed strictly on-device without telemetry or transmission.
+
+### 2. Verification
+- `.\gradlew.bat assembleDebug` succeeded with exit code 0.
+- Manifest merger verified clean.
+
+### 3. Phase 5 Definition of Done Checklist
+- [x] Runtime role prompt triggers via `RoleManager`
+- [x] Screening service properly bound and declared with `BIND_SCREENING_SERVICE`
+- [x] Build verified clean
+
+
 
 
 
