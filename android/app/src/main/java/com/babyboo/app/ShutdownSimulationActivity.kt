@@ -1,8 +1,11 @@
 package com.babyboo.app
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -27,12 +30,26 @@ class ShutdownSimulationActivity : Activity() {
 
     companion object {
         const val EXTRA_MODE = "mode"
+        const val EXTRA_WAKE_SIGNAL = "wake_signal"
         const val MODE_BACKDROP = "backdrop"
         const val MODE_HOST = "host"
+
+        /** Graceful fallback: collapses Android notification shade if child swipes top edge */
+        fun collapseStatusBar(context: Context) {
+            try {
+                @android.annotation.SuppressLint("WrongConstant")
+                val sbservice = context.getSystemService("statusbar")
+                val statusbarManager = Class.forName("android.app.StatusBarManager")
+                val collapse = statusbarManager.getMethod("collapsePanels")
+                collapse.invoke(sbservice)
+            } catch (_: Exception) { }
+        }
     }
 
     private val handler = Handler(Looper.getMainLooper())
     private var hostedView: ShutdownSimulationView? = null
+    private var screenOffReceiver: BroadcastReceiver? = null
+    private var wasScreenOff = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +59,18 @@ class ShutdownSimulationActivity : Activity() {
             hideSystemBars()
             v.onApplyWindowInsets(insets)
         }
+
+        // Register screen off receiver so that when device wakes up, we can flash the 1-second battery signal
+        try {
+            val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    wasScreenOff = true
+                }
+            }
+            screenOffReceiver = receiver
+            registerReceiver(receiver, filter)
+        } catch (_: Exception) { }
 
         // Opened late (e.g. from the notification) after the parent already unlocked
         if (!SimulationController.isActive()) {
@@ -56,26 +85,42 @@ class ShutdownSimulationActivity : Activity() {
         super.onNewIntent(intent)
         setIntent(intent)
         render(intent)
+        if (intent.getBooleanExtra(EXTRA_WAKE_SIGNAL, false)) {
+            hostedView?.showWakeBatterySignal()
+        }
     }
 
     private fun render(intent: Intent?) {
         if (hostedView != null) return
         val mode = intent?.getStringExtra(EXTRA_MODE) ?: MODE_HOST
-        // In backdrop mode the overlay normally covers this view entirely. It still listens for
-        // the "A" in case the overlay is hidden (e.g. behind the lock screen) so the parent is
-        // never stuck on a black screen that ignores input.
-        // MODE_HOST: this activity is the visible simulation, so it dims its own window at blackout.
-        // MODE_BACKDROP: the overlay window on top drives the visuals and the dimming, so this
-        // backdrop stays passive (dimming it here would darken the bright battery-drain animation).
         val dimCallback: () -> Unit = if (mode == MODE_HOST) ({ dimToLowest() }) else ({})
         hostedView = ShutdownSimulationView(
             this,
             startInBlackout = mode == MODE_BACKDROP,
-            onBlackout = dimCallback
+            onBlackout = dimCallback,
+            onSetBrightness = { brightness -> setScreenBrightness(brightness) }
         ) {
             SimulationController.finish(this)
         }
         setContentView(hostedView)
+    }
+
+    fun setScreenBrightness(brightness: Float) {
+        try {
+            window.attributes = window.attributes.apply {
+                screenBrightness = brightness
+            }
+        } catch (_: Exception) { }
+    }
+
+    fun unlockAndDismiss() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                km.requestDismissKeyguard(this, null)
+            } catch (_: Exception) { }
+        }
+        finish()
     }
 
     private fun configureFullScreen() {
@@ -96,11 +141,7 @@ class ShutdownSimulationActivity : Activity() {
 
     /** Lowest backlight once the screen is fully black; auto-restores when the window goes away. */
     private fun dimToLowest() {
-        try {
-            window.attributes = window.attributes.apply {
-                screenBrightness = 0.004f
-            }
-        } catch (_: Exception) { }
+        setScreenBrightness(0.004f)
     }
 
     // Android lets a deliberate edge swipe reveal the bars for a moment. Re-hide them the instant
@@ -116,6 +157,10 @@ class ShutdownSimulationActivity : Activity() {
         super.onResume()
         handler.removeCallbacks(keepBarsHidden)
         handler.post(keepBarsHidden)
+        if (wasScreenOff) {
+            wasScreenOff = false
+            hostedView?.showWakeBatterySignal()
+        }
     }
 
     override fun onPause() {
@@ -145,7 +190,15 @@ class ShutdownSimulationActivity : Activity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) hideSystemBars()
+        if (hasFocus) {
+            hideSystemBars()
+        } else {
+            // If child pulled down shade when accessibility overlay is disabled, snap it shut
+            if (!BlackoutAccessibilityService.isRunning()) {
+                collapseStatusBar(this)
+                hideSystemBars()
+            }
+        }
     }
 
     override fun onStop() {
@@ -177,6 +230,10 @@ class ShutdownSimulationActivity : Activity() {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
+        screenOffReceiver?.let {
+            try { unregisterReceiver(it) } catch (_: Exception) { }
+            screenOffReceiver = null
+        }
         hostedView?.release()
         SimulationController.unregisterActivity(this)
         super.onDestroy()

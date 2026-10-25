@@ -71,6 +71,12 @@ export interface SessionLog {
 
 export type ScreenName = 
   | 'splash'
+  | 'onboarding_second'
+  | 'onboarding_third'
+  | 'onboarding_fourth'
+  | 'onboarding_fifth'
+  | 'onboarding_sixth'
+  | 'onboarding_seventh'
   | 'onboarding_assessment'
   | 'auth'
   | 'add_child'

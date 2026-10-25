@@ -80,14 +80,30 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(() => {
-    return isStoredOnboardingCompleted() ? 'parent_dashboard' : 'onboarding_assessment';
+    return isStoredOnboardingCompleted() ? 'parent_dashboard' : 'splash';
   });
   const [user, setUser] = useState<UserAccount>(loadStoredUser);
   const [childrenList, setChildrenList] = useState<ChildProfile[]>(() => {
     const loaded = loadStoredChildren();
-    if (loaded.length > 0) return loaded;
-    return isStoredOnboardingCompleted() ? [] : [];
+    if (loaded.length >= 2) return loaded;
+    if (loaded.length === 1) {
+      const second = loaded[0].name === 'Maya' ? DEMO_CHILDREN[0] : DEMO_CHILDREN[1];
+      const two = [loaded[0], second];
+      saveStoredChildren(two);
+      return two;
+    }
+    saveStoredChildren(DEMO_CHILDREN);
+    return DEMO_CHILDREN;
   });
+
+  useEffect(() => {
+    if (childrenList.length < 2) {
+      const second = childrenList[0]?.name === 'Maya' ? DEMO_CHILDREN[0] : DEMO_CHILDREN[1];
+      const two = childrenList.length === 0 ? DEMO_CHILDREN : [childrenList[0], second];
+      setChildrenList(two);
+      saveStoredChildren(two);
+    }
+  }, []);
   const [activeChildId, setActiveChildId] = useState<string>(() => childrenList[0]?.id || 'child_1');
   const [sessionLogs, setSessionLogs] = useState<SessionLog[]>(loadStoredLogs);
   const [simulationSpeed, setSimulationSpeed] = useState<number>(1);
@@ -276,7 +292,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const resetOnboarding = () => {
     setStoredOnboardingCompleted(false);
-    setCurrentScreen('onboarding_assessment');
+    setCurrentScreen('splash');
   };
 
   const verifyPattern = (pattern: number[]): boolean => {

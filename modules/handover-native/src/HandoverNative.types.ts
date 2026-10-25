@@ -34,4 +34,6 @@ export interface HandoverNative {
   getPermissionStatus(): Promise<NativePermissionStatus>;
   openPermissionSettings(permissionType: PermissionSettingType): Promise<void>;
   addStateChangeListener(listener: (state: NativeSessionState) => void): { remove: () => void };
+  setWidgetOptions(options: number[]): Promise<boolean>;
+  getWidgetOptions(): Promise<number[]>;
 }

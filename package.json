@@ -1,7 +1,7 @@
 {
   "name": "babyboo",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "main": "expo-router/entry",
   "scripts": {
@@ -15,27 +15,40 @@
     "web": "expo start --web",
     "build:preview": "eas build --platform android --profile preview",
     "update:preview": "eas update --channel preview",
-    "postinstall": "node scripts/patch-expo-constants.cjs"
+    "postinstall": "node scripts/patch-expo-constants.cjs",
+    "test": "vitest run",
+    "mascot:prepare": "python tools/prepare_mascot.py",
+    "hero:sounds": "node tools/generate_hero_sounds.mjs",
+    "hero:strips": "python tools/render_frame_strip.py"
   },
   "dependencies": {
+    "@shopify/react-native-skia": "2.13.1",
     "@tailwindcss/vite": "^4.3.3",
     "canvas-confetti": "^1.9.4",
     "expo": "~58.0.9",
+    "expo-audio": "~58.0.10",
     "expo-build-properties": "~58.0.10",
+    "expo-clipboard": "~58.0.4",
     "expo-constants": "~58.0.11",
+    "expo-file-system": "~58.0.11",
     "expo-font": "~58.0.8",
+    "expo-haptics": "~58.0.7",
     "expo-linking": "~58.0.12",
     "expo-router": "~58.0.18",
+    "expo-sensors": "~58.0.4",
+    "expo-sharing": "~58.0.20",
     "expo-status-bar": "~58.0.3",
     "expo-updates": "~58.0.17",
     "lucide-react": "^1.35.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.0-rc.4",
+    "react-native-reanimated": "4.7.0",
     "react-native-safe-area-context": "~5.9.1",
     "react-native-screens": "~4.29.0",
     "react-native-svg": "^15.15.5",
     "react-native-web": "^0.21.4",
+    "react-native-worklets": "0.13.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
@@ -47,7 +60,8 @@
     "eas-cli": "^25.0.0",
     "oxlint": "^1.79.0",
     "typescript": "~6.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vitest": "^3.2.4"
   },
   "overrides": {
     "react-native": "0.88.0-rc.4"

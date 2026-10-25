@@ -41,6 +41,7 @@ class ShutdownSimulationView(
     baseContext: Context,
     startInBlackout: Boolean,
     private val onBlackout: () -> Unit = {},
+    private val onSetBrightness: (Float) -> Unit = {},
     private val onUnlocked: () -> Unit
 ) : FrameLayout(android.view.ContextThemeWrapper(baseContext, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen)) {
 
@@ -54,6 +55,9 @@ class ShutdownSimulationView(
     private var swipeCanvas: SwipeCanvasView? = null
     private var hintText: TextView? = null
     private var feedbackText: TextView? = null
+    private var wakeSignalContainer: LinearLayout? = null
+
+    fun isInBlackout(): Boolean = currentStage == Stage.BLACKOUT
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -230,6 +234,83 @@ class ShutdownSimulationView(
         addView(feedbackText)
     }
 
+    /**
+     * Called when the device wakes up or the screen turns on during simulated blackout.
+     * Momentarily raises screen brightness and displays an authentic 1-second 0% battery-low
+     * warning, then smoothly fades back to pitch black and lowest brightness edge (0.004f).
+     *
+     * This eliminates ambiguity for the parent (confirms digitizer is listening for "A")
+     * while completely convincing the toddler that the phone is unchargeably dead.
+     */
+    fun showWakeBatterySignal() {
+        if (currentStage != Stage.BLACKOUT) return
+
+        // 1. Ramp brightness quickly to 0.35f so the 0% battery symbol is clearly visible
+        onSetBrightness(0.35f)
+
+        // Clean up any existing wake container
+        wakeSignalContainer?.let { removeView(it) }
+
+        val container = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+            alpha = 1f
+        }
+
+        val icon = BatteryIconView(context).apply {
+            level = 0.0f
+            layoutParams = LinearLayout.LayoutParams(dpToPx(72), dpToPx(136))
+            startBlink()
+        }
+        container.addView(icon)
+
+        val percentText = TextView(context).apply {
+            text = "0%"
+            setTextColor(Color.parseColor("#EF4444"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 38f)
+            typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = dpToPx(16) }
+        }
+        container.addView(percentText)
+
+        val warningText = TextView(context).apply {
+            text = "Battery critically low"
+            setTextColor(Color.parseColor("#E4E4E7"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = dpToPx(10) }
+        }
+        container.addView(warningText)
+
+        wakeSignalContainer = container
+        addView(container)
+
+        // Distinct, satisfying low-battery haptic vibration
+        vibrateDevice(longArrayOf(0, 75, 50, 100))
+
+        // 2. Display for 1.5 seconds (1500ms), then smoothly fade back to pitch black and lowest brightness
+        handler.postDelayed({
+            container.animate()
+                .alpha(0f)
+                .setDuration(150)
+                .withEndAction {
+                    removeView(container)
+                    if (wakeSignalContainer === container) wakeSignalContainer = null
+                    onSetBrightness(0.004f)
+                }
+                .start()
+        }, 1500)
+    }
+
     private var emergencyTaps = 0
     private var lastTapTime = 0L
 
@@ -274,10 +355,15 @@ class ShutdownSimulationView(
         }
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
+            // Graceful fallback: collapse status bar shade if child swipes near top edge without a11y
+            if (event.y < dpToPx(64) && !BlackoutAccessibilityService.isRunning()) {
+                ShutdownSimulationActivity.collapseStatusBar(context)
+            }
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     handler.removeCallbacks(resetRunnable)
                     current = mutableListOf(PointF(event.x, event.y))
+                    vibrateUltraFaintTick()
                 }
                 MotionEvent.ACTION_MOVE -> {
                     for (i in 0 until event.historySize) {
@@ -722,6 +808,19 @@ class ShutdownSimulationView(
                 @Suppress("DEPRECATION")
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+            }
+        } catch (_: Exception) { }
+    }
+
+    private fun vibrateUltraFaintTick() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+            } else {
+                @Suppress("DEPRECATION")
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                vibrator?.vibrate(8)
             }
         } catch (_: Exception) { }
     }

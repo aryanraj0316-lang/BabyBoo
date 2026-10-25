@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { BuddyMascot } from '../Mascot/BuddyMascot';
+import mascotImg from '../../../assets/mascot.png';
 import { NatureDecorations } from '../../theme/NatureDecorations';
 import {
   Clock,
@@ -15,6 +15,8 @@ import {
   Calendar,
   Play,
   LayoutGrid,
+  Battery,
+  ChevronDown,
 } from 'lucide-react';
 import type { AgeGroup } from '../../types';
 import { MONSTER_PROFILES, SWITCH_OFF_PROFILES } from '../../data/researchCitations';
@@ -63,6 +65,7 @@ export const formatAgeGroupDisplay = (age: string | undefined): string => {
 
 export const ParentDashboardScreen: React.FC = () => {
   const {
+    user,
     activeChild,
     childrenList,
     selectChild,
@@ -70,6 +73,8 @@ export const ParentDashboardScreen: React.FC = () => {
     deleteChild,
     navigateTo,
     startSession,
+    sessionLogs,
+    activeSession,
     quickWidgetMinutes,
     isWidgetAddedToHome,
     setIsWidgetAddedToHome,
@@ -77,6 +82,9 @@ export const ParentDashboardScreen: React.FC = () => {
     isWidgetDefaultPresetActive,
     widgetDefaultPresetMinutes,
   } = useApp();
+
+  const [showChildPickerModal, setShowChildPickerModal] = useState<boolean>(false);
+  const [showWidgetHelpModal, setShowWidgetHelpModal] = useState<boolean>(false);
 
   // Widget Quick-Select Modal State
   const [showWidgetQuickSelectModal, setShowWidgetQuickSelectModal] = useState<boolean>(false);
@@ -150,14 +158,7 @@ export const ParentDashboardScreen: React.FC = () => {
   const [isCustomAutomationTime, setIsCustomAutomationTime] = useState<boolean>(false);
   const [isAutomationSavedFeedback, setIsAutomationSavedFeedback] = useState<boolean>(false);
 
-  // Time-aware greeting
-  const [greeting, setGreeting] = useState<string>('Good evening');
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 17) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
-  }, []);
+
 
   useEffect(() => {
     if (activeChild?.dailyLimitMinutes) {
@@ -179,7 +180,61 @@ export const ParentDashboardScreen: React.FC = () => {
 
   const currentMonster = MONSTER_PROFILES.find((m) => m.id === selectedMonsterId) || MONSTER_PROFILES[0];
   const currentSwitchOff = SWITCH_OFF_PROFILES.find((s) => s.id === selectedSwitchOffId) || SWITCH_OFF_PROFILES[0];
-  const presets = [10, 15, 20, 30, 45];
+  const getLocalDateStr = (d = new Date()) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  const todayStr = getLocalDateStr(new Date());
+  const todayLogs = sessionLogs.filter((l) => l.dateStr === todayStr);
+  const isActiveRunning = activeSession.status === 'running' || activeSession.status === 'warning_80' || activeSession.status === 'time_up_grace';
+  const todayCount = todayLogs.length + (isActiveRunning ? 1 : 0);
+  const completedSeconds = todayLogs.reduce((acc, l) => acc + (l.elapsedSeconds || 0), 0);
+  const activeElapsed = isActiveRunning ? activeSession.elapsedSeconds : 0;
+  const totalMins = Math.round((completedSeconds + activeElapsed) / 60);
+
+  const formatTodayScreenTime = (mins: number) => {
+    if (mins <= 0) return '0 min';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h} hr${h > 1 ? 's' : ''}`;
+    return `${m} min`;
+  };
+
+  const getTimeGreeting = (name?: string) => {
+    const hour = new Date().getHours();
+    let g = 'Good morning';
+    if (hour >= 12 && hour < 17) g = 'Good afternoon';
+    else if (hour >= 17 || hour < 4) g = 'Good evening';
+    return name?.trim() ? `${g}, ${name.trim()}` : g;
+  };
+
+  const formatEventTime = (isoStringOrTimestamp: string | number) => {
+    const date = new Date(isoStringOrTimestamp);
+    const now = new Date();
+    const isToday =
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday =
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear();
+
+    const timeStr = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    if (isToday) return `Today at ${timeStr}`;
+    if (isYesterday) return `Yesterday at ${timeStr}`;
+    return `${date.getMonth() + 1}/${date.getDate()} at ${timeStr}`;
+  };
+
+  const recentLogs = sessionLogs.slice(0, 2);
+  const parentName = typeof window !== 'undefined' ? localStorage.getItem('babyboo_parent_name') || '' : '';
 
   return (
     <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A2436] justify-between relative overflow-hidden font-sans select-none">
@@ -188,256 +243,112 @@ export const ParentDashboardScreen: React.FC = () => {
 
       {/* Main Scrollable View */}
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-24 relative z-10 space-y-4 scrollbar-none">
-
-        {/* ========================================================================= */}
-        {/* 1. HEADER: Greeting and All Children Profiles at Top */}
-        {/* ========================================================================= */}
-        <header className="pt-1">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <span className="text-[11px] font-bold text-[#64748B] tracking-wide uppercase flex items-center gap-1.5">
-                {greeting}, Parent
-                <Sparkles className="w-3 h-3 text-[#F6D878] fill-[#F6D878]" />
-              </span>
-              <h1 className="text-lg sm:text-xl font-extrabold text-[#1A2436] tracking-tight">
-                Child Profiles
-              </h1>
-            </div>
-          </div>
-
-          {/* All Children's Profiles Displayed on Top of Home Page with Dynamic Width */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {childrenList.map((c) => {
-              const isSelected = activeChild.id === c.id;
-              return (
-                <div key={c.id} className="relative shrink-0">
-                  <div
-                    className={`flex items-center gap-2.5 pl-3 ${isSelected ? 'pr-8' : 'pr-4'} py-2 rounded-2xl transition-all relative ${isSelected
-                      ? 'bg-[#EBF4EF] text-[#2D5441] border-2 border-[#5D997C] shadow-xs'
-                      : 'bg-white hover:bg-[#FBF9F4] text-[#475569] border border-[#EAE5DE] shadow-xs'
-                      }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => selectChild(c.id)}
-                      className="flex items-center gap-2.5 text-left focus:outline-none cursor-pointer"
-                    >
-                      <div className={`w-9 h-9 rounded-2xl flex items-center justify-center text-base font-black shadow-xs shrink-0 ${
-                        isSelected
-                          ? 'bg-[#5D997C] text-white'
-                          : 'bg-[#F5F2EB] text-[#475569]'
-                      }`}>
-                        {c.name[0].toUpperCase()}
-                      </div>
-                      <div className="whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-extrabold text-[#1A2436] block tracking-tight">
-                            {c.name}
-                          </span>
-                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[#FFF7ED] border border-[#FED7AA] text-[10px] font-black text-[#C2410C]">
-                            <span className="text-[10px] leading-none">🔥</span>
-                            <span className="leading-none">{c.streakDays || (c as any).streak || 5}</span>
-                          </span>
-                        </div>
-                        <span className={`text-[10px] font-semibold block mt-0.5 ${isSelected ? 'text-[#2D5441]' : 'text-[#64748B]'}`}>
-                          {formatAgeGroupDisplay(c.ageGroup)} • {c.dailyLimitMinutes || 20}m limit
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* Edit button in Top Right Corner */}
-                    {isSelected && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditChildId(c.id);
-                          setEditChildName(c.name);
-                          setEditChildAge(c.ageGroup);
-                          setEditChildAvatar(c.avatar);
-                          setEditChildLimit(c.dailyLimitMinutes || 20);
-                          setShowEditChildModal(true);
-                        }}
-                        className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#5D997C] hover:bg-[#51876D] text-white flex items-center justify-center shadow-xs active:scale-90 transition-all z-10 cursor-pointer"
-                        title={`Edit ${c.name}'s profile`}
-                        aria-label={`Edit ${c.name}'s profile`}
-                      >
-                        <Pencil className="w-2.5 h-2.5 text-white" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        {/* 1. Greeting */}
+        <header className="pt-1 mb-2">
+          <h1 className="text-2xl font-extrabold text-[#1A2436] tracking-tight">
+            {getTimeGreeting(parentName)}
+          </h1>
+          <p className="text-xs font-medium text-[#64748B] mt-0.5">
+            A little peace of mind.
+          </p>
         </header>
 
-        {/* Quick Screen Time Home Screen Widget (Appears on parent's phone home screen when added) */}
-        {isWidgetAddedToHome && (
-          <section className="rounded-[24px] bg-white border border-[#EAE5DE] p-4 shadow-[0_2px_14px_rgba(26,36,54,0.04)] text-[#1A2436]">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wider text-[#5D997C]">
-                <LayoutGrid className="w-3.5 h-3.5 text-[#5D997C]" />
-                <span>Home Screen Widget</span>
+        {/* 2. Selected Child Profile (Below Greeting, 2 Children Side by Side, No Switch Button) */}
+        <div className="mb-3">
+          {childrenList.length === 0 ? (
+            <div className="bg-[#FAF5FF] border border-[#DDD6FE] rounded-2xl p-3 shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold text-[#6D28D9]">No Child Profile Added</p>
+                <p className="text-[11px] text-[#64748B]">Create a profile to personalize screen time</p>
               </div>
               <button
                 type="button"
-                onClick={() => setIsWidgetAddedToHome(false)}
-                className="text-[#94A3B8] hover:text-[#1A2436] text-xs font-bold p-1 rounded-md hover:bg-[#FAF8F5] cursor-pointer"
-                title="Remove widget from home screen"
+                onClick={() => navigateTo('add_child')}
+                className="px-3 py-1.5 bg-[#6D28D9] text-white text-xs font-bold rounded-lg cursor-pointer"
               >
-                ✕
+                + Add Child
               </button>
             </div>
-
-            <div
-              onClick={() => {
-                if (isWidgetDefaultPresetActive) {
-                  startSession({
-                    childId: activeChild.id,
-                    durationMinutes: widgetDefaultPresetMinutes,
-                    gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
-                    shutdownStyle: 'low_battery',
-                  });
-                  navigateTo('active_session');
-                } else {
-                  setShowWidgetQuickSelectModal(true);
-                }
-              }}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
-                isWidgetDefaultPresetActive
-                  ? 'bg-[#FAF8F5] hover:bg-[#F5F2EB] border-[#5D997C]'
-                  : 'bg-[#FAF8F5] hover:bg-[#F5F2EB] border-[#EAE5DE]'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black shadow-xs shrink-0 ${
-                      isWidgetDefaultPresetActive
-                        ? 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
-                        : 'bg-[#5D997C] text-white'
-                    }`}
-                  >
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-sm font-extrabold text-[#1A2436] truncate">
-                        {isWidgetDefaultPresetActive
-                          ? `★ ${formatWidgetDuration(widgetDefaultPresetMinutes)} Preset`
-                          : 'Quick-Select Widget'}
-                      </h4>
-                      <span
-                        className={`text-[8.5px] font-black px-1.5 py-0.2 rounded ${
-                          isWidgetDefaultPresetActive
-                            ? 'bg-[#FDF5E6] text-[#B37400] border border-[#F6C343]'
-                            : 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
-                        }`}
-                      >
-                        {isWidgetDefaultPresetActive ? '1-TAP ACTION' : `${widgetTimerOptions.length} OPTIONS`}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#64748B] truncate mt-0.5">
-                      {isWidgetDefaultPresetActive
-                        ? `1-tap starts immediately • Click "Options" for other choices`
-                        : `Click to choose from ${widgetTimerOptions.map((o) => `${o}m`).join(' • ')}`}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                  {isWidgetDefaultPresetActive ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setShowWidgetQuickSelectModal(true)}
-                        className="py-1.5 px-2.5 rounded-xl bg-white hover:bg-slate-100 border border-[#CBD5E1] text-[10.5px] font-extrabold text-[#475569] shadow-xs cursor-pointer"
-                      >
-                        ⏱️ Options
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          startSession({
-                            childId: activeChild.id,
-                            durationMinutes: widgetDefaultPresetMinutes,
-                            gracePeriodSeconds: activeChild.defaultGraceSeconds || 60,
-                            shutdownStyle: 'low_battery',
-                          });
-                          navigateTo('active_session');
-                        }}
-                        className="py-2 px-3.5 rounded-xl bg-[#5D997C] hover:bg-[#51876D] text-white font-bold text-xs shadow-xs cursor-pointer"
-                      >
-                        Start
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowWidgetQuickSelectModal(true)}
-                      className="py-2 px-3.5 rounded-xl bg-[#5D997C] hover:bg-[#51876D] text-white font-bold text-xs shadow-xs cursor-pointer"
-                    >
-                      ⏱️ Options
-                    </button>
-                  )}
-                </div>
+          ) : childrenList.length === 1 ? (
+            <div className="bg-[#FAF5FF] border border-[#DDD6FE] rounded-2xl p-3 shadow-xs flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-full bg-[#7C6DF8] text-white flex items-center justify-center font-black text-sm shadow-xs shrink-0">
+                {activeChild?.avatar || activeChild?.name?.[0]?.toUpperCase() || 'C'}
               </div>
-
-              {/* Sub-bar showing configured options */}
-              <div className="mt-2.5 pt-2 border-t border-[#EAE5DE] flex items-center justify-between text-[10px]">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[#94A3B8] font-bold">Available:</span>
-                  {widgetTimerOptions.map((opt) => (
-                    <span
-                      key={opt}
-                      className={`px-1.5 py-0.5 rounded text-[9.5px] font-black ${
-                        isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
-                          ? 'bg-[#EBF4EF] text-[#2D5441] border border-[#5D997C]'
-                          : 'bg-white text-[#64748B] border border-[#E2E8F0]'
-                      }`}
-                    >
-                      {opt === widgetDefaultPresetMinutes && isWidgetDefaultPresetActive ? `★ ${opt}m` : `${opt}m`}
-                    </span>
-                  ))}
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-extrabold text-[#1A2436]">{activeChild.name}</span>
+                  <span className="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-[#EDE9FE] text-[#6D28D9]">
+                    Selected Profile
+                  </span>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => navigateTo('schedule_automation')}
-                  className="text-[#5D997C] font-extrabold hover:underline"
-                >
-                  Configure →
-                </button>
+                <p className="text-[11px] text-[#64748B]">
+                  {formatAgeGroupDisplay(activeChild.ageGroup)} • {activeChild.dailyLimitMinutes}m daily target
+                </p>
               </div>
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="grid grid-cols-2 gap-2.5">
+              {childrenList.slice(0, 2).map((c) => {
+                const isSelected = c.id === activeChild?.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      if (isActiveRunning) {
+                        alert('Please finish the active screen-time countdown before switching child profiles.');
+                        return;
+                      }
+                      selectChild(c.id);
+                    }}
+                    className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#FAF5FF] border-[#DDD6FE] shadow-xs ring-1 ring-[#DDD6FE]'
+                        : 'bg-white border-[#EAE5DE] hover:bg-[#FAF8F5]'
+                    }`}
+                  >
+                    <div
+                      className="w-9 h-9 rounded-full text-white flex items-center justify-center font-black text-xs shadow-xs shrink-0"
+                      style={{ backgroundColor: c.name === 'Maya' ? '#F59E0B' : '#7C6DF8' }}
+                    >
+                      {c.avatar || c.name?.[0]?.toUpperCase() || 'C'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-xs font-extrabold truncate ${isSelected ? 'text-[#1A2436]' : 'text-[#475569]'}`}>
+                          {c.name}
+                        </span>
+                        {isSelected && (
+                          <span className="px-1 py-0.2 rounded text-[8.5px] font-bold bg-[#EDE9FE] text-[#6D28D9] shrink-0">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-[#64748B] truncate mt-0.5">
+                        {formatAgeGroupDisplay(c.ageGroup)} • {c.dailyLimitMinutes}m
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* ========================================================================= */}
-        {/* 2. HERO CENTERPIECE: Warm Rounded Card with Interactive Mascot */}
+        {/* 3. HERO CENTERPIECE: Warm Rounded Card with Interactive Mascot */}
         {/* ========================================================================= */}
         <section className="relative rounded-[28px] bg-white border border-[#EAE5DE] p-5 pt-4 text-center shadow-[0_2px_14px_rgba(26,36,54,0.04)] overflow-hidden group">
-          {/* Top Subtle Status Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBF4EF] border border-[#D1E6DA] text-[10.5px] font-bold uppercase tracking-wider text-[#2D5441] mb-2 shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5D997C]" />
-            <span>Target Session Limit</span>
-          </div>
 
           {/* Central Mascot Pedestal (Mascot component kept strictly untouched) */}
           <div className="relative my-2 flex items-center justify-center">
             <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-b from-[#EBF4EF] via-[#FEF9E7] to-[#FAF8F5] border-2 border-[#D1E6DA] shadow-xs flex items-center justify-center">
               <div className="w-full h-full rounded-full bg-[#FAF8F5] flex items-center justify-center overflow-hidden">
-                <div className="transform scale-[1.05] transition-transform duration-500 group-hover:scale-110">
-                  <BuddyMascot
-                    mood="sleepy"
-                    size={142}
-                    disableHover={false}
-                    waveHand={true}
-                    lookAround={true}
-                  />
-                </div>
+                <img
+                  src={mascotImg}
+                  alt="BabyBoo Mascot"
+                  className="w-28 h-auto object-contain select-none pointer-events-none"
+                />
               </div>
             </div>
           </div>
@@ -451,7 +362,7 @@ export const ParentDashboardScreen: React.FC = () => {
             {/* 1. Target Screen Time Limits (Contained inside the box) */}
             <div className="p-1.5 rounded-2xl bg-[#FAF8F5] border border-[#EAE5DE] mb-2.5">
               <div className="flex items-center gap-1.5">
-                {presets.map((mins) => {
+                {[10, 15, 20, 30, 45].map((mins) => {
                   const isCurrent = selectedMinutes === mins;
                   return (
                     <button
@@ -473,7 +384,7 @@ export const ParentDashboardScreen: React.FC = () => {
                   type="button"
                   onClick={() => setShowDurationSheet(true)}
                   className={`flex-1 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                    !presets.includes(selectedMinutes)
+                    ![10, 15, 20, 30, 45].includes(selectedMinutes)
                       ? 'bg-[#5D997C] border-[#5D997C] text-white shadow-xs'
                       : 'bg-white hover:bg-[#F5F2EB] border-[#EAE5DE] text-[#5D997C]'
                   }`}
@@ -541,49 +452,125 @@ export const ParentDashboardScreen: React.FC = () => {
               <ArrowRight className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" />
             </button>
           </div>
-        </section>
-
-
-
-
+        </section>        {/* ========================================================================= */}
+        {/* 4 & 5. SIDE BY SIDE: TODAY'S OVERVIEW & WIDGET STATUS */}
         {/* ========================================================================= */}
-        {/* 5. POSITIVE REINFORCEMENT STREAK CARD */}
-        {/* ========================================================================= */}
-        <section className="p-3.5 rounded-[24px] bg-[#FEF9E7] border border-[#F9ECC0] flex items-center gap-3 text-[#1A2436]">
-          <div className="w-10 h-10 rounded-2xl bg-[#F6D878]/30 border border-[#F6D878]/50 flex items-center justify-center text-xl shrink-0 shadow-xs">
-            🔥
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-extrabold text-[#7A6216]">
-                {activeChild.streakDays || 5}-Day Screen Streak!
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* Today's Overview */}
+          <section className="bg-white rounded-[18px] p-3.5 border border-[#EAE5DE] shadow-xs flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-extrabold text-[#64748B] tracking-wider uppercase block">
+                Today's Screen Time
+              </span>
+              <span className="block text-2xl font-black text-[#1A2436] tracking-tight mt-1">
+                {formatTodayScreenTime(totalMins)}
               </span>
             </div>
-            <p className="text-[11px] text-[#7A6216]/80 mt-0.5">
-              {activeChild.name} transitioned peacefully in his last {activeChild.streakDays || 5} sessions.
-            </p>
-          </div>
-        </section>
 
-        {/* Quick Assessment Re-test Banner */}
-        <div className="p-3.5 rounded-[24px] bg-[#F5F2FF] border border-[#E5DCFC] flex items-center justify-between text-[#1A2436]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-xl bg-[#DDD6FE]/40 text-[#5B3F9B] flex items-center justify-center text-xs font-bold border border-[#DDD6FE]">
-              <Sparkles className="w-3.5 h-3.5" />
+            <div className="mt-2.5 pt-2 border-t border-[#F1ECE6]">
+              <span className="text-xs font-bold text-[#475569] block">
+                {todayCount} {todayCount === 1 ? 'session' : 'sessions'}
+              </span>
+              <span className="text-[9.5px] text-[#94A3B8] block mt-0.5">
+                BabyBoo-managed
+              </span>
             </div>
+          </section>
+
+          {/* Widget Status */}
+          <section className="bg-white rounded-[18px] p-3.5 border border-[#EAE5DE] shadow-xs flex flex-col justify-between">
             <div>
-              <p className="text-xs font-extrabold text-[#1A2436]">Screen Wellbeing Assessment</p>
-              <p className="text-[10px] text-[#64748B]">7-step research-backed pediatric flow</p>
+              <div className="flex items-center gap-1.5 mb-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#5D997C]" />
+                <span className="text-[10px] font-extrabold text-[#2D5A43] uppercase tracking-wider">
+                  Home Widget
+                </span>
+              </div>
+              <span className="block text-[12.5px] font-extrabold text-[#1A2436]">
+                Ready to Use
+              </span>
+              <p className="text-[10.5px] text-[#64748B] leading-tight mt-1">
+                Start timer from phone home screen
+              </p>
             </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigateTo('onboarding_assessment')}
-            className="px-3.5 py-1.5 bg-[#5D997C] hover:bg-[#51876D] text-white text-xs font-bold rounded-full shadow-xs transition-all active:scale-95 cursor-pointer"
-          >
-            Open →
-          </button>
+
+            <div className="mt-2.5 pt-2 border-t border-[#F1ECE6]">
+              <button
+                type="button"
+                onClick={() => setShowWidgetHelpModal(true)}
+                className="text-[11px] font-extrabold text-[#5D997C] hover:underline cursor-pointer"
+              >
+                Widget help →
+              </button>
+            </div>
+          </section>
         </div>
+
+        {/* ========================================================================= */}
+        {/* 7. RECENT ACTIVITY (CLEANER DESIGN) */}
+        {/* ========================================================================= */}
+        <section className="bg-white rounded-[18px] px-3.5 py-3 border border-[#EAE5DE] shadow-xs">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-extrabold text-[#1A2436] tracking-wide uppercase">
+              Recent Activity
+            </span>
+            <button
+              type="button"
+              onClick={() => navigateTo('weekly_stats')}
+              className="text-[11px] font-extrabold text-[#5D997C] hover:underline cursor-pointer"
+            >
+              View all →
+            </button>
+          </div>
+
+          {recentLogs.length === 0 ? (
+            <div className="py-2 text-center">
+              <p className="text-xs font-medium text-[#94A3B8]">
+                No sessions recorded today
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              {recentLogs.map((log) => {
+                const outcomeLabel =
+                  log.outcome === 'voluntary_grace'
+                    ? 'Completed'
+                    : log.outcome === 'required_shutdown'
+                    ? 'Battery rest'
+                    : 'Ended early';
+
+                const dotColor =
+                  log.outcome === 'voluntary_grace'
+                    ? 'bg-[#5D997C]'
+                    : log.outcome === 'required_shutdown'
+                    ? 'bg-[#94A3B8]'
+                    : 'bg-amber-500';
+
+                const durationMinutesVal = Math.max(1, Math.round((log.elapsedSeconds || 0) / 60));
+
+                return (
+                  <div
+                    key={log.id}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                      <span className="text-xs font-extrabold text-[#1A2436]">
+                        {log.childName}
+                      </span>
+                      <span className="text-[11px] text-[#64748B]">
+                        • {durationMinutesVal}m • {outcomeLabel}
+                      </span>
+                    </div>
+                    <span className="text-[10.5px] font-medium text-[#94A3B8]">
+                      {formatEventTime(log.startedAt)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
 
       {/* ========================================================================= */}
@@ -1125,6 +1112,151 @@ export const ParentDashboardScreen: React.FC = () => {
                 ⚙️ Customize Options & Default Preset →
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* CHILD PROFILE PICKER MODAL */}
+      {/* ========================================================================= */}
+      {showChildPickerModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-[#EAE5DE] text-[#1A2436] rounded-3xl p-5 max-w-sm w-full shadow-2xl animate-scale-up space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EAE5DE]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[#FAF5FF] border border-[#DDD6FE] flex items-center justify-center text-[#6D28D9]">
+                  👶
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1A2436]">Switch Child Profile</h3>
+                  <p className="text-[11px] text-[#64748B]">Select who is using the phone today</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowChildPickerModal(false)}
+                className="p-1 rounded-full text-[#94A3B8] hover:text-[#1A2436] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {childrenList.map((c) => {
+                const isSelected = c.id === activeChild.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      selectChild(c.id);
+                      setShowChildPickerModal(false);
+                    }}
+                    className={`w-full p-3 rounded-2xl border flex items-center justify-between transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#FAF5FF] border-[#DDD6FE] shadow-xs'
+                        : 'bg-[#FAF8F5] border-[#EAE5DE] hover:bg-[#F5F2EB]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#6D28D9] flex items-center justify-center text-white text-sm font-bold">
+                        {c.name?.charAt(0).toUpperCase() || 'C'}
+                      </div>
+                      <div className="text-left">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-extrabold text-[#1A2436]">{c.name}</span>
+                          {isSelected && (
+                            <span className="bg-[#DDD6FE] text-[#6D28D9] text-[9.5px] font-bold px-1.5 py-0.5 rounded">
+                              Current
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-[#64748B]">
+                          {c.ageGroup ? `${c.ageGroup.replace('_', '-')} yrs` : 'Preschool'} • {c.dailyLimitMinutes || 20}m target
+                        </span>
+                      </div>
+                    </div>
+                    {isSelected && <Check className="w-4 h-4 text-[#6D28D9]" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-[#EAE5DE] flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowChildPickerModal(false);
+                  navigateTo('add_child');
+                }}
+                className="w-full py-2.5 bg-[#FAF5FF] hover:bg-[#EDE9FE] text-[#6D28D9] text-xs font-bold rounded-xl border border-[#DDD6FE] transition-all cursor-pointer text-center"
+              >
+                + Add Another Child Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* WIDGET HELP MODAL */}
+      {/* ========================================================================= */}
+      {showWidgetHelpModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-[#EAE5DE] text-[#1A2436] rounded-3xl p-5 max-w-sm w-full shadow-2xl animate-scale-up space-y-3.5">
+            <div className="flex items-center justify-between pb-2 border-b border-[#EAE5DE]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[#EBF4EF] border border-[#D1E6DA] flex items-center justify-center text-[#5D997C]">
+                  📱
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1A2436]">BabyBoo Home Widget</h3>
+                  <p className="text-[11px] text-[#64748B]">Quick timer on your phone launcher</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWidgetHelpModal(false)}
+                className="p-1 rounded-full text-[#94A3B8] hover:text-[#1A2436] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              The BabyBoo widget lets parents launch a toddler screen time countdown directly from the Android home screen without opening the application.
+            </p>
+
+            <div className="space-y-2 bg-[#FAF8F5] p-3 rounded-2xl border border-[#EAE5DE]">
+              <span className="text-[10.5px] font-extrabold text-[#1A2436] uppercase tracking-wider block">
+                How to add the widget:
+              </span>
+              {[
+                'Go to your phone’s home screen launcher.',
+                'Long-press any empty space on your home screen.',
+                'Tap Widgets and scroll to find BabyBoo.',
+                'Touch and hold the BabyBoo widget, then drag it to your screen.'
+              ].map((step, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-xs text-[#475569]">
+                  <span className="w-4 h-4 rounded-full bg-[#5D997C] text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                    {idx + 1}
+                  </span>
+                  <span>{step}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-2.5 rounded-xl bg-[#FAF5FF] border border-[#DDD6FE] text-[10.5px] text-[#6D28D9] leading-tight">
+              <strong>Note on Verification:</strong> Android launcher security does not expose whether a widget is placed on the home screen to apps. BabyBoo syncs timer preferences via SharedPreferences.
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowWidgetHelpModal(false)}
+              className="w-full py-2.5 bg-[#5D997C] hover:bg-[#51876D] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+            >
+              Got It
+            </button>
           </div>
         </div>
       )}

@@ -21,8 +21,8 @@ import java.lang.ref.WeakReference
  * SimulationController — manages the fake "battery died" blackout overlay and system controls.
  *
  * Requirements fulfilled:
- * 1. AccessibilityService overlay (TYPE_ACCESSIBILITY_OVERLAY):
- *    When BlackoutAccessibilityService is running, uses TYPE_ACCESSIBILITY_OVERLAY covering system bars.
+ * 1. Lock Screen & Fullscreen Coverage (showWhenLocked + TYPE_APPLICATION_OVERLAY):
+ *    Uses Immersive Sticky Mode & showWhenLocked without requiring AccessibilityService.
  * 2. Silent CallScreeningService:
  *    Silently rejects calls when active.
  * 3. Forced Do Not Disturb:
@@ -57,11 +57,15 @@ object SimulationController {
 
     /** Dim the overlay window to its lowest backlight once blackout begins. */
     fun dimOverlayToLowest() {
+        setOverlayBrightness(0.004f)
+    }
+
+    fun setOverlayBrightness(brightness: Float) {
         val view = overlayView ?: return
         try {
             val wm = activeWindowManager ?: (view.context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager)
             val lp = view.layoutParams as? WindowManager.LayoutParams ?: return
-            lp.screenBrightness = 0.004f
+            lp.screenBrightness = brightness
             wm.updateViewLayout(view, lp)
         } catch (_: Exception) { }
     }
@@ -110,7 +114,15 @@ object SimulationController {
             .commit()
 
         removeOverlay()
-        backdrop?.get()?.let { if (!it.isFinishing) it.finish() }
+        backdrop?.get()?.let { act ->
+            if (!act.isFinishing) {
+                if (act is ShutdownSimulationActivity) {
+                    act.unlockAndDismiss()
+                } else {
+                    act.finish()
+                }
+            }
+        }
         backdrop = null
 
         restoreAudio(app)
@@ -140,10 +152,13 @@ object SimulationController {
         }
     }
 
-    fun launchActivity(context: Context, mode: String) {
+    fun launchActivity(context: Context, mode: String, wakeSignal: Boolean = false) {
         try {
             context.startActivity(Intent(context, ShutdownSimulationActivity::class.java).apply {
                 putExtra(ShutdownSimulationActivity.EXTRA_MODE, mode)
+                if (wakeSignal) {
+                    putExtra(ShutdownSimulationActivity.EXTRA_WAKE_SIGNAL, true)
+                }
                 addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK or
                         Intent.FLAG_ACTIVITY_CLEAR_TOP or
@@ -156,14 +171,23 @@ object SimulationController {
         }
     }
 
+    /** Called when the physical power button turns on the display during an active simulation. */
+    fun onScreenTurnedOn(context: Context) {
+        if (!active) return
+        handler.post {
+            overlayView?.showWakeBatterySignal()
+        }
+        launchActivity(context.applicationContext, ShutdownSimulationActivity.MODE_HOST, wakeSignal = true)
+    }
+
     private fun showOverlay(app: Context, resume: Boolean): Boolean {
         if (overlayView != null) return true
 
-        val usingAccessibilityOverlay = BlackoutAccessibilityService.isRunning()
+        val usingA11y = BlackoutAccessibilityService.isRunning()
         val a11y = BlackoutAccessibilityService.instance
-        val hostContext = if (usingAccessibilityOverlay && a11y != null) a11y else app
+        val hostContext = if (usingA11y && a11y != null) a11y else app
 
-        val overlayType = if (usingAccessibilityOverlay) {
+        val overlayType = if (usingA11y) {
             WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
         } else if (canDrawOverlays(app)) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -180,16 +204,17 @@ object SimulationController {
             val view = ShutdownSimulationView(
                 themedContext,
                 startInBlackout = resume,
-                onBlackout = { dimOverlayToLowest() }
+                onBlackout = { dimOverlayToLowest() },
+                onSetBrightness = { brightness -> setOverlayBrightness(brightness) }
             ) { finish(app) }
 
-            val flags = if (overlayType == WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY) {
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+            val flags = if (overlayType == WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY) {
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
             } else {
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON

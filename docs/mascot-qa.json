@@ -1,0 +1,9 @@
+{
+ "deltaE76_mean_bear": 1.077730247656021,
+ "deltaE76_p95_bear": 3.2058088700276954,
+ "deltaE76_p99_bear": 11.221880894774797,
+ "deltaE76_mean_interior": 0.9026358406114222,
+ "deltaE76_p99_interior": 6.995056597697714,
+ "deltaE76_max_interior": 38.19856000442579,
+ "pixels_over_3_interior_pct": 3.938113535111123
+}

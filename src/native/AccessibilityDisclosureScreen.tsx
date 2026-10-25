@@ -45,7 +45,7 @@ export const AccessibilityDisclosureScreen: React.FC<AccessibilityDisclosureScre
   };
 
   const handleLearnMore = () => {
-    Linking.openURL('https://babyboo.app/privacy');
+    Linking.openURL('https://babyboo.app/accessibility');
   };
 
   const content = (
@@ -63,8 +63,10 @@ export const AccessibilityDisclosureScreen: React.FC<AccessibilityDisclosureScre
 
         {/* Verbatim Required Body Copy */}
         <Text style={styles.body}>
-          BabyBoo watches for app changes so it can show a full-screen blackout and hold the
-          device locked. It does not collect or share personal data.{' '}
+          BabyBoo draws a black layer over the whole screen, above the status bar, so the phone looks completely dead. Without it, a swipe from the top would reveal the clock and battery and break the illusion.{'\n\n'}
+          • What BabyBoo does with it: draws that overlay. That's it.{'\n'}
+          • What it does NOT do: it does not read your screen, and it does not collect or share any data.{'\n\n'}
+          You can turn it off any time in Settings → Accessibility.{' '}
           <Text style={styles.link} onPress={handleLearnMore}>
             [Learn more]
           </Text>
@@ -76,9 +78,9 @@ export const AccessibilityDisclosureScreen: React.FC<AccessibilityDisclosureScre
           onPress={handleEnable}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Enable in Settings"
+          accessibilityLabel="Agree & Continue"
         >
-          <Text style={styles.enableText}>Enable in Settings</Text>
+          <Text style={styles.enableText}>Agree & Continue</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

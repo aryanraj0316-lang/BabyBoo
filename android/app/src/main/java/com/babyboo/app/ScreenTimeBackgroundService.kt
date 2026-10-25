@@ -5,8 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.Handler
@@ -45,6 +47,7 @@ class ScreenTimeBackgroundService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var endTimeMillis: Long = 0L
     private var wakeLock: PowerManager.WakeLock? = null
+    private var screenReceiver: BroadcastReceiver? = null
 
     private val tickRunnable = object : Runnable {
         override fun run() {
@@ -65,6 +68,22 @@ class ScreenTimeBackgroundService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
+        try {
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_ON)
+            }
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    if (intent?.action == Intent.ACTION_SCREEN_ON) {
+                        if (SimulationController.isActive()) {
+                            context?.let { SimulationController.onScreenTurnedOn(it) }
+                        }
+                    }
+                }
+            }
+            screenReceiver = receiver
+            registerReceiver(receiver, filter)
+        } catch (_: Exception) { }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -295,6 +314,10 @@ class ScreenTimeBackgroundService : Service() {
     override fun onDestroy() {
         handler.removeCallbacks(tickRunnable)
         releaseWakeLock()
+        screenReceiver?.let {
+            try { unregisterReceiver(it) } catch (_: Exception) { }
+            screenReceiver = null
+        }
         BabyBooWidgetProvider.updateAllWidgets(this)
         super.onDestroy()
     }

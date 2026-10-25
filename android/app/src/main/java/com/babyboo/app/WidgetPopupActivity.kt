@@ -62,6 +62,29 @@ class WidgetPopupActivity : Activity() {
                 else -> "${h}h ${m}m"
             }
         }
+
+        fun isInstalledFromPlayStore(context: Context): Boolean {
+            return try {
+                val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
+                } else {
+                    @Suppress("DEPRECATION")
+                    context.packageManager.getInstallerPackageName(context.packageName)
+                }
+                installer == "com.android.vending"
+            } catch (_: Exception) {
+                false
+            }
+        }
+
+        fun openAppInfoSettings(context: Context) {
+            try {
+                context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:${context.packageName}")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                })
+            } catch (_: Exception) { }
+        }
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -78,6 +101,7 @@ class WidgetPopupActivity : Activity() {
 
     private var pendingTimerMinutes = 0
     private var awaitingOverlayReturn = false
+    private var awaitingRestrictedUnlockReturn = false
     private var awaitingAccessibilityReturn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +109,7 @@ class WidgetPopupActivity : Activity() {
         if (savedInstanceState != null) {
             pendingTimerMinutes = savedInstanceState.getInt("pending_timer_minutes", 0)
             awaitingOverlayReturn = savedInstanceState.getBoolean("awaiting_overlay_return", false)
+            awaitingRestrictedUnlockReturn = savedInstanceState.getBoolean("awaiting_restricted_unlock_return", false)
             awaitingAccessibilityReturn = savedInstanceState.getBoolean("awaiting_accessibility_return", false)
         }
         window.apply {
@@ -98,6 +123,7 @@ class WidgetPopupActivity : Activity() {
         super.onSaveInstanceState(outState)
         outState.putInt("pending_timer_minutes", pendingTimerMinutes)
         outState.putBoolean("awaiting_overlay_return", awaitingOverlayReturn)
+        outState.putBoolean("awaiting_restricted_unlock_return", awaitingRestrictedUnlockReturn)
         outState.putBoolean("awaiting_accessibility_return", awaitingAccessibilityReturn)
     }
 
@@ -115,6 +141,11 @@ class WidgetPopupActivity : Activity() {
         renderPopupUI()
         handler.removeCallbacks(tickRunnable)
         handler.post(tickRunnable)
+
+        if (awaitingRestrictedUnlockReturn) {
+            awaitingRestrictedUnlockReturn = false
+            prefs().edit().putBoolean("has_unlocked_restricted_settings", true).apply()
+        }
 
         // If user was in the middle of granting permissions for a selected timer:
         if (pendingTimerMinutes > 0 && remainingSeconds() <= 0) {
@@ -341,7 +372,7 @@ class WidgetPopupActivity : Activity() {
         }
 
     private fun buildIdleSection(card: LinearLayout) {
-        val needsSetup = !SimulationController.canDrawOverlays(this) || !BlackoutAccessibilityService.isEnabled(this)
+        val needsSetup = !SimulationController.canDrawOverlays(this)
         if (needsSetup) {
             card.addView(TextView(this).apply {
                 text = "⚡ Tap any time below to begin 1-time setup"
@@ -474,29 +505,38 @@ class WidgetPopupActivity : Activity() {
     private fun checkAndProceedPermissionFlow(minutes: Int) {
         if (isFinishing || isDestroyed) return
 
-        // 1. Overlay Permission: Required to display the shutdown screen over YouTube/games
+        val isSideloaded = !isInstalledFromPlayStore(this)
+        val hasUnlockedRestricted = prefs().getBoolean("has_unlocked_restricted_settings", false)
+        val needsRestrictedUnlock = isSideloaded &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                !hasUnlockedRestricted &&
+                (!SimulationController.canDrawOverlays(this) || !BlackoutAccessibilityService.isEnabled(this))
+
+        // Step 1: For direct website APK downloads on Android 13+, unlock restricted settings first in App Info
+        if (needsRestrictedUnlock) {
+            AlertDialog.Builder(this)
+                .setTitle("🛡️ Step 1: Unlock Setup")
+                .setMessage("Because BabyBoo was downloaded directly from our website, Android requires a quick 5-second unlock before permissions can be turned on:\n\n1. Tap \"Open App Info\" below\n2. Tap the ⋮ (three dots) in the top-right corner\n3. Tap \"Allow restricted settings\" and enter your PIN\n\nWhen you press Back, BabyBoo will automatically guide you to the next step!")
+                .setCancelable(false)
+                .setPositiveButton("Open App Info") { _, _ ->
+                    awaitingRestrictedUnlockReturn = true
+                    openAppInfoSettings(this)
+                }
+                .setNegativeButton("Cancel") { _, _ ->
+                    pendingTimerMinutes = 0
+                }
+                .show()
+            return
+        }
+
+        // Step 2: Overlay Permission (Required to lock screen over YouTube/games)
         if (!SimulationController.canDrawOverlays(this)) {
             if (awaitingOverlayReturn) {
-                // User came back from settings without enabling it
                 awaitingOverlayReturn = false
-                AlertDialog.Builder(this)
-                    .setTitle("Permission Needed")
-                    .setMessage("Overlay permission was not turned on. BabyBoo cannot take over the screen when time runs out without this switch enabled.")
-                    .setCancelable(false)
-                    .setPositiveButton("Try Again") { _, _ ->
-                        awaitingOverlayReturn = true
-                        openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        pendingTimerMinutes = 0
-                    }
-                    .show()
-                return
             }
-
             AlertDialog.Builder(this)
-                .setTitle("Step 1 of 2: Allow Display Over Apps")
-                .setMessage("To allow BabyBoo to lock the screen over YouTube and other apps when time is up, switch ON \"Allow display over other apps\" on the next screen.\n\nThen press Back to continue.")
+                .setTitle("Allow Display Over Apps")
+                .setMessage("To allow BabyBoo to display the blackout screen over apps when time is up, switch ON \"Allow display over other apps\" on the next screen.\n\nThen press Back to return.")
                 .setCancelable(false)
                 .setPositiveButton("Turn ON") { _, _ ->
                     awaitingOverlayReturn = true
@@ -510,55 +550,35 @@ class WidgetPopupActivity : Activity() {
         }
         awaitingOverlayReturn = false
 
-        // 2. Accessibility Permission: Prevents kids from pulling down status bar or pressing Home
+        // Step 3: Accessibility Permission (Option A: Blackout & lock screen)
         if (!BlackoutAccessibilityService.isEnabled(this)) {
             if (awaitingAccessibilityReturn) {
-                // User came back from accessibility settings without enabling it
                 awaitingAccessibilityReturn = false
+            } else {
                 AlertDialog.Builder(this)
-                    .setTitle("Accessibility Not Enabled")
-                    .setMessage("BabyBoo will still take over the screen with low battery! Do you want to start the timer now without status bar protection?")
+                    .setTitle("BabyBoo uses Android's Accessibility Service")
+                    .setMessage("BabyBoo draws a black layer over the whole screen, above the status bar, so the phone looks completely dead. Without it, a swipe from the top would reveal the clock and battery.\n\n• Draws that overlay. That's it.\n• Does not read your screen, and does not collect or share data.\n\nYou can turn it off any time in Settings → Accessibility.")
                     .setCancelable(false)
-                    .setPositiveButton("Start Timer Now") { _, _ ->
+                    .setPositiveButton("Agree & Continue") { _, _ ->
+                        awaitingAccessibilityReturn = true
+                        try {
+                            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        } catch (_: Exception) {
+                            openSettings(Settings.ACTION_SETTINGS, null)
+                        }
+                    }
+                    .setNegativeButton("Not now") { _, _ ->
+                        awaitingAccessibilityReturn = false
                         requestNotificationPermissionIfNeeded()
                         startTimerDirectly(minutes)
-                    }
-                    .setNeutralButton("Try Again") { _, _ ->
-                        awaitingAccessibilityReturn = true
-                        openSettings(Settings.ACTION_ACCESSIBILITY_SETTINGS, null)
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        pendingTimerMinutes = 0
                     }
                     .show()
                 return
             }
-
-            AlertDialog.Builder(this)
-                .setTitle("BabyBoo uses Android's Accessibility Service")
-                .setMessage("BabyBoo watches for app changes so it can show a full-screen blackout and hold the device locked. It does not collect or share personal data.")
-                .setCancelable(false)
-                .setPositiveButton("Enable in Settings") { _, _ ->
-                    awaitingAccessibilityReturn = true
-                    openSettings(Settings.ACTION_ACCESSIBILITY_SETTINGS, null)
-                }
-                .setNeutralButton("Learn more") { _, _ ->
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://babyboo.app/privacy")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                    } catch (_: Exception) {}
-                    // Keep dialog flow alive
-                    checkAndProceedPermissionFlow(minutes)
-                }
-                .setNegativeButton("Not now") { _, _ ->
-                    requestNotificationPermissionIfNeeded()
-                    startTimerDirectly(minutes)
-                }
-                .show()
-            return
         }
         awaitingAccessibilityReturn = false
 
-        // 3. Notification permission check
+        // Notification permission check
         requestNotificationPermissionIfNeeded()
 
         // All ready! Start the countdown directly!

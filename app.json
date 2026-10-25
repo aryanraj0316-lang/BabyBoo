@@ -2,7 +2,7 @@
   "expo": {
     "name": "BabyBoo",
     "slug": "babyboo",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "sdkVersion": "58.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,8 @@
     "updates": {
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 5000
+      "fallbackToCacheTimeout": 5000,
+      "url": "https://u.expo.dev/52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
     },
     "ios": {
       "supportsTablet": true,
@@ -36,7 +37,7 @@
     },
     "android": {
       "package": "com.babyboo.app",
-      "versionCode": 1,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FAF8F5"
@@ -72,7 +73,9 @@
             "targetSdkVersion": 36
           }
         }
-      ]
+      ],
+      "expo-audio",
+      "expo-sharing"
     ],
     "extra": {
       "router": {
@@ -81,9 +84,9 @@
         }
       },
       "eas": {
-        "projectId": "83ea71f2-9b91-44b8-a0de-2260bf28cf4b"
+        "projectId": "52c724cf-4bba-46e2-9d48-1f8bd7a3fcaa"
       }
     },
-    "owner": "aryanraj0316"
+    "owner": "harsh_16"
   }
 }

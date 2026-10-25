@@ -28,19 +28,20 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({ children }) => {
   const [deviceFrame, setDeviceFrame] = useState<'iphone' | 'pixel' | 'fullscreen'>('iphone');
 
   const screens: { id: ScreenName; label: string }[] = [
-    { id: 'parent_dashboard', label: '1. Parent Dashboard' },
-    { id: 'session_setup', label: '2. Session Setup' },
-    { id: 'active_session', label: '3. Active Child Session' },
-    { id: 'time_up_warning', label: '4. Time Up & Grace' },
-    { id: 'shutdown_illusion', label: '5. Shutdown Illusion' },
-    { id: 'post_session_summary', label: '6. Post Session Debrief' },
-    { id: 'weekly_stats', label: '7. Weekly Analytics' },
-    { id: 'schedule_automation', label: '8. Schedule Automation' },
-    { id: 'add_child', label: '9. Add Child Profile' },
-    { id: 'settings', label: '10. Settings' },
-    { id: 'auth', label: '11. Auth Screen' },
-    { id: 'set_pattern', label: '12. Set Pattern Lock' },
-    { id: 'splash', label: '13. Onboarding Assessment' },
+    { id: 'splash', label: '1. Onboarding First Screen (Demo & Mascot)' },
+    { id: 'onboarding_assessment', label: '2. Onboarding Assessment' },
+    { id: 'parent_dashboard', label: '3. Parent Dashboard' },
+    { id: 'session_setup', label: '4. Session Setup' },
+    { id: 'active_session', label: '5. Active Child Session' },
+    { id: 'time_up_warning', label: '6. Time Up & Grace' },
+    { id: 'shutdown_illusion', label: '7. Shutdown Illusion' },
+    { id: 'post_session_summary', label: '8. Post Session Debrief' },
+    { id: 'weekly_stats', label: '9. Weekly Analytics' },
+    { id: 'schedule_automation', label: '10. Schedule Automation' },
+    { id: 'add_child', label: '11. Add Child Profile' },
+    { id: 'settings', label: '12. Settings' },
+    { id: 'auth', label: '13. Auth Screen' },
+    { id: 'set_pattern', label: '14. Set Pattern Lock' },
   ];
 
   return (

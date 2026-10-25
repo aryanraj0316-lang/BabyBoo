@@ -4,6 +4,6 @@
     android:summary="@string/blackout_a11y_summary"
     android:isAccessibilityTool="false"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"
+    android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="false"
     android:notificationTimeout="100" />

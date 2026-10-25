@@ -14,6 +14,7 @@ import {
   Switch,
   Linking,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,6 +32,13 @@ import Svg, {
 import { BuddyMascotNative } from '../src/native/BuddyMascotNative';
 import { PatternLockNative } from '../src/native/PatternLockNative';
 import { OnboardingAssessmentNative, OnboardingChildData } from '../src/native/OnboardingAssessmentNative';
+import { OnboardingFirstScreenNative } from '../src/native/OnboardingFirstScreenNative';
+import { OnboardingSecondScreenNative, type OnboardingSecondChildData } from '../src/native/OnboardingSecondScreenNative';
+import { OnboardingThirdScreenNative, type OnboardingScreen3Data } from '../src/native/OnboardingThirdScreenNative';
+import { OnboardingFourthScreenNative, type OnboardingScreen4Data } from '../src/native/OnboardingFourthScreenNative';
+import { OnboardingFifthScreenNative, type OnboardingScreen5Data } from '../src/native/OnboardingFifthScreenNative';
+import { OnboardingSixthScreenNative, type OnboardingScreen6Data } from '../src/native/OnboardingSixthScreenNative';
+import { OnboardingSeventhScreenNative } from '../src/native/OnboardingSeventhScreenNative';
 import { ParentAnalyticsNative } from '../src/native/ParentAnalyticsNative';
 import { AnalyticsFeaturesHubNative } from '../src/native/AnalyticsFeaturesHubNative';
 import { ParentControlsSecurityNative } from '../src/native/ParentControlsSecurityNative';
@@ -43,6 +51,12 @@ const { width } = Dimensions.get('window');
 
 type ScreenType =
   | 'splash'
+  | 'onboarding_second'
+  | 'onboarding_third'
+  | 'onboarding_fourth'
+  | 'onboarding_fifth'
+  | 'onboarding_sixth'
+  | 'onboarding_seventh'
   | 'onboarding_assessment'
   | 'auth'
   | 'add_child'
@@ -81,6 +95,97 @@ const WIDGET_DEFAULT_PRESET_ENABLED_KEY = 'babyboo_widget_default_preset_enabled
 const WIDGET_DEFAULT_PRESET_MINUTES_KEY = 'babyboo_widget_default_preset_minutes';
 const WIDGET_INCLUDE_CUSTOM_KEY = 'babyboo_widget_include_custom';
 const WIDGET_INCLUDE_LOCK_KEY = 'babyboo_widget_include_lock';
+const SESSION_LOGS_KEY = 'babyboo_session_logs';
+const PARENT_NAME_KEY = 'babyboo_parent_name';
+
+export interface SessionRecord {
+  id: string;
+  childId: string;
+  childName: string;
+  startedAt: number;
+  endedAt: number;
+  durationMinutes: number;
+  graceSeconds: number;
+  shutdownStyle: ShutdownStyle;
+  outcome: 'voluntary_grace' | 'required_shutdown' | 'ended_early';
+  elapsedSeconds: number;
+  dateStr: string;
+}
+
+const getLocalDateString = (d = new Date()): string => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const formatEventTime = (timestampMs: number): string => {
+  const date = new Date(timestampMs);
+  const now = new Date();
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const isYesterday =
+    date.getDate() === yesterday.getDate() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getFullYear() === yesterday.getFullYear();
+
+  const timeStr = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  if (isToday) return `Today at ${timeStr}`;
+  if (isYesterday) return `Yesterday at ${timeStr}`;
+  return `${date.getMonth() + 1}/${date.getDate()} at ${timeStr}`;
+};
+
+const getTimeGreeting = (parentName?: string | null): string => {
+  const hour = new Date().getHours();
+  let greeting = 'Good morning';
+  if (hour >= 12 && hour < 17) {
+    greeting = 'Good afternoon';
+  } else if (hour >= 17 || hour < 4) {
+    greeting = 'Good evening';
+  }
+  return parentName && parentName.trim().length > 0 ? `${greeting}, ${parentName.trim()}` : greeting;
+};
+
+const createSeedLogs = (): SessionRecord[] => {
+  const now = Date.now();
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  const yesterdayDate = new Date(now - oneDayMs);
+  const twoDaysAgoDate = new Date(now - 2 * oneDayMs);
+
+  return [
+    {
+      id: 'session_demo_1',
+      childId: 'child_1',
+      childName: 'Leo',
+      startedAt: now - oneDayMs - 20 * 60 * 1000,
+      endedAt: now - oneDayMs,
+      durationMinutes: 20,
+      graceSeconds: 60,
+      shutdownStyle: 'low_battery',
+      outcome: 'voluntary_grace',
+      elapsedSeconds: 20 * 60,
+      dateStr: getLocalDateString(yesterdayDate),
+    },
+    {
+      id: 'session_demo_2',
+      childId: 'child_1',
+      childName: 'Leo',
+      startedAt: now - 2 * oneDayMs - 15 * 60 * 1000,
+      endedAt: now - 2 * oneDayMs,
+      durationMinutes: 15,
+      graceSeconds: 60,
+      shutdownStyle: 'low_battery',
+      outcome: 'required_shutdown',
+      elapsedSeconds: 15 * 60,
+      dateStr: getLocalDateString(twoDaysAgoDate),
+    },
+  ];
+};
 
 const memoryStorage: Record<string, string> = {};
 
@@ -152,8 +257,22 @@ export default function App() {
   // Precise bottom padding: exactly clears the floating dock (64px + 2px protrusion) with a clean 8px gap
   const contentBottomPadding = bottomNavOffset + 74;
 
-  // Default to parent_dashboard so Expo Go immediately opens the complete dashboard
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('parent_dashboard');
+  // Default to splash so the Onboarding First Screen opens immediately
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('splash');
+  const [onboardingChildInfo, setOnboardingChildInfo] = useState<{
+    name: string;
+    ageCategory: string;
+    dailyMinutes?: number;
+    timeChipId?: string;
+    handoverType?: string;
+    dailyFrequency?: number;
+    frequencyChipId?: string;
+    hasWorryingContent?: boolean;
+  }>({
+    name: 'Leo',
+    ageCategory: '2_4',
+    dailyMinutes: 20,
+  });
   const [splashSlide, setSplashSlide] = useState(0);
   const [nativeStatus, setNativeStatus] = useState<string>('Connecting to native engine...');
 
@@ -169,11 +288,28 @@ export default function App() {
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= 2) return parsed;
+        if (Array.isArray(parsed) && parsed.length === 1) {
+          const second = parsed[0].name === 'Maya' ? DEMO_CHILDREN[0] : DEMO_CHILDREN[1];
+          const two = [parsed[0], second];
+          setStoredItem(CHILDREN_STORAGE_KEY, JSON.stringify(two));
+          return two;
+        }
       } catch { }
     }
+    setStoredItem(CHILDREN_STORAGE_KEY, JSON.stringify(DEMO_CHILDREN));
     return DEMO_CHILDREN;
   });
+
+  useEffect(() => {
+    if (children.length < 2) {
+      const second = children[0]?.name === 'Maya' ? DEMO_CHILDREN[0] : DEMO_CHILDREN[1];
+      const two = children.length === 0 ? DEMO_CHILDREN : [children[0], second];
+      setChildren(two);
+      setStoredItem(CHILDREN_STORAGE_KEY, JSON.stringify(two));
+    }
+  }, []);
+
   const [activeChildId, setActiveChildId] = useState(() => {
     const savedId = getStoredItem(ACTIVE_CHILD_ID_KEY);
     return savedId || DEMO_CHILDREN[0].id;
@@ -323,6 +459,24 @@ export default function App() {
   const [showEndingModal, setShowEndingModal] = useState(false);
   const [previewItem, setPreviewItem] = useState<{ type: 'monster' | 'switchoff'; id: string } | null>(null);
   const [showChildPicker, setShowChildPicker] = useState(false);
+  const [showChildPickerModal, setShowChildPickerModal] = useState(false);
+  const [showWidgetHelpModal, setShowWidgetHelpModal] = useState(false);
+  const currentSessionStartTimeRef = useRef<number | null>(null);
+
+  const [sessionLogs, setSessionLogs] = useState<SessionRecord[]>(() => {
+    const raw = getStoredItem(SESSION_LOGS_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return createSeedLogs();
+  });
+
+  const [parentName] = useState<string | null>(() => {
+    return getStoredItem(PARENT_NAME_KEY);
+  });
 
   // Active Session State
   const [remainingSeconds, setRemainingSeconds] = useState(20 * 60);
@@ -670,7 +824,7 @@ export default function App() {
           style: 'destructive',
           onPress: () => {
             setStoredItem(ONBOARDING_COMPLETED_KEY, 'false');
-            setCurrentScreen('onboarding_assessment');
+            setCurrentScreen('splash');
           },
         },
       ]
@@ -763,6 +917,33 @@ export default function App() {
     }
   };
 
+  const recordSessionCompletion = (
+    outcome: 'voluntary_grace' | 'required_shutdown' | 'ended_early',
+    elapsedSec: number
+  ) => {
+    const now = Date.now();
+    const startTime = currentSessionStartTimeRef.current || (now - elapsedSec * 1000);
+    const newRecord: SessionRecord = {
+      id: `session_${now}`,
+      childId: activeChild.id,
+      childName: activeChild.name,
+      startedAt: startTime,
+      endedAt: now,
+      durationMinutes: Math.round(totalSeconds / 60),
+      graceSeconds,
+      shutdownStyle: selectedStyle,
+      outcome,
+      elapsedSeconds: Math.max(1, elapsedSec),
+      dateStr: getLocalDateString(new Date(startTime)),
+    };
+    setSessionLogs((prev) => {
+      const updated = [newRecord, ...prev];
+      setStoredItem(SESSION_LOGS_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    currentSessionStartTimeRef.current = null;
+  };
+
   const startNewSession = (customDuration?: number) => {
     const dur = customDuration || durationMinutes;
     const total = dur * 60;
@@ -770,6 +951,7 @@ export default function App() {
     setRemainingSeconds(total);
     setGraceRemaining(graceSeconds);
     setIs80CueTriggered(false);
+    currentSessionStartTimeRef.current = Date.now();
     setCurrentScreen('active_session');
   };
 
@@ -783,6 +965,8 @@ export default function App() {
   }, [localParams.widgetTrigger, localParams.minutes]);
 
   const handleChildPutPhoneDown = () => {
+    const elapsed = Math.max(1, totalSeconds - remainingSeconds);
+    recordSessionCompletion('voluntary_grace', elapsed);
     setSessionOutcome('voluntary_grace');
     setChildren((prev) =>
       prev.map((c) =>
@@ -800,6 +984,8 @@ export default function App() {
   };
 
   const finishSession = (outcome: 'voluntary_grace' | 'required_shutdown' | 'ended_early') => {
+    const elapsed = Math.max(1, totalSeconds - remainingSeconds);
+    recordSessionCompletion(outcome, elapsed);
     setSessionOutcome(outcome);
     setChildren((prev) =>
       prev.map((c) =>
@@ -816,355 +1002,207 @@ export default function App() {
 
   // Screen: Parent Dashboard (Visually Stunning Cosmic Dial & Centerpiece)
   const renderParentDashboard = () => {
-    const currentMonster = MONSTER_PROFILES.find((m) => m.id === selectedMonsterId) || MONSTER_PROFILES[0];
-    const currentSwitchOff = SWITCH_OFF_PROFILES.find((s) => s.id === selectedSwitchOffId) || SWITCH_OFF_PROFILES[0];
+    // 4. Today's Overview Aggregation & Calculation
+    const todayStr = getLocalDateString(new Date());
+    const todayCompletedLogs = sessionLogs.filter((log) => log.dateStr === todayStr);
+    const isActiveSessionRunning = currentScreen === 'active_session';
+    const todaySessionCount = todayCompletedLogs.length + (isActiveSessionRunning ? 1 : 0);
 
-    const hour = new Date().getHours();
-    const greetingText = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const completedManagedSeconds = todayCompletedLogs.reduce((acc, log) => acc + (log.elapsedSeconds || 0), 0);
+    const activeElapsedSeconds = isActiveSessionRunning ? Math.max(0, totalSeconds - remainingSeconds) : 0;
+    const totalTodayManagedSeconds = completedManagedSeconds + activeElapsedSeconds;
+    const totalTodayManagedMinutes = Math.round(totalTodayManagedSeconds / 60);
+
+    const formatTodayScreenTime = (mins: number): string => {
+      if (mins <= 0) return '0 min';
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      if (h > 0 && m > 0) return `${h}h ${m}m`;
+      if (h > 0) return `${h} hr${h > 1 ? 's' : ''}`;
+      return `${m} min`;
+    };
+
+    const formattedTodayScreenTime = formatTodayScreenTime(totalTodayManagedMinutes);
+    const recentLogs = sessionLogs.slice(0, 2);
 
     return (
       <View style={{ flex: 1, backgroundColor: '#FAF8F5' }}>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: contentBottomPadding }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: contentBottomPadding }}
           showsVerticalScrollIndicator={false}
         >
-          {/* 1. Header: Greeting */}
-          <View style={styles.topHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 11, fontWeight: '700', color: '#718096', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                {greetingText}, Parent
+          {/* 1. Greeting & Quick Onboarding Link */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, paddingTop: 2 }}>
+            <View>
+              <Text style={{ fontSize: 22, fontWeight: '900', color: '#1A2436', letterSpacing: -0.4 }}>
+                {getTimeGreeting(parentName)}
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436', marginTop: 1 }}>
-                Child Profiles
+              <Text style={{ fontSize: 13, fontWeight: '500', color: '#64748B', marginTop: 2 }}>
+                A little peace of mind.
               </Text>
             </View>
-          </View>
-
-          {/* Native Engine Connection Status Pill */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#EBF4EF', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12, marginBottom: 10, alignSelf: 'flex-start', borderWidth: 1, borderColor: '#5D997C' }}>
-            <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981' }} />
-            <Text style={{ fontSize: 11, fontWeight: '700', color: '#2D5A43' }}>
-              {nativeStatus}
-            </Text>
-          </View>
-
-          {/* All Children's Profiles Displayed on Top of the Home Page */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 10, paddingVertical: 4, marginBottom: 12 }}
-          >
-            {children.map((c) => {
-              const isSelected = activeChild.id === c.id;
-              return (
-                <TouchableOpacity
-                  key={c.id}
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    setActiveChildId(c.id);
-                    setDurationMinutes(c.dailyMinutes);
-                  }}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 10,
-                    backgroundColor: isSelected ? '#EBF4EF' : '#FFFFFF',
-                    paddingLeft: 12,
-                    paddingRight: 38,
-                    paddingVertical: 9,
-                    borderRadius: 20,
-                    borderWidth: 1.5,
-                    borderColor: isSelected ? '#5D997C' : '#EAE5DE',
-                    alignSelf: 'flex-start',
-                    position: 'relative',
-                    minWidth: 152,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 2,
-                    elevation: 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 13,
-                      backgroundColor: c.avatarColor || '#5D997C',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text style={{ color: '#FFFFFF', fontSize: 17, fontWeight: '900' }}>
-                      {c.avatarInitial}
-                    </Text>
-                  </View>
-
-                  <View style={{ justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: '800', color: '#1A2436', letterSpacing: -0.3 }}>
-                      {c.name}
-                    </Text>
-                    <Text style={{ fontSize: 11, fontWeight: '600', color: isSelected ? '#2D5A43' : '#718096', marginTop: 1 }}>
-                      {c.age} yrs • {c.dailyMinutes}m
-                    </Text>
-                  </View>
-
-                  {/* Edit button directly inside the reserved box size (Zero box extension/jump) */}
-                  {isSelected && (
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={(e) => {
-                        e.stopPropagation?.();
-                        setEditChildId(c.id);
-                        setEditChildName(c.name);
-                        setEditChildAge(c.age);
-                        setEditChildColor(c.avatarColor);
-                        setShowEditChildModal(true);
-                      }}
-                      style={{
-                        position: 'absolute',
-                        right: 8,
-                        top: '50%',
-                        marginTop: -11,
-                        width: 22,
-                        height: 22,
-                        borderRadius: 11,
-                        backgroundColor: '#5D997C',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: '#5D997C',
-                      }}
-                      accessibilityLabel={`Edit ${c.name}'s profile`}
-                    >
-                      <Svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth={2.5}>
-                        <Path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <Path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </Svg>
-                    </TouchableOpacity>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-
-          {/* Quick Screen Time Widget on Parent's Phone Home Screen (Appears if parent added it) */}
-          {isWidgetAddedToHome && (
-            <View
+            <TouchableOpacity
+              onPress={() => setCurrentScreen('splash')}
+              activeOpacity={0.8}
               style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: 22,
-                padding: 14,
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#EBF4EF',
                 borderWidth: 1,
-                borderColor: '#EAE5DE',
-                marginBottom: 14,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.05,
-                shadowRadius: 3,
-                elevation: 1,
+                borderColor: '#5D997C',
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 14,
+                gap: 4,
               }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.5}>
-                    <Rect x="3" y="3" width="7" height="7" rx="1.5" />
-                    <Rect x="14" y="3" width="7" height="7" rx="1.5" />
-                    <Rect x="14" y="14" width="7" height="7" rx="1.5" />
-                    <Rect x="3" y="14" width="7" height="7" rx="1.5" />
-                  </Svg>
-                  <Text style={{ fontSize: 10.5, fontWeight: '800', color: '#5D997C', letterSpacing: 0.3, textTransform: 'uppercase' }}>
-                    Home Screen Widget
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => setIsWidgetAddedToHome(false)}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  accessibilityLabel="Remove widget from home screen"
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '800', color: '#718096' }}>✕</Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={{ fontSize: 11, fontWeight: '900', color: '#2D5A43' }}>✨ Onboarding</Text>
+            </TouchableOpacity>
+          </View>
 
-              {/* Tapping widget on phone home screen executes default preset directly or opens quick-select modal */}
-              <TouchableOpacity
-                activeOpacity={0.88}
-                onPress={() => handleWidgetClick(false)}
-                onLongPress={() => setShowWidgetQuickSelectModal(true)}
-                delayLongPress={500}
+          {/* 2. Selected Child Profile (Below Greeting, 2 Children Side by Side, No Switch Button) */}
+          <View style={{ marginBottom: 12 }}>
+            {children.length === 0 ? (
+              <View
                 style={{
-                  backgroundColor: '#FAF8F5',
+                  backgroundColor: '#FAF5FF',
                   borderRadius: 18,
                   padding: 12,
                   borderWidth: 1.5,
-                  borderColor: isWidgetDefaultPresetActive ? '#5D997C' : '#EAE5DE',
+                  borderColor: '#DDD6FE',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-                    <View
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 14,
-                        backgroundColor: isWidgetDefaultPresetActive ? '#EBF4EF' : '#FFFFFF',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: '#5D997C',
-                      }}
-                    >
-                      <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
-                        <Circle cx="12" cy="12" r="10" />
-                        <Polyline points="12 6 12 12 16 14" />
-                      </Svg>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                        <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>
-                          {isWidgetDefaultPresetActive
-                            ? `★ ${formatWidgetDuration(widgetDefaultPresetMinutes)} Preset`
-                            : 'Quick-Select Widget'}
-                        </Text>
-                        <View
-                          style={{
-                            backgroundColor: isWidgetDefaultPresetActive ? '#FDF5E6' : '#EBF4EF',
-                            paddingHorizontal: 6,
-                            paddingVertical: 2,
-                            borderRadius: 6,
-                            borderWidth: 0.8,
-                            borderColor: isWidgetDefaultPresetActive ? '#F6C343' : '#5D997C',
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 9,
-                              fontWeight: '900',
-                              color: isWidgetDefaultPresetActive ? '#B37400' : '#2D5A43',
-                            }}
-                          >
-                            {isWidgetDefaultPresetActive ? '1-TAP ACTION' : `${widgetTimerOptions.length} OPTIONS`}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text style={{ fontSize: 10.5, color: '#718096', marginTop: 2 }}>
-                        {isWidgetDefaultPresetActive
-                          ? `1-tap starts ${formatWidgetDuration(widgetDefaultPresetMinutes)} • Hold for options`
-                          : `Tapping opens ${widgetTimerOptions.map((o) => `${o}m`).join(' • ')} choices`}
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: '#6D28D9' }}>No Child Profile Added</Text>
+                  <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>Create a profile to personalize screen time</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setCurrentScreen('add_child')}
+                  style={{ backgroundColor: '#6D28D9', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 }}
+                >
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#FFFFFF' }}>+ Add Child</Text>
+                </TouchableOpacity>
+              </View>
+            ) : children.length === 1 ? (
+              <View
+                style={{
+                  backgroundColor: '#FAF5FF',
+                  borderRadius: 18,
+                  padding: 12,
+                  borderWidth: 1.5,
+                  borderColor: '#DDD6FE',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 19,
+                    backgroundColor: children[0].avatarColor || '#7C6DF8',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900' }}>
+                    {children[0].avatarInitial || children[0].name?.charAt(0).toUpperCase() || 'C'}
+                  </Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '900', color: '#1A2436' }}>
+                      {children[0].name}
+                    </Text>
+                    <View style={{ backgroundColor: '#EDE9FE', paddingHorizontal: 6, paddingVertical: 1.5, borderRadius: 6 }}>
+                      <Text style={{ fontSize: 9.5, fontWeight: '800', color: '#6D28D9' }}>
+                        Selected Profile
                       </Text>
                     </View>
                   </View>
-
-                  {/* Actions: Primary action & Secondary Options Button */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    {isWidgetDefaultPresetActive ? (
-                      <>
-                        <TouchableOpacity
-                          activeOpacity={0.8}
-                          onPress={() => setShowWidgetQuickSelectModal(true)}
-                          style={{
-                            backgroundColor: '#FFFFFF',
-                            paddingHorizontal: 8,
-                            paddingVertical: 7,
-                            borderRadius: 11,
-                            borderWidth: 1,
-                            borderColor: '#CBD5E1',
-                          }}
-                          accessibilityLabel="Show all quick options"
-                        >
-                          <Text style={{ fontSize: 10.5, fontWeight: '800', color: '#475569' }}>⏱️ Options</Text>
-                        </TouchableOpacity>
-
+                  <Text style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>
+                    {children[0].age ? `Age ${children[0].age}` : 'Preschool'} • {children[0].dailyMinutes}m target
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                {children.slice(0, 2).map((child) => {
+                  const isSelected = child.id === activeChild.id;
+                  return (
+                    <TouchableOpacity
+                      key={child.id}
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        if (currentScreen === 'active_session') {
+                          Alert.alert('Session Active', 'Please finish the active screen-time countdown before switching child profiles.');
+                          return;
+                        }
+                        setActiveChildId(child.id);
+                        setDurationMinutes(child.dailyMinutes);
+                        setGraceSeconds(child.graceSeconds);
+                        setSelectedStyle(child.preferredStyle);
+                        setStoredItem(ACTIVE_CHILD_ID_KEY, child.id);
+                      }}
+                      style={{
+                        flex: 1,
+                        backgroundColor: isSelected ? '#FAF5FF' : '#FFFFFF',
+                        borderRadius: 18,
+                        padding: 11,
+                        borderWidth: isSelected ? 1.5 : 1,
+                        borderColor: isSelected ? '#DDD6FE' : '#EAE5DE',
+                        shadowColor: isSelected ? '#6D28D9' : '#000',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: isSelected ? 0.08 : 0.03,
+                        shadowRadius: 3,
+                        elevation: isSelected ? 2 : 1,
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <View
                           style={{
-                            backgroundColor: '#5D997C',
-                            paddingHorizontal: 11,
-                            paddingVertical: 7,
-                            borderRadius: 11,
+                            width: 34,
+                            height: 34,
+                            borderRadius: 17,
+                            backgroundColor: child.avatarColor || '#7C6DF8',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>
-                            Start
+                          <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '900' }}>
+                            {child.avatarInitial || child.name?.charAt(0).toUpperCase() || 'C'}
                           </Text>
                         </View>
-                      </>
-                    ) : (
-                      <View
-                        style={{
-                          backgroundColor: '#5D997C',
-                          paddingHorizontal: 12,
-                          paddingVertical: 7,
-                          borderRadius: 11,
-                        }}
-                      >
-                        <Text style={{ fontSize: 11, fontWeight: '900', color: '#FFFFFF' }}>
-                          ⏱️ Options
-                        </Text>
+                        <View style={{ flex: 1 }}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 13, fontWeight: isSelected ? '900' : '700', color: '#1A2436' }} numberOfLines={1}>
+                              {child.name}
+                            </Text>
+                            {isSelected && (
+                              <View style={{ backgroundColor: '#EDE9FE', paddingHorizontal: 4, paddingVertical: 1, borderRadius: 4 }}>
+                                <Text style={{ fontSize: 8.5, fontWeight: '800', color: '#6D28D9' }}>
+                                  Active
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text style={{ fontSize: 10.5, color: '#64748B', marginTop: 1 }}>
+                            {child.age ? `Age ${child.age}` : 'Preschool'} • {child.dailyMinutes}m
+                          </Text>
+                        </View>
                       </View>
-                    )}
-                  </View>
-                </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
 
-                {/* Sub-bar showing configured options */}
-                <View
-                  style={{
-                    marginTop: 8,
-                    paddingTop: 8,
-                    borderTopWidth: 1,
-                    borderTopColor: '#EAE5DE',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap', flex: 1 }}>
-                    <Text style={{ fontSize: 10, fontWeight: '700', color: '#94A3B8' }}>Available:</Text>
-                    {widgetTimerOptions.map((opt) => (
-                      <View
-                        key={opt}
-                        style={{
-                          backgroundColor:
-                            isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
-                              ? '#EBF4EF'
-                              : '#FFFFFF',
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                          borderRadius: 6,
-                          borderWidth: 0.8,
-                          borderColor:
-                            isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
-                              ? '#5D997C'
-                              : '#E2E8F0',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 9.5,
-                            fontWeight: '800',
-                            color:
-                              isWidgetDefaultPresetActive && opt === widgetDefaultPresetMinutes
-                                ? '#2D5A43'
-                                : '#64748B',
-                          }}
-                        >
-                          {opt === widgetDefaultPresetMinutes && isWidgetDefaultPresetActive ? `★ ${opt}m` : `${opt}m`}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-
-                  <TouchableOpacity
-                    onPress={() => setCurrentScreen('schedule_automation')}
-                    style={{ paddingLeft: 6 }}
-                  >
-                    <Text style={{ fontSize: 10, fontWeight: '800', color: '#5D997C' }}>Configure →</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* 2. Main Hero: Calm Pastel Dial & Timer Card */}
+          {/* 3. Preserved Main Session Component */}
           <View
             style={{
               backgroundColor: '#FFFFFF',
@@ -1181,26 +1219,7 @@ export default function App() {
               elevation: 2,
             }}
           >
-            {/* Status Pill */}
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                backgroundColor: '#EBF4EF',
-                paddingHorizontal: 10,
-                paddingVertical: 4,
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: 'rgba(93, 153, 124, 0.3)',
-                marginBottom: 8,
-              }}
-            >
-              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5D997C' }} />
-              <Text style={{ fontSize: 10, fontWeight: '800', color: '#2D5A43', letterSpacing: 0.5 }}>
-                TARGET SESSION LIMIT
-              </Text>
-            </View>
+
 
             {/* Calm Mascot Dial Ring / Pedestal */}
             <View
@@ -1221,7 +1240,11 @@ export default function App() {
                 elevation: 1,
               }}
             >
-              <BuddyMascotNative size={132} animated={false} />
+              <Image
+                source={require('../assets/mascot.png')}
+                style={{ width: 114, height: 114 }}
+                resizeMode="contain"
+              />
             </View>
 
             {/* Digital Clock Display */}
@@ -1396,29 +1419,172 @@ export default function App() {
 
 
 
-          {/* 5. Positive Reinforcement Streak Card */}
+          {/* 4 & 5. Side by Side: Today's Overview & Widget Status */}
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
+            {/* Today's Overview */}
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: '#FFFFFF',
+                borderRadius: 18,
+                padding: 13,
+                borderWidth: 1,
+                borderColor: '#EAE5DE',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.04,
+                shadowRadius: 4,
+                elevation: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <View>
+                <Text style={{ fontSize: 10, fontWeight: '800', color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                  Today's Screen Time
+                </Text>
+                <Text style={{ fontSize: 22, fontWeight: '900', color: '#1A2436', letterSpacing: -0.5, marginTop: 4 }}>
+                  {formattedTodayScreenTime}
+                </Text>
+              </View>
+
+              <View style={{ marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#F1ECE6' }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: '#475569' }}>
+                  {todaySessionCount} {todaySessionCount === 1 ? 'session' : 'sessions'}
+                </Text>
+                <Text style={{ fontSize: 9.5, color: '#94A3B8', marginTop: 1 }}>
+                  BabyBoo-managed
+                </Text>
+              </View>
+            </View>
+
+            {/* Widget Status */}
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: '#FFFFFF',
+                borderRadius: 18,
+                padding: 13,
+                borderWidth: 1,
+                borderColor: '#EAE5DE',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.04,
+                shadowRadius: 4,
+                elevation: 1,
+                justifyContent: 'space-between',
+              }}
+            >
+              <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#5D997C' }} />
+                  <Text style={{ fontSize: 10, fontWeight: '800', color: '#2D5A43', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                    Home Widget
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 12.5, fontWeight: '800', color: '#1A2436', marginTop: 2 }}>
+                  Ready to Use
+                </Text>
+                <Text style={{ fontSize: 10.5, color: '#64748B', lineHeight: 14, marginTop: 3 }}>
+                  Start timer from phone home screen
+                </Text>
+              </View>
+
+              <View style={{ marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#F1ECE6' }}>
+                <TouchableOpacity
+                  onPress={() => setShowWidgetHelpModal(true)}
+                  style={{ alignSelf: 'flex-start' }}
+                >
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: '#5D997C' }}>
+                    Widget help →
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          {/* 7. Recent Activity (Cleaner Design) */}
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#FEF9E7',
+              backgroundColor: '#FFFFFF',
               borderRadius: 18,
-              padding: 12,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
               borderWidth: 1,
-              borderColor: '#FDE68A',
-              gap: 10,
-              marginBottom: 10,
+              borderColor: '#EAE5DE',
+              marginBottom: 12,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.04,
+              shadowRadius: 4,
+              elevation: 1,
             }}
           >
-            <Text style={{ fontSize: 20 }}>🔥</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 11.5, fontWeight: '900', color: '#8E4B10' }}>
-                {activeChild.streak}-Day Screen Streak
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Text style={{ fontSize: 11, fontWeight: '800', color: '#1A2436', letterSpacing: 0.3, textTransform: 'uppercase' }}>
+                Recent Activity
               </Text>
-              <Text style={{ fontSize: 10.5, color: '#78350F', marginTop: 1 }}>
-                {activeChild.name} completed his last {activeChild.streak} sessions with zero conflict!
-              </Text>
+              <TouchableOpacity
+                onPress={() => setCurrentScreen('weekly_stats')}
+                style={{ paddingVertical: 2, paddingHorizontal: 4 }}
+              >
+                <Text style={{ fontSize: 11, fontWeight: '800', color: '#5D997C' }}>
+                  View all →
+                </Text>
+              </TouchableOpacity>
             </View>
+
+            {recentLogs.length === 0 ? (
+              <View style={{ paddingVertical: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 11.5, fontWeight: '500', color: '#94A3B8' }}>
+                  No sessions recorded today
+                </Text>
+              </View>
+            ) : (
+              <View style={{ gap: 6 }}>
+                {recentLogs.map((log) => {
+                  const outcomeLabel =
+                    log.outcome === 'voluntary_grace'
+                      ? 'Completed'
+                      : log.outcome === 'required_shutdown'
+                      ? 'Battery rest'
+                      : 'Ended early';
+
+                  const dotColor =
+                    log.outcome === 'voluntary_grace'
+                      ? '#5D997C'
+                      : log.outcome === 'required_shutdown'
+                      ? '#94A3B8'
+                      : '#D97706';
+
+                  const durationMinutesVal = Math.max(1, Math.round(log.elapsedSeconds / 60));
+
+                  return (
+                    <View
+                      key={log.id}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingVertical: 4,
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flex: 1 }}>
+                        <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: dotColor }} />
+                        <Text style={{ fontSize: 12, fontWeight: '800', color: '#1A2436' }}>
+                          {log.childName}
+                        </Text>
+                        <Text style={{ fontSize: 11, color: '#64748B' }}>
+                          • {durationMinutesVal}m • {outcomeLabel}
+                        </Text>
+                      </View>
+                      <Text style={{ fontSize: 10.5, fontWeight: '500', color: '#94A3B8' }}>
+                        {formatEventTime(log.startedAt)}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -1570,185 +1736,425 @@ export default function App() {
           </View>
         </Modal>
 
-        {/* Ending Experience Selector Modal */}
-        <Modal visible={showEndingModal} transparent animationType="fade">
+        {/* Modal 2: Custom Mascot Countdown Grace Modal */}
+        <Modal visible={showCustomGraceModal} transparent animationType="fade">
           <View style={styles.modalOverlay}>
-            <View style={[styles.addChildModalCard, { maxWidth: 400, maxHeight: '88%' }]}>
+            <View style={[styles.addChildModalCard, { maxWidth: 360, padding: 22 }]}>
               <View style={styles.addChildModalHeader}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style={styles.addChildModalTitle}>Screen End Style</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={{ fontSize: 18 }}>⏳</Text>
+                  <Text style={styles.addChildModalTitle}>Mascot Countdown</Text>
+                </View>
+                <TouchableOpacity onPress={() => setShowCustomGraceModal(false)} style={styles.addChildModalCloseBtn}>
+                  <Text style={styles.addChildModalCloseText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={{ fontSize: 12, color: '#718096', marginBottom: 12 }}>
+                Set custom seconds for Buddy's gentle wrap-up warning:
+              </Text>
+
+              <View style={{ marginVertical: 10, alignItems: 'center' }}>
+                <TextInput
+                  style={{
+                    backgroundColor: '#FAF8F5',
+                    borderWidth: 1.5,
+                    borderColor: '#EAE5DE',
+                    borderRadius: 14,
+                    color: '#1A2436',
+                    fontSize: 24,
+                    fontWeight: '900',
+                    textAlign: 'center',
+                    paddingVertical: 10,
+                    width: 120,
+                  }}
+                  keyboardType="number-pad"
+                  value={String(customGraceInput)}
+                  onChangeText={(txt) => setCustomGraceInput(parseInt(txt.replace(/[^0-9]/g, ''), 10) || 0)}
+                  placeholder="60"
+                  placeholderTextColor="#94A3B8"
+                  maxLength={3}
+                />
+                <Text style={{ fontSize: 11, fontWeight: '700', color: '#718096', marginTop: 6 }}>seconds</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14, justifyContent: 'center' }}>
+                {[15, 30, 45, 60, 90, 120].map((s) => (
+                  <TouchableOpacity
+                    key={s}
+                    onPress={() => setCustomGraceInput(s)}
+                    style={{
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      backgroundColor: '#FAF8F5',
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: '#EAE5DE',
+                    }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '800', color: '#4A5568' }}>{s}s</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <TouchableOpacity
+                style={styles.modalApplyBtn}
+                onPress={() => {
+                  const s = Math.max(5, Math.min(300, customGraceInput));
+                  setGraceSeconds(s);
+                  setShowCustomGraceModal(false);
+                }}
+              >
+                <Text style={styles.modalApplyBtnText}>Apply Wrap-Up Seconds</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal 3: Child Picker Modal */}
+        <Modal visible={showChildPickerModal} transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={[styles.addChildModalCard, { maxWidth: 360, padding: 20 }]}>
+              <View style={styles.addChildModalHeader}>
+                <Text style={styles.addChildModalTitle}>Select Child Profile</Text>
+                <TouchableOpacity
+                  onPress={() => setShowChildPickerModal(false)}
+                  style={styles.addChildModalCloseBtn}
+                >
+                  <Text style={styles.addChildModalCloseText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={{ fontSize: 12, color: '#64748B', marginBottom: 14 }}>
+                Choose which child is using the phone for this session.
+              </Text>
+              <View style={{ gap: 8, marginBottom: 16 }}>
+                {children.map((child) => {
+                  const isSelected = child.id === activeChild.id;
+                  return (
+                    <TouchableOpacity
+                      key={child.id}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setActiveChildId(child.id);
+                        setStoredItem(ACTIVE_CHILD_ID_KEY, child.id);
+                        setDurationMinutes(child.dailyMinutes);
+                        setGraceSeconds(child.graceSeconds);
+                        setSelectedStyle(child.preferredStyle);
+                        setShowChildPickerModal(false);
+                      }}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: 12,
+                        borderRadius: 14,
+                        backgroundColor: isSelected ? '#FAF5FF' : '#FAF8F5',
+                        borderWidth: 1.5,
+                        borderColor: isSelected ? '#DDD6FE' : '#EAE5DE',
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <View
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 18,
+                            backgroundColor: child.avatarColor || '#7C6DF8',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '900' }}>
+                            {child.avatarInitial || child.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text style={{ fontSize: 13, fontWeight: '800', color: '#1A2436' }}>
+                            {child.name}
+                          </Text>
+                          <Text style={{ fontSize: 11, color: '#64748B' }}>
+                            {child.age ? `Age ${child.age}` : 'Preschool'} • {child.dailyMinutes}m target
+                          </Text>
+                        </View>
+                      </View>
+                      {isSelected ? (
+                        <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#6D28D9', alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '900' }}>✓</Text>
+                        </View>
+                      ) : (
+                        <Text style={{ fontSize: 11, fontWeight: '700', color: '#64748B' }}>Select</Text>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowChildPickerModal(false);
+                  setCurrentScreen('add_child');
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  backgroundColor: '#FAF8F5',
+                  borderWidth: 1,
+                  borderColor: '#EAE5DE',
+                }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '800', color: '#6D28D9' }}>+ Add Another Child</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal 4: Home Screen Widget Help Modal */}
+        <Modal visible={showWidgetHelpModal} transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={[styles.addChildModalCard, { maxWidth: 360, padding: 22 }]}>
+              <View style={styles.addChildModalHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#5D997C" strokeWidth={2.2}>
+                    <Rect x="3" y="3" width="7" height="7" rx="1.5" />
+                    <Rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <Rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    <Rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  </Svg>
+                  <Text style={styles.addChildModalTitle}>Home Screen Widget</Text>
                 </View>
                 <TouchableOpacity
-                  onPress={() => setShowEndingModal(false)}
+                  onPress={() => setShowWidgetHelpModal(false)}
                   style={styles.addChildModalCloseBtn}
                 >
                   <Text style={styles.addChildModalCloseText}>✕</Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ fontSize: 12, color: '#718096', marginBottom: 12, lineHeight: 16 }}>
-                Choose what Buddy and the screen will do when your child's timer runs out.
+              <Text style={{ fontSize: 12, color: '#64748B', marginBottom: 14, lineHeight: 17 }}>
+                Add the BabyBoo Quick Timer widget to your phone's home screen for one-tap countdowns:
               </Text>
 
-              {/* Mode Tabs */}
-              <View style={{ flexDirection: 'row', backgroundColor: '#FAF8F5', borderRadius: 14, padding: 4, marginBottom: 14, borderWidth: 1, borderColor: '#EAE5DE' }}>
-                <TouchableOpacity
-                  onPress={() => setSelectedEndingType('monster')}
-                  style={{
-                    flex: 1,
-                    paddingVertical: 9,
-                    borderRadius: 11,
-                    backgroundColor: selectedEndingType === 'monster' ? '#5D997C' : 'transparent',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '900', color: selectedEndingType === 'monster' ? '#FFFFFF' : '#718096' }}>👾 Monster Mode</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setSelectedEndingType('switchoff')}
-                  style={{
-                    flex: 1,
-                    paddingVertical: 9,
-                    borderRadius: 11,
-                    backgroundColor: selectedEndingType === 'switchoff' ? '#5D997C' : 'transparent',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '900', color: selectedEndingType === 'switchoff' ? '#FFFFFF' : '#718096' }}>🔋 Switch-Off</Text>
-                </TouchableOpacity>
-              </View>
+              <View style={{ gap: 10, marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#EBF4EF', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 10.5, fontWeight: '900', color: '#2D5A43' }}>1</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, color: '#1A2436', flex: 1, lineHeight: 17 }}>
+                    Go to your phone's home screen and touch & hold an empty space.
+                  </Text>
+                </View>
 
-              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 340 }}>
-                {selectedEndingType === 'monster' ? (
-                  MONSTER_PROFILES.map((mon) => {
-                    const isSelected = selectedMonsterId === mon.id;
-                    return (
-                      <TouchableOpacity
-                        key={mon.id}
-                        onPress={() => setSelectedMonsterId(mon.id)}
-                        style={[
-                          styles.monsterCard,
-                          isSelected && styles.monsterCardSelected,
-                        ]}
-                      >
-                        <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isSelected ? '#EBF4EF' : '#FAF8F5', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: isSelected ? '#5D997C' : '#EAE5DE' }}>
-                          <Text style={{ fontSize: 24 }}>{mon.emoji}</Text>
-                        </View>
-                        <View style={{ flex: 1, marginLeft: 12, marginRight: 8 }}>
-                          <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>{mon.name}</Text>
-                          <Text style={{ fontSize: 11, color: isSelected ? '#2D5A43' : '#718096', marginTop: 2 }} numberOfLines={2}>
-                            "{mon.dialogue}"
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={(e) => {
-                            e.stopPropagation?.();
-                            setPreviewItem({ type: 'monster', id: mon.id });
-                          }}
-                          style={{ backgroundColor: '#FAF8F5', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 8, borderWidth: 1, borderColor: '#EAE5DE' }}
-                        >
-                          <Text style={{ fontSize: 10, color: '#5D997C', fontWeight: '900' }}>Preview</Text>
-                        </TouchableOpacity>
-                      </TouchableOpacity>
-                    );
-                  })
-                ) : (
-                  SWITCH_OFF_PROFILES.map((sw) => {
-                    const isSelected = selectedSwitchOffId === sw.id;
-                    return (
-                      <TouchableOpacity
-                        key={sw.id}
-                        onPress={() => setSelectedSwitchOffId(sw.id)}
-                        style={[
-                          styles.monsterCard,
-                          isSelected && styles.monsterCardSelected,
-                        ]}
-                      >
-                        <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isSelected ? '#EBF4EF' : '#FAF8F5', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: isSelected ? '#5D997C' : '#EAE5DE' }}>
-                          <Text style={{ fontSize: 24 }}>{sw.icon}</Text>
-                        </View>
-                        <View style={{ flex: 1, marginLeft: 12, marginRight: 8 }}>
-                          <Text style={{ fontSize: 13, fontWeight: '900', color: '#1A2436' }}>{sw.title}</Text>
-                          <Text style={{ fontSize: 11, color: isSelected ? '#2D5A43' : '#718096', marginTop: 2 }} numberOfLines={2}>
-                            {sw.description}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={(e) => {
-                            e.stopPropagation?.();
-                            setPreviewItem({ type: 'switchoff', id: sw.id });
-                          }}
-                          style={{ backgroundColor: '#FAF8F5', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 8, borderWidth: 1, borderColor: '#EAE5DE' }}
-                        >
-                          <Text style={{ fontSize: 10, color: '#5D997C', fontWeight: '900' }}>Preview</Text>
-                        </TouchableOpacity>
-                      </TouchableOpacity>
-                    );
-                  })
-                )}
-              </ScrollView>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#EBF4EF', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 10.5, fontWeight: '900', color: '#2D5A43' }}>2</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, color: '#1A2436', flex: 1, lineHeight: 17 }}>
+                    Tap <Text style={{ fontWeight: '800' }}>Widgets</Text> in the launcher popup menu.
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#EBF4EF', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 10.5, fontWeight: '900', color: '#2D5A43' }}>3</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, color: '#1A2436', flex: 1, lineHeight: 17 }}>
+                    Scroll to find <Text style={{ fontWeight: '800' }}>BabyBoo</Text> and drag the timer widget to your screen.
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#EBF4EF', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 10.5, fontWeight: '900', color: '#2D5A43' }}>4</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, color: '#1A2436', flex: 1, lineHeight: 17 }}>
+                    Start countdowns directly from your launcher without opening the application!
+                  </Text>
+                </View>
+              </View>
 
               <TouchableOpacity
                 style={styles.modalApplyBtn}
-                onPress={() => setShowEndingModal(false)}
+                onPress={() => setShowWidgetHelpModal(false)}
               >
-                <Text style={styles.modalApplyBtnText}>Apply Screen End Style</Text>
+                <Text style={styles.modalApplyBtnText}>Got it</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
-
-        {/* Live Preview Modal */}
-        {previewItem && (
-          <Modal visible={previewItem !== null} transparent animationType="fade">
-            <View style={styles.modalOverlay}>
-              <View style={[styles.addChildModalCard, { alignItems: 'center', padding: 24, maxWidth: 360 }]}>
-                {previewItem.type === 'monster' ? (
-                  <>
-                    <Text style={{ fontSize: 48, marginBottom: 8 }}>
-                      {MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.emoji}
-                    </Text>
-                    <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436', marginBottom: 4 }}>
-                      {MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.name}
-                    </Text>
-                    <View style={{ backgroundColor: '#EBF4EF', padding: 12, borderRadius: 14, marginVertical: 10, borderWidth: 1, borderColor: 'rgba(93, 153, 124, 0.3)' }}>
-                      <Text style={{ fontSize: 12, color: '#2D5A43', fontStyle: 'italic', textAlign: 'center' }}>
-                        "{MONSTER_PROFILES.find((m) => m.id === previewItem.id)?.dialogue}"
-                      </Text>
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    <Text style={{ fontSize: 48, marginBottom: 8 }}>
-                      {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.icon}
-                    </Text>
-                    <Text style={{ fontSize: 18, fontWeight: '900', color: '#1A2436', marginBottom: 4 }}>
-                      {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.title}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: '#718096', textAlign: 'center', marginVertical: 8 }}>
-                      {SWITCH_OFF_PROFILES.find((s) => s.id === previewItem.id)?.description}
-                    </Text>
-                  </>
-                )}
-                <TouchableOpacity
-                  style={[styles.modalApplyBtn, { width: '100%', marginTop: 8 }]}
-                  onPress={() => setPreviewItem(null)}
-                >
-                  <Text style={styles.modalApplyBtnText}>Close Preview</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        )}
       </View>
     );
   };
 
-  // Screen: Onboarding Assessment & Intro Flow
+  // Screen: Onboarding Intro & First Screen Flow
   const renderSplash = () => (
-    <OnboardingAssessmentNative
-      onNavigateToDashboard={() => setCurrentScreen('parent_dashboard')}
-      onComplete={handleOnboardingComplete}
+    <OnboardingFirstScreenNative
+      onGetStarted={() => setCurrentScreen('onboarding_second')}
+      onSkip={() => setCurrentScreen('onboarding_second')}
+    />
+  );
+
+  // Screen: Onboarding Second Waving Page (Buddy greeting, floating child name, age chips)
+  const renderOnboardingSecond = () => (
+    <OnboardingSecondScreenNative
+      onBack={() => setCurrentScreen('splash')}
+      onContinue={(childData: OnboardingSecondChildData) => {
+        setOnboardingChildInfo({
+          name: childData.name,
+          ageCategory: childData.ageCategory,
+        });
+        setCurrentScreen('onboarding_third');
+      }}
+      onSkip={() => {
+        setOnboardingChildInfo((prev) => ({
+          name: prev.name || 'Leo',
+          ageCategory: prev.ageCategory || '2_4',
+        }));
+        setCurrentScreen('onboarding_third');
+      }}
+    />
+  );
+
+  // Screen: Onboarding Third Screen (Scientific daily screen time reaction guide)
+  const renderOnboardingThird = () => (
+    <OnboardingThirdScreenNative
+      childName={onboardingChildInfo.name}
+      ageCategory={onboardingChildInfo.ageCategory}
+      onBack={() => setCurrentScreen('onboarding_second')}
+      onSkip={() => {
+        setCurrentScreen('onboarding_fourth');
+      }}
+      onContinue={(data: OnboardingScreen3Data) => {
+        const minutesMap: Record<string, number> = {
+          under_1: 10,
+          age_1: 15,
+          '2_4': 20,
+          '5_7': 30,
+          '8_10': 45,
+        };
+
+        setOnboardingChildInfo((prev) => ({
+          ...prev,
+          name: data.childName,
+          ageCategory: data.ageCategory,
+          dailyMinutes: minutesMap[data.ageCategory] || 20,
+          timeChipId: data.timeChipId,
+        }));
+        setCurrentScreen('onboarding_fourth');
+      }}
+    />
+  );
+
+  // Screen: Onboarding Fourth Screen (Screen time ends & handover empathy reaction guide)
+  const renderOnboardingFourth = () => (
+    <OnboardingFourthScreenNative
+      childName={onboardingChildInfo.name}
+      ageCategory={onboardingChildInfo.ageCategory}
+      onBack={() => setCurrentScreen('onboarding_third')}
+      onSkip={() => {
+        setCurrentScreen('onboarding_fifth');
+      }}
+      onContinue={(data: OnboardingScreen4Data) => {
+        setOnboardingChildInfo((prev) => ({
+          ...prev,
+          name: data.childName,
+          ageCategory: data.ageCategory,
+          handoverType: data.handoverType,
+        }));
+        setCurrentScreen('onboarding_fifth');
+      }}
+    />
+  );
+
+  // Screen: Onboarding Fifth Screen (Phone handover frequency & daily goodbyes)
+  const renderOnboardingFifth = () => (
+    <OnboardingFifthScreenNative
+      childName={onboardingChildInfo.name}
+      ageCategory={onboardingChildInfo.ageCategory}
+      onBack={() => setCurrentScreen('onboarding_fourth')}
+      onSkip={() => {
+        setCurrentScreen('onboarding_sixth');
+      }}
+      onContinue={(data: OnboardingScreen5Data) => {
+        setOnboardingChildInfo((prev) => ({
+          ...prev,
+          name: data.childName,
+          ageCategory: data.ageCategory,
+          dailyFrequency: data.dailyFrequency,
+          frequencyChipId: data.frequencyChipId,
+        }));
+        setCurrentScreen('onboarding_sixth');
+      }}
+    />
+  );
+
+  // Screen: Onboarding Sixth Screen (Content picked up from phone & multi-select reaction guide)
+  const renderOnboardingSixth = () => (
+    <OnboardingSixthScreenNative
+      childName={onboardingChildInfo.name}
+      ageCategory={onboardingChildInfo.ageCategory}
+      onBack={() => setCurrentScreen('onboarding_fifth')}
+      onSkip={() => {
+        setCurrentScreen('onboarding_seventh');
+      }}
+      onContinue={(data: OnboardingScreen6Data) => {
+        setOnboardingChildInfo((prev) => ({
+          ...prev,
+          name: data.childName,
+          ageCategory: data.ageCategory,
+          hasWorryingContent: data.hasWorryingContent,
+        }));
+        setCurrentScreen('onboarding_seventh');
+      }}
+    />
+  );
+
+  // Screen: Onboarding Seventh Screen (Buddy Taking Notes, 4 Sticky Notes, What BabyBoo Changes)
+  const renderOnboardingSeventh = () => (
+    <OnboardingSeventhScreenNative
+      childName={onboardingChildInfo.name}
+      ageCategory={onboardingChildInfo.ageCategory}
+      dailyMinutes={onboardingChildInfo.dailyMinutes}
+      timeChipId={onboardingChildInfo.timeChipId}
+      dailyFrequency={onboardingChildInfo.dailyFrequency}
+      frequencyChipId={onboardingChildInfo.frequencyChipId}
+      handoverType={onboardingChildInfo.handoverType}
+      hasWorryingContent={onboardingChildInfo.hasWorryingContent}
+      onBack={() => setCurrentScreen('onboarding_sixth')}
+      onSkip={() => {
+        const mappedAgeBracket =
+          onboardingChildInfo.ageCategory === 'under_1' ? '< 2' :
+          onboardingChildInfo.ageCategory === 'age_1' ? '2–3' :
+          onboardingChildInfo.ageCategory === '2_4' ? '4–5' :
+          onboardingChildInfo.ageCategory === '5_7' ? '6–7' :
+          onboardingChildInfo.ageCategory === '8_10' ? '8–10' : '4–5';
+
+        handleOnboardingComplete({
+          name: onboardingChildInfo.name || 'Leo',
+          ageBracket: mappedAgeBracket,
+          dailyMinutes: onboardingChildInfo.dailyMinutes || 20,
+          graceSeconds: 60,
+          preferredStyle: 'low_battery',
+          avatarColor: '#7C6DF8',
+        });
+      }}
+      onContinue={() => {
+        const mappedAgeBracket =
+          onboardingChildInfo.ageCategory === 'under_1' ? '< 2' :
+          onboardingChildInfo.ageCategory === 'age_1' ? '2–3' :
+          onboardingChildInfo.ageCategory === '2_4' ? '4–5' :
+          onboardingChildInfo.ageCategory === '5_7' ? '6–7' :
+          onboardingChildInfo.ageCategory === '8_10' ? '8–10' : '4–5';
+
+        handleOnboardingComplete({
+          name: onboardingChildInfo.name || 'Leo',
+          ageBracket: mappedAgeBracket,
+          dailyMinutes: onboardingChildInfo.dailyMinutes || 20,
+          graceSeconds: 60,
+          preferredStyle: onboardingChildInfo.handoverType === 'meltdown' ? 'needs_rest' : 'low_battery',
+          avatarColor: '#7C6DF8',
+        });
+      }}
     />
   );
 
@@ -2318,6 +2724,12 @@ export default function App() {
 
         {/* Screen Router */}
         {currentScreen === 'splash' && renderSplash()}
+        {currentScreen === 'onboarding_second' && renderOnboardingSecond()}
+        {currentScreen === 'onboarding_third' && renderOnboardingThird()}
+        {currentScreen === 'onboarding_fourth' && renderOnboardingFourth()}
+        {currentScreen === 'onboarding_fifth' && renderOnboardingFifth()}
+        {currentScreen === 'onboarding_sixth' && renderOnboardingSixth()}
+        {currentScreen === 'onboarding_seventh' && renderOnboardingSeventh()}
         {currentScreen === 'onboarding_assessment' && (
           <OnboardingAssessmentNative
             onComplete={handleOnboardingComplete}

@@ -194,26 +194,31 @@ export const SettingsDrawerHubNative: React.FC<SettingsDrawerHubProps> = ({
           </Text>
         </View>
 
-        {/* Accessibility Service Disclosure (Google Play Compliance) */}
-        <TouchableOpacity
-          onPress={() => setShowA11yDisclosure(true)}
-          style={styles.a11yDisclosureBtn}
-          activeOpacity={0.8}
-          accessibilityLabel="View Accessibility Service Disclosure"
-        >
-          <View style={styles.a11yDisclosureLeft}>
-            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-              <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </Svg>
-            <View style={{ marginLeft: 8 }}>
-              <Text style={styles.a11yDisclosureTitle}>Accessibility Service Disclosure</Text>
-              <Text style={styles.a11yDisclosureSub}>Learn how BabyBoo protects lockout sessions</Text>
+        {/* Total Blackout Protection Status Card & Accessibility Disclosure */}
+        <View style={styles.a11yCard}>
+          <View style={styles.a11yCardHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+                <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </Svg>
+              <Text style={styles.a11yCardTitle}>Total Blackout Mode</Text>
+            </View>
+            <View style={[styles.badge, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
+              <Text style={[styles.badgeText, { color: '#166534' }]}>Enhanced (accessibility on)</Text>
             </View>
           </View>
-          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-            <Path d="M9 18l6-6-6-6" />
-          </Svg>
-        </TouchableOpacity>
+          <Text style={styles.a11yCardBody}>
+            Full-screen blackout covers the entire display including system status &amp; navigation bars.
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowA11yDisclosure(true)}
+            style={styles.a11yLinkBtn}
+            activeOpacity={0.8}
+            accessibilityLabel="Why does BabyBoo need this?"
+          >
+            <Text style={styles.a11yLinkText}>Why does BabyBoo need this? →</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Sign Out / Exit Action */}
         <TouchableOpacity
@@ -453,30 +458,39 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     textDecorationLine: 'underline',
   },
-  a11yDisclosureBtn: {
+  a11yCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#EAE5DE',
+  },
+  a11yCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#EEF2FF',
-    borderWidth: 1,
-    borderColor: '#C7D2FE',
-    borderRadius: 16,
-    padding: 12,
+    marginBottom: 8,
   },
-  a11yDisclosureLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  a11yDisclosureTitle: {
-    fontSize: 12,
+  a11yCardTitle: {
+    fontSize: 13,
     fontWeight: '800',
-    color: '#3730A3',
+    color: '#0F172A',
+    marginLeft: 8,
   },
-  a11yDisclosureSub: {
-    fontSize: 10,
-    fontWeight: '500',
+  a11yCardBody: {
+    fontSize: 11.5,
+    color: '#64748B',
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  a11yLinkBtn: {
+    alignSelf: 'flex-start',
+  },
+  a11yLinkText: {
+    fontSize: 11,
+    fontWeight: '700',
     color: '#4F46E5',
-    marginTop: 1,
+    textDecorationLine: 'underline',
   },
 });

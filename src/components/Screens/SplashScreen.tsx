@@ -1,6 +1,19 @@
 import React from 'react';
-import { OnboardingAssessment } from '../Onboarding/OnboardingAssessment';
+import { useApp } from '../../context/AppContext';
+import { OnboardingFirstScreen } from '../Onboarding/OnboardingFirstScreen';
 
-export const SplashScreen: React.FC = () => {
-  return <OnboardingAssessment />;
+interface SplashScreenProps {
+  onSkip?: () => void;
+}
+
+export const SplashScreen: React.FC<SplashScreenProps> = ({ onSkip }) => {
+  const { navigateTo } = useApp();
+
+  return (
+    <OnboardingFirstScreen
+      onGetStarted={() => navigateTo('onboarding_second')}
+      onSkip={onSkip || (() => navigateTo('onboarding_second'))}
+    />
+  );
 };
+

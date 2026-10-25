@@ -17,13 +17,169 @@ import { WeeklyStatsScreen } from './components/Screens/WeeklyStatsScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
 
 import { OnboardingAssessment } from './components/Onboarding/OnboardingAssessment';
+import { OnboardingSecondScreen } from './components/Onboarding/OnboardingSecondScreen';
+import { OnboardingThirdScreen, type OnboardingScreen3Data } from './components/Onboarding/OnboardingThirdScreen';
+import { OnboardingFourthScreen, type OnboardingScreen4Data } from './components/Onboarding/OnboardingFourthScreen';
+import { OnboardingFifthScreen, type OnboardingScreen5Data } from './components/Onboarding/OnboardingFifthScreen';
+import { OnboardingSixthScreen, type OnboardingScreen6Data } from './components/Onboarding/OnboardingSixthScreen';
+import { OnboardingSeventhScreen } from './components/Onboarding/OnboardingSeventhScreen';
 
 const MainScreenRouter: React.FC = () => {
-  const { currentScreen } = useApp();
+  const { currentScreen, navigateTo, completeOnboarding } = useApp();
+  const [onboardingChild, setOnboardingChild] = React.useState<{
+    name: string;
+    ageCategory: string;
+    dailyMinutes?: number;
+    timeChipId?: string;
+    handoverType?: string;
+    dailyFrequency?: number;
+    frequencyChipId?: string;
+    hasWorryingContent?: boolean;
+  }>({
+    name: 'Leo',
+    ageCategory: '2_4',
+    dailyMinutes: 20,
+  });
 
   switch (currentScreen) {
     case 'splash':
-      return <SplashScreen />;
+      return (
+        <SplashScreen
+          onSkip={() => navigateTo('onboarding_second')}
+        />
+      );
+    case 'onboarding_second':
+      return (
+        <OnboardingSecondScreen
+          onBack={() => navigateTo('splash')}
+          onContinue={(childData) => {
+            setOnboardingChild({ name: childData.name, ageCategory: childData.ageCategory });
+            navigateTo('onboarding_third');
+          }}
+          onSkip={() => {
+            setOnboardingChild((prev) => ({
+              name: prev.name || 'Leo',
+              ageCategory: prev.ageCategory || '2_4',
+            }));
+            navigateTo('onboarding_third');
+          }}
+        />
+      );
+    case 'onboarding_third':
+      return (
+        <OnboardingThirdScreen
+          childName={onboardingChild.name}
+          ageCategory={onboardingChild.ageCategory}
+          onBack={() => navigateTo('onboarding_second')}
+          onSkip={() => {
+            navigateTo('onboarding_fourth');
+          }}
+          onContinue={(data: OnboardingScreen3Data) => {
+            const minutesMap: Record<string, number> = {
+              under_1: 10,
+              age_1: 15,
+              '2_4': 20,
+              '5_7': 30,
+              '8_10': 45,
+            };
+            setOnboardingChild((prev) => ({
+              ...prev,
+              name: data.childName,
+              ageCategory: data.ageCategory,
+              dailyMinutes: minutesMap[data.ageCategory] || 20,
+              timeChipId: data.timeChipId,
+            }));
+            navigateTo('onboarding_fourth');
+          }}
+        />
+      );
+    case 'onboarding_fourth':
+      return (
+        <OnboardingFourthScreen
+          childName={onboardingChild.name}
+          ageCategory={onboardingChild.ageCategory}
+          onBack={() => navigateTo('onboarding_third')}
+          onSkip={() => {
+            navigateTo('onboarding_fifth');
+          }}
+          onContinue={(data: OnboardingScreen4Data) => {
+            setOnboardingChild((prev) => ({
+              ...prev,
+              handoverType: data.handoverType,
+            }));
+            navigateTo('onboarding_fifth');
+          }}
+        />
+      );
+    case 'onboarding_fifth':
+      return (
+        <OnboardingFifthScreen
+          childName={onboardingChild.name}
+          ageCategory={onboardingChild.ageCategory}
+          onBack={() => navigateTo('onboarding_fourth')}
+          onSkip={() => {
+            navigateTo('onboarding_sixth');
+          }}
+          onContinue={(data: OnboardingScreen5Data) => {
+            setOnboardingChild((prev) => ({
+              ...prev,
+              dailyFrequency: data.dailyFrequency,
+              frequencyChipId: data.frequencyChipId,
+            }));
+            navigateTo('onboarding_sixth');
+          }}
+        />
+      );
+    case 'onboarding_sixth':
+      return (
+        <OnboardingSixthScreen
+          childName={onboardingChild.name}
+          ageCategory={onboardingChild.ageCategory}
+          onBack={() => navigateTo('onboarding_fifth')}
+          onSkip={() => {
+            navigateTo('onboarding_seventh');
+          }}
+          onContinue={(data: OnboardingScreen6Data) => {
+            setOnboardingChild((prev) => ({
+              ...prev,
+              hasWorryingContent: data.hasWorryingContent,
+            }));
+            navigateTo('onboarding_seventh');
+          }}
+        />
+      );
+    case 'onboarding_seventh':
+      return (
+        <OnboardingSeventhScreen
+          childName={onboardingChild.name}
+          ageCategory={onboardingChild.ageCategory}
+          dailyMinutes={onboardingChild.dailyMinutes}
+          timeChipId={onboardingChild.timeChipId}
+          dailyFrequency={onboardingChild.dailyFrequency}
+          frequencyChipId={onboardingChild.frequencyChipId}
+          handoverType={onboardingChild.handoverType}
+          hasWorryingContent={onboardingChild.hasWorryingContent}
+          onBack={() => navigateTo('onboarding_sixth')}
+          onSkip={() => {
+            completeOnboarding({
+              name: onboardingChild.name || 'Leo',
+              ageGroup: onboardingChild.ageCategory || '2_4',
+              dailyMinutes: onboardingChild.dailyMinutes || 20,
+              preferredStyle: 'low_battery',
+            });
+            navigateTo('parent_dashboard');
+          }}
+          onContinue={() => {
+            completeOnboarding({
+              name: onboardingChild.name,
+              ageGroup: onboardingChild.ageCategory,
+              dailyMinutes: onboardingChild.dailyMinutes || 20,
+              preferredStyle: onboardingChild.handoverType === 'meltdown' ? 'needs_rest' : 'low_battery',
+            });
+            navigateTo('parent_dashboard');
+          }}
+        />
+      );
     case 'onboarding_assessment':
       return <OnboardingAssessment />;
     case 'auth':
