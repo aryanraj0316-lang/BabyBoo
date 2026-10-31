@@ -40,3 +40,14 @@ keystore.properties
 /android/.gradle/
 /android/app/build/
 
+
+# Kotlin compiler cache
+/android/.kotlin/
+
+# Dev-only mascot cutout tooling (rembg / BiRefNet): model cache and venvs
+.u2net/
+tools/.venv/
+tools/**/.venv/
+.venv/
+__pycache__/
+design/buddy/_work/
