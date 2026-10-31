@@ -1,0 +1,50 @@
+{
+  "headWidthPt": 106,
+  "frames": {
+    "buddy_watch_34_left": {
+      "source": "turn_34_left",
+      "mirrored": false
+    },
+    "buddy_worried_paws": {
+      "source": "act_worried_paws",
+      "mirrored": false
+    },
+    "buddy_worried_wavy": {
+      "source": "expr_worried",
+      "mirrored": false
+    },
+    "buddy_yawn": {
+      "source": "act_yawn",
+      "mirrored": false
+    },
+    "buddy_sleepy": {
+      "source": "act_sleepy",
+      "mirrored": false
+    },
+    "buddy_surprised": {
+      "source": "expr_surprised",
+      "mirrored": false
+    },
+    "buddy_point_left": {
+      "source": "act_point_right",
+      "mirrored": true
+    },
+    "buddy_arms_up": {
+      "source": "joy_arms_up",
+      "mirrored": false
+    },
+    "buddy_wave": {
+      "source": "joy_wave",
+      "mirrored": false
+    },
+    "buddy_happy_front": {
+      "source": "cel_happy_front",
+      "mirrored": false
+    }
+  },
+  "canvasPt": [
+    160,
+    159
+  ],
+  "baselinePt": 155.0
+}
