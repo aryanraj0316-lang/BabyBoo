@@ -327,5 +327,5 @@ Decisions made during the build. Where these differ from the brief above, these 
 
 - All 10 app frames are colour-matched to `buddy_watch_34_left`, measured on body fur only (eyes, mouth, pink ears, blush, foot pads and the soft edge excluded).
 - Matching is done in CIELAB, not HSL: HSL saturation sits near its ceiling for pastel fur and did not register the differences. CIELAB showed the outliers were frames paler than the reference (wave ΔE 8.4, yawn 5.2, arms_up 4.0), not deeper ones; worried_wavy and surprised already matched (ΔE 0.5 and 0.8).
-- One global correction per frame: hue rotation (≤ 2°), one chroma gain (≤ 1.18), an L* curve with black and white pinned. After matching, every frame is within ΔE 0.7 of the reference. Eyes move by at most 8/255.
-- Known side effect: the global chroma gain also lifts the blush on buddy_wave (chroma 50.5 → 59.5, against about 50 on the other frames).
+- One global colour transform per frame: hue rotation (≤ 2°), an L* curve with black and white pinned, and a hue-weighted chroma gain: one gain for the lavender fur, one for the pink (inner ears, blush), blended smoothly by hue. This is still one transform applied to every pixel, not a per-region edit.
+- Results: fur within ΔE 0.51 of the reference on every frame (worst before: 8.4). Pink chroma 51.0-51.6 on every frame (reference 51.2; before, 42.8-51.3). Eyes move by at most 9/255. Alpha is untouched.

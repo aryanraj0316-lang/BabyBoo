@@ -70,18 +70,30 @@ COLOUR_REFERENCE = 'turn_34_left'
 
 
 def colour_matched() -> tuple[dict[str, np.ndarray], dict[str, dict]]:
-    """Colour-corrected pixels and the correction used, per app source frame."""
-    ref = colour.fur_stats(load(COLOUR_REFERENCE))
+    """Colour-corrected pixels and the correction used, per app source frame.
+
+    Fur and pink (inner ears, blush) are both matched to the reference frame.
+    """
+    ref_img = load(COLOUR_REFERENCE)
+    ref = colour.fur_stats(ref_img)
+    ref_pink = colour.chroma_at(ref_img, colour.pink_mask(ref_img))
     pixels: dict[str, np.ndarray] = {}
     report: dict[str, dict] = {}
     for src, _ in EXPORTS.values():
         before = load(src)
-        after, c = colour.match(before, ref) if src != COLOUR_REFERENCE else (before, {'h_shift': 0.0, 'C_gain': 1.0, 'L_gamma': 1.0})
+        if src == COLOUR_REFERENCE:
+            after, c = before, dict(colour.IDENTITY)
+        else:
+            after, c = colour.match(before, ref, ref_pink)
+        pink = colour.pink_mask(before)
         pixels[src] = after
         report[src] = {
             'correction': c,
             'before': colour.fur_stats(before),
             'after': colour.fur_stats(after),
+            'pink_C_before': colour.chroma_at(before, pink),
+            'pink_C_after': colour.chroma_at(after, pink),
+            'pink_C_reference': ref_pink,
         }
         report[src]['dE_before'] = colour.delta_e(report[src]['before'], ref)
         report[src]['dE_after'] = colour.delta_e(report[src]['after'], ref)
@@ -371,10 +383,13 @@ def contact_sheet(metrics: dict[str, dict], matched: dict[str, np.ndarray]) -> N
 
 def print_colour_report(report: dict[str, dict]) -> None:
     names = {src: out for out, (src, _) in EXPORTS.items()}
-    print(f"{'frame':22s} {'dE before':>9s} {'dE after':>8s}   hue shift  chroma gain  L* gamma")
+    ref_pink = next(iter(report.values()))['pink_C_reference']
+    print(f"{'frame':22s} {'fur dE':>13s}  {'pink C* (ref ' + format(ref_pink, '.1f') + ')':>20s}   hue    fur gain  pink gain  L* gamma")
     for src, r in report.items():
         c = r['correction']
-        print(f"{names[src]:22s} {r['dE_before']:9.2f} {r['dE_after']:8.2f}   {c['h_shift']:+8.2f}  {c['C_gain']:10.3f}  {c['L_gamma']:8.3f}")
+        print(f"{names[src]:22s} {r['dE_before']:5.2f} -> {r['dE_after']:4.2f}  "
+              f"{r['pink_C_before']:9.1f} -> {r['pink_C_after']:5.1f}    "
+              f"{c['h_shift']:+5.2f}   {c['C_gain']:7.3f}  {c['C_gain_pink']:8.3f}  {c['L_gamma']:8.3f}")
 
 
 def colour_strips(metrics: dict[str, dict], matched: dict[str, np.ndarray]) -> None:
