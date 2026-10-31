@@ -319,6 +319,6 @@ Decisions made during the build. Where these differ from the brief above, these 
 ### Resolution and scene sizing
 
 - **Upscaling cap:** at most 1.12x display-time upscaling of any Buddy frame, on any device. No AI upscaling for now.
-- **Buddy cap:** the watching frame is at most **159pt** tall (141.8pt native × 1.12). On screens denser than 3x the cap scales down to keep within 1.12x (about 136pt at 3.5x, 119pt at 4x).
+- **Buddy cap:** the watching frame is at most **159pt** tall (141.8pt native × 1.12) on every device, including screens denser than 3x. The cap is in points, not a per-density upscale ratio: a point is roughly the same physical size on every device, so each source pixel covers the same physical area and 159pt looks equally sharp at 3x, 3.5x and 4x.
 - **Scene sizing:** the scene is sized from Buddy's cap. Buddy is 40% of the phone height, so the phone is 2.5x Buddy's height (397pt at the cap), with a realistic phone aspect ratio. Composition proportions are identical on every device.
 - **Large screens:** extra space becomes air around the scene and between the scene and the text. The phone is never enlarged on its own. The brief's 55-60% phone-width target is secondary to this.
