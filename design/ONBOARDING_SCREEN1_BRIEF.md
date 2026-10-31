@@ -322,3 +322,10 @@ Decisions made during the build. Where these differ from the brief above, these 
 - **Buddy cap:** the watching frame is at most **159pt** tall (141.8pt native × 1.12) on every device, including screens denser than 3x. The cap is in points, not a per-density upscale ratio: a point is roughly the same physical size on every device, so each source pixel covers the same physical area and 159pt looks equally sharp at 3x, 3.5x and 4x.
 - **Scene sizing:** the scene is sized from Buddy's cap. Buddy is 40% of the phone height, so the phone is 2.5x Buddy's height (397pt at the cap), with a realistic phone aspect ratio. Composition proportions are identical on every device.
 - **Large screens:** extra space becomes air around the scene and between the scene and the text. The phone is never enlarged on its own. The brief's 55-60% phone-width target is secondary to this.
+
+### Colour match (after Checkpoint 1)
+
+- All 10 app frames are colour-matched to `buddy_watch_34_left`, measured on body fur only (eyes, mouth, pink ears, blush, foot pads and the soft edge excluded).
+- Matching is done in CIELAB, not HSL: HSL saturation sits near its ceiling for pastel fur and did not register the differences. CIELAB showed the outliers were frames paler than the reference (wave ΔE 8.4, yawn 5.2, arms_up 4.0), not deeper ones; worried_wavy and surprised already matched (ΔE 0.5 and 0.8).
+- One global correction per frame: hue rotation (≤ 2°), one chroma gain (≤ 1.18), an L* curve with black and white pinned. After matching, every frame is within ΔE 0.7 of the reference. Eyes move by at most 8/255.
+- Known side effect: the global chroma gain also lifts the blush on buddy_wave (chroma 50.5 → 59.5, against about 50 on the other frames).

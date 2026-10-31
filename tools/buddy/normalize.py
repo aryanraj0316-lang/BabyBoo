@@ -22,6 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from detect import SHEETS  # noqa: E402
+import colour  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 MATTE = ROOT / 'design/buddy/_work/matte'
@@ -62,6 +63,29 @@ HEAD_WIDTH_PER_DIAMETER = 1.20
 # Each sheet is drawn at one scale (clean frames on a sheet agree within ~3%),
 # so these take the median head size of the clean frames on their sheet.
 PAWS_ON_HEAD = {'joy_arms_up', 'joy_giggle', 'joy_cover_eyes', 'cel_arms_up', 'cel_peek'}
+
+
+# Colour reference: every app frame's fur is matched to this frame.
+COLOUR_REFERENCE = 'turn_34_left'
+
+
+def colour_matched() -> tuple[dict[str, np.ndarray], dict[str, dict]]:
+    """Colour-corrected pixels and the correction used, per app source frame."""
+    ref = colour.fur_stats(load(COLOUR_REFERENCE))
+    pixels: dict[str, np.ndarray] = {}
+    report: dict[str, dict] = {}
+    for src, _ in EXPORTS.values():
+        before = load(src)
+        after, c = colour.match(before, ref) if src != COLOUR_REFERENCE else (before, {'h_shift': 0.0, 'C_gain': 1.0, 'L_gamma': 1.0})
+        pixels[src] = after
+        report[src] = {
+            'correction': c,
+            'before': colour.fur_stats(before),
+            'after': colour.fur_stats(after),
+        }
+        report[src]['dE_before'] = colour.delta_e(report[src]['before'], ref)
+        report[src]['dE_after'] = colour.delta_e(report[src]['after'], ref)
+    return pixels, report
 
 
 def all_frames() -> list[str]:
@@ -270,7 +294,7 @@ def canvas_for(frames, metrics, head_px: float) -> tuple[tuple[int, int], float]
     return (w, h), above
 
 
-def export(metrics: dict[str, dict]) -> dict:
+def export(metrics: dict[str, dict], matched: dict[str, np.ndarray]) -> dict:
     EXPORT.mkdir(parents=True, exist_ok=True)
     for old in EXPORT.glob('*.webp'):
         old.unlink()
@@ -291,7 +315,7 @@ def export(metrics: dict[str, dict]) -> dict:
             k = head_px / m['head_w']
             if k > 1.0:
                 raise SystemExit(f'{out_name}@{s}x would be upscaled {k:.3f}x from the source; lower HEAD_PT')
-            img = place(load(src), m, mirror, k, canvas, base_y)
+            img = place(matched[src], m, mirror, k, canvas, base_y)
             dst = EXPORT / f'{out_name}@{s}x.webp'
             q = 90
             while True:
@@ -305,7 +329,7 @@ def export(metrics: dict[str, dict]) -> dict:
     return manifest
 
 
-def contact_sheet(metrics: dict[str, dict]) -> None:
+def contact_sheet(metrics: dict[str, dict], matched: dict[str, np.ndarray]) -> None:
     """Every cut frame at the normalized scale on a mid-dark background."""
     names = [(n, False) for n in all_frames()]
     names += [(src, True) for out, (src, mirror) in EXPORTS.items() if mirror]
@@ -332,17 +356,71 @@ def contact_sheet(metrics: dict[str, dict]) -> None:
         y = header + (i // cols) * ch
         m = metrics[n]
         k = head_px / m['head_w']
-        img = place(load(n), m, mirror, k, canvas, base_y)
+        out = export_name.get((n, mirror))
+        img = place(matched[n] if out else load(n), m, mirror, k, canvas, base_y)
         sheet.alpha_composite(img, (x, y))
         d.line([(x, y + base_y), (x + canvas[0], y + base_y)], fill=(150, 150, 170, 255), width=1)
         d.line([(x + canvas[0] / 2, y + base_y), (x + canvas[0] / 2, y + base_y + 6)], fill=(150, 150, 170, 255), width=1)
-        out = export_name.get((n, mirror))
         label = f'{out}@3x.webp' if out else (n + (' (mirrored)' if mirror else ''))
         d.text((x, y + canvas[1] + 6), label, font=font, fill=(196, 184, 255) if out else (165, 165, 175))
         if out:
             d.text((x, y + canvas[1] + 24), f'from {n}' + (' , mirrored' if mirror else ''), font=font, fill=(130, 130, 145))
     sheet.convert('RGB').save(SHEET_OUT)
     print('contact sheet', SHEET_OUT.relative_to(ROOT), sheet.size)
+
+
+def print_colour_report(report: dict[str, dict]) -> None:
+    names = {src: out for out, (src, _) in EXPORTS.items()}
+    print(f"{'frame':22s} {'dE before':>9s} {'dE after':>8s}   hue shift  chroma gain  L* gamma")
+    for src, r in report.items():
+        c = r['correction']
+        print(f"{names[src]:22s} {r['dE_before']:9.2f} {r['dE_after']:8.2f}   {c['h_shift']:+8.2f}  {c['C_gain']:10.3f}  {c['L_gamma']:8.3f}")
+
+
+def colour_strips(metrics: dict[str, dict], matched: dict[str, np.ndarray]) -> None:
+    """All 10 app frames side by side: corrected on dark and lavender, and before/after."""
+    head_px = HEAD_PT * 1.5
+    frames = list(EXPORTS.values())
+    canvas, base_y = canvas_for(frames, metrics, head_px)
+    try:
+        font = ImageFont.truetype('arialbd.ttf', 20)
+    except OSError:
+        font = ImageFont.load_default()
+
+    def row(pixels_for, bg) -> Image.Image:
+        strip = Image.new('RGBA', (canvas[0] * len(frames), canvas[1]), bg + (255,))
+        for i, (src, mirror) in enumerate(frames):
+            m = metrics[src]
+            strip.alpha_composite(place(pixels_for(src), m, mirror, head_px / m['head_w'], canvas, base_y), (i * canvas[0], 0))
+        return strip
+
+    def labelled(rows: list[tuple[str, Image.Image]], bg) -> Image.Image:
+        h = sum(r.height + 34 for _, r in rows)
+        out = Image.new('RGBA', (rows[0][1].width, h), bg + (255,))
+        d = ImageDraw.Draw(out)
+        y = 0
+        for text, r in rows:
+            d.text((10, y + 6), text, font=font, fill=(235, 235, 245) if sum(bg) < 300 else (30, 26, 60))
+            out.alpha_composite(r, (0, y + 34))
+            y += r.height + 34
+        return out
+
+    dark, lav = (0x1A, 0x1A, 0x1E), (0xA9, 0x9B, 0xF0)
+    corrected = labelled([
+        ('Colour-matched on #1A1A1E', row(lambda s: matched[s], dark)),
+    ], dark)
+    corrected_lav = labelled([
+        ('Colour-matched on lavender #A99BF0', row(lambda s: matched[s], lav)),
+    ], lav)
+    both = Image.new('RGBA', (corrected.width, corrected.height + corrected_lav.height))
+    both.alpha_composite(corrected, (0, 0))
+    both.alpha_composite(corrected_lav, (0, corrected.height))
+    both.convert('RGB').save(ROOT / 'design/buddy/colour_match_strip.png')
+    labelled([
+        ('Before colour match', row(load, dark)),
+        ('After colour match (reference: buddy_watch_34_left, first)', row(lambda s: matched[s], dark)),
+    ], dark).convert('RGB').save(ROOT / 'design/buddy/colour_match_before_after.png')
+    print('strips: design/buddy/colour_match_strip.png, design/buddy/colour_match_before_after.png')
 
 
 def main() -> None:
@@ -360,8 +438,12 @@ def main() -> None:
     print('coloured source px not opaque:', {n: v for n, v in lost.items() if v} or 'none')
     if args.qa:
         return
-    export(metrics)
-    contact_sheet(metrics)
+    matched, colour_report = colour_matched()
+    (WORK / 'colour_report.json').write_text(json.dumps(colour_report, indent=1))
+    print_colour_report(colour_report)
+    export(metrics, matched)
+    contact_sheet(metrics, matched)
+    colour_strips(metrics, matched)
 
 
 if __name__ == '__main__':
