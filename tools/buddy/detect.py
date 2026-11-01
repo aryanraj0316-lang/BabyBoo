@@ -12,7 +12,8 @@ import numpy as np
 
 # Sheet name -> (rows, cols).
 LAYOUT = {'buddy_turnaround': (2, 3), 'buddy_expressions': (2, 4), 'buddy_actions': (2, 3),
-          'buddy_joy': (2, 3), 'buddy_celebrate': (2, 3), 'buddy_eyes_closed': (1, 1)}
+          'buddy_joy': (2, 3), 'buddy_celebrate': (2, 3), 'buddy_eyes_closed': (1, 1),
+          'buddy_master': (1, 1)}
 
 # Sheet name -> frame names in reading order. None marks a cell we never use.
 SHEETS: dict[str, list[str | None]] = {
@@ -32,11 +33,15 @@ SHEETS: dict[str, list[str | None]] = {
         'joy_wave', 'joy_clasped', 'joy_arms_up',
         'joy_giggle', 'joy_content', 'joy_cover_eyes',
     ],
+    # A jump sequence in reading order. The bottom-middle frame (flattened head,
+    # ears flopped forward) is the intentional landing squash.
     'buddy_celebrate': [
-        'cel_peek', 'cel_jump', 'cel_arms_up',
-        'cel_arms_out', None, 'cel_happy_front',  # bottom-middle: ears off-model
+        'cel_anticipation', 'cel_takeoff', 'cel_apex',
+        'cel_falling', 'cel_landing', 'cel_settle',
     ],
     'buddy_eyes_closed': ['eyes_closed_smile'],
+    # The locked master design: primary reference for colours, eyes, blush, pads and proportions.
+    'buddy_master': ['master'],
 }
 
 

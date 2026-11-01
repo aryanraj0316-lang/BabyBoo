@@ -50,7 +50,7 @@ EXPORTS: dict[str, tuple[str, bool]] = {
     'buddy_point_left': ('act_point_right', True),
     'buddy_arms_up': ('joy_arms_up', False),
     'buddy_wave': ('joy_wave', False),
-    'buddy_happy_front': ('cel_happy_front', False),
+    'buddy_happy_front': ('cel_settle', False),
 }
 
 # Head size. The head is the largest round shape in Buddy's upper body, so the
@@ -63,7 +63,7 @@ HEAD_WIDTH_PER_DIAMETER = 1.20
 # Frames where paws press against the head, which lets a bigger circle fit.
 # Each sheet is drawn at one scale (clean frames on a sheet agree within ~3%),
 # so these take the median head size of the clean frames on their sheet.
-PAWS_ON_HEAD = {'joy_arms_up', 'joy_giggle', 'joy_cover_eyes', 'cel_arms_up', 'cel_peek'}
+PAWS_ON_HEAD = {'joy_arms_up', 'joy_giggle', 'joy_cover_eyes', 'cel_apex', 'cel_anticipation'}
 
 
 # Colour reference: every app frame's fur is matched to this frame.
