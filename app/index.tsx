@@ -32,7 +32,7 @@ import Svg, {
 import { BuddyMascotNative } from '../src/native/BuddyMascotNative';
 import { PatternLockNative } from '../src/native/PatternLockNative';
 import { OnboardingAssessmentNative, OnboardingChildData } from '../src/native/OnboardingAssessmentNative';
-import { OnboardingFirstScreenNative } from '../src/native/OnboardingFirstScreenNative';
+import { OnboardingScreen1 } from '../src/onboarding/screen1/OnboardingScreen1';
 import { OnboardingSecondScreenNative, type OnboardingSecondChildData } from '../src/native/OnboardingSecondScreenNative';
 import { OnboardingThirdScreenNative, type OnboardingScreen3Data } from '../src/native/OnboardingThirdScreenNative';
 import { OnboardingFourthScreenNative, type OnboardingScreen4Data } from '../src/native/OnboardingFourthScreenNative';
@@ -1988,10 +1988,7 @@ export default function App() {
 
   // Screen: Onboarding Intro & First Screen Flow
   const renderSplash = () => (
-    <OnboardingFirstScreenNative
-      onGetStarted={() => setCurrentScreen('onboarding_second')}
-      onSkip={() => setCurrentScreen('onboarding_second')}
-    />
+    <OnboardingScreen1 onGetStarted={() => setCurrentScreen('onboarding_second')} />
   );
 
   // Screen: Onboarding Second Waving Page (Buddy greeting, floating child name, age chips)

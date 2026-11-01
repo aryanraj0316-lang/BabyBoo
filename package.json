@@ -17,9 +17,8 @@
     "update:preview": "eas update --channel preview",
     "postinstall": "node scripts/patch-expo-constants.cjs",
     "test": "vitest run",
-    "mascot:prepare": "python tools/prepare_mascot.py",
-    "hero:sounds": "node tools/generate_hero_sounds.mjs",
-    "hero:strips": "python tools/render_frame_strip.py"
+    "buddy:matte": "tools/.venv/Scripts/python tools/buddy/matte.py",
+    "buddy:frames": "python tools/buddy/normalize.py"
   },
   "dependencies": {
     "@shopify/react-native-skia": "2.13.1",

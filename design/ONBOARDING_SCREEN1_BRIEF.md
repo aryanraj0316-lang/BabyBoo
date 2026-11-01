@@ -329,3 +329,14 @@ Decisions made during the build. Where these differ from the brief above, these 
 - Matching is done in CIELAB, not HSL: HSL saturation sits near its ceiling for pastel fur and did not register the differences. CIELAB showed the outliers were frames paler than the reference (wave ΔE 8.4, yawn 5.2, arms_up 4.0), not deeper ones; worried_wavy and surprised already matched (ΔE 0.5 and 0.8).
 - One global colour transform per frame: hue rotation (≤ 2°), an L* curve with black and white pinned, and a hue-weighted chroma gain: one gain for the lavender fur, one for the pink (inner ears, blush), blended smoothly by hue. This is still one transform applied to every pixel, not a per-region edit.
 - Results: fur within ΔE 0.51 of the reference on every frame (worst before: 8.4). Pink chroma 51.0-51.6 on every frame (reference 51.2; before, 42.8-51.3). Eyes move by at most 9/255. Alpha is untouched.
+
+### Phase 2 (static layout)
+
+- New screen lives in `src/onboarding/screen1/`; `app/index.tsx` renders `OnboardingScreen1`. All values are in `tokens.ts`.
+- Removed: `src/onboarding/hero/`, the Studio route `app/dev/hero-studio.tsx` (and its seven-tap unlock), `src/native/OnboardingFirstScreenNative.tsx`, the old mascot pipeline (`tools/prepare_mascot.py` and helpers), `assets/mascot/`, `assets/sounds/hero/` and their npm scripts. New scripts: `buddy:matte`, `buddy:frames`.
+- Frame measurements are generated into `buddyMetrics.generated.ts` (numbers only, unit-testable) and `buddyImages.generated.ts` (image requires).
+- **Composition:** the phone + Buddy group is centred horizontally, which puts the phone left of centre with Buddy to its right. The group is centred vertically in the space between the language toggle and the text, so extra height becomes equal air above and below.
+- **Halo:** opacity 0.35, the low end of the brief's range; at 0.42 it was noticeable at first glance.
+- **Text:** centred, matching the old screen. Headline 26/semibold, subline 16/regular; Devanagari line heights 1.5 and 1.7 (Latin 1.18 and 1.45). Large accessibility fonts are honoured up to 1.4x; the CTA grows with them (54pt minimum).
+- **CTA haptic:** expo-haptics light impact (already a dependency, used by the old screen 1). `Vibration` is avoided because iOS ignores its duration.
+- Screenshots are taken on an Android emulator set to each exact point size at 3x, with gesture navigation, so Android's status-bar and navigation insets are included.

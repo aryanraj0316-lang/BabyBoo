@@ -3,43 +3,103 @@
   "frames": {
     "buddy_watch_34_left": {
       "source": "turn_34_left",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        30.67,
+        13.67,
+        152.33,
+        155.33
+      ]
     },
     "buddy_worried_paws": {
       "source": "act_worried_paws",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        10.33,
+        19.33,
+        137.67,
+        155.33
+      ]
     },
     "buddy_worried_wavy": {
       "source": "expr_worried",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        27.0,
+        7.67,
+        141.0,
+        155.33
+      ]
     },
     "buddy_yawn": {
       "source": "act_yawn",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        21.67,
+        10.0,
+        147.0,
+        155.0
+      ]
     },
     "buddy_sleepy": {
       "source": "act_sleepy",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        26.33,
+        16.67,
+        148.33,
+        155.33
+      ]
     },
     "buddy_surprised": {
       "source": "expr_surprised",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        26.67,
+        9.67,
+        141.33,
+        155.0
+      ]
     },
     "buddy_point_left": {
       "source": "act_point_right",
-      "mirrored": true
+      "mirrored": true,
+      "boundsPt": [
+        18.0,
+        10.67,
+        152.67,
+        155.0
+      ]
     },
     "buddy_arms_up": {
       "source": "joy_arms_up",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        8.33,
+        6.67,
+        155.33,
+        155.33
+      ]
     },
     "buddy_wave": {
       "source": "joy_wave",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        8.33,
+        5.0,
+        147.0,
+        155.0
+      ]
     },
     "buddy_happy_front": {
       "source": "cel_happy_front",
-      "mirrored": false
+      "mirrored": false,
+      "boundsPt": [
+        26.33,
+        22.0,
+        147.67,
+        155.33
+      ]
     }
   },
   "canvasPt": [
