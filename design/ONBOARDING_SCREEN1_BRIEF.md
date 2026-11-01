@@ -348,3 +348,16 @@ Decisions made during the build. Where these differ from the brief above, these 
 - **Reel palette:** no lavender or violet. Reel 1 (rest frame and reduced-motion still) is teal to mint; the others are night ocean, sunset peach to coral, sky to aqua, lime to green. The reel's bottom shade is neutral black.
 - **Phone:** a small round punch-hole camera replaces the pill; status bar time is 7:30 and its row is centred on the camera.
 - Deleted the old prompt document and `docs/hero-feasibility.md` (both remain in git history).
+
+### Phase 3 (the demo)
+
+- **One master clock:** `useDemoClock` advances a single UI-thread shared value per frame. `sceneAt(t, elapsed, motion)` in `timeline.ts` derives every animated value from it; no component keeps its own timer. Breathing and sway use the unwrapped `elapsed` (breathing through a pre-integrated phase table), so they never jump at the loop seam.
+- All demo timings and motion values are in `tokens.ts` (`demo`, `swipes`, `battery`, `toast`, `emptyBattery`, `dim`, `homePill`, `unlock`, `dot`, `home`, `haloTimeline`, `loopSeam`, `buddyTimeline`, `buddyMotion`, `buddyLight`, `reelShapes`).
+- **Reel swipes:** analytic spring.snappy (2.8% overshoot); Beat 2's two swipes run at 45% and 22% of its stiffness; the last swipe stalls at 42% of a reel and settles back.
+- **Dim:** a colour matrix lowers saturation to 15% and contrast to 80% while a black layer fades in, then a black lock layer takes over (6.4s) and carries the home pill.
+- **Dot, trail and lock layer** read the same displacement from the clock, so they cannot separate. After release the dot core holds at 35%, then fades out during the settle.
+- **Buddy crossfades** draw the lower of the two frames opaque and fade the upper one, so he never turns see-through mid-change. Pops are 0.97 -> 1.03 -> 1.0 (spring.bouncy); big changes (surprised, arms up) dip 2pt first. The last pop's residue is brought to exactly 1 before the loop seam.
+- **Reduced motion:** the clock parks at 9.4s (home screen, Buddy waving, warm halo) with breathing, sway, pops and the bounce off.
+- **"Battery low" toast:** localised (Hindi: "बैटरी कम है"), drawn with Skia's paragraph shaping so Devanagari renders correctly.
+- **Home screen status bar** uses dark icons over the light wallpaper.
+- **Dev-only scrubber** (top-left, `__DEV__` only): pause/play, step 50 ms, jump to beats 1-6, scrub bar, time readout.

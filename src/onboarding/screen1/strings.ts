@@ -11,6 +11,8 @@ export const STRINGS: Record<Language, {
   cta: string;
   toggleLabel: string;
   toggleA11y: string;
+  /** Shown inside the demo phone (decorative). */
+  batteryLow: string;
 }> = {
   en: {
     headline: 'Screen time ends with no one being the bad guy.',
@@ -18,6 +20,7 @@ export const STRINGS: Record<Language, {
     cta: 'Get Started',
     toggleLabel: 'EN',
     toggleA11y: 'English',
+    batteryLow: 'Battery low',
   },
   hi: {
     headline: 'स्क्रीन टाइम बिना किसी के विलेन बने खत्म होता है।',
@@ -25,6 +28,7 @@ export const STRINGS: Record<Language, {
     cta: 'शुरू करें',
     toggleLabel: 'हिन्दी',
     toggleA11y: 'हिन्दी',
+    batteryLow: 'बैटरी कम है',
   },
 };
 

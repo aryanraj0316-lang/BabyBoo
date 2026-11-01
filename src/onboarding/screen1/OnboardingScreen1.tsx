@@ -14,12 +14,14 @@
  * The scene and text therefore always read as one group, and on large screens
  * the extra room becomes air, never a bigger phone.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { computeScene, fitBuddyHeight, sceneHeightFor } from './layout';
 import { LanguageToggle } from './LanguageToggle';
 import { CtaButton } from './CtaButton';
+import { DebugScrubber } from './DebugScrubber';
+import { useDemoClock, useReducedMotion } from './useDemoClock';
 import { Scene } from './scene/Scene';
 import { STRINGS, type Language } from './strings';
 import { page, palette, textBlock as TB, type } from './tokens';
@@ -38,6 +40,9 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
   const [root, setRoot] = useState<Size | null>(null);
   const [textHeight, setTextHeight] = useState<number | null>(null);
   const [sceneY, setSceneY] = useState<number | null>(null);
+  const [assetsReady, setAssetsReady] = useState(false);
+  const onAssetsReady = useCallback(() => setAssetsReady(true), []);
+  const reducedMotion = useReducedMotion();
   const t = STRINGS[lang];
   const script = lang === 'hi' ? 'devanagari' : 'latin';
 
@@ -57,6 +62,9 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
     return computeScene({ x: 0, y: sceneY, width: root.width, height: sceneHeight });
   }, [root, sceneY, sceneHeight]);
 
+  // The master clock holds on Beat 1's first frame until every frame is decoded and the scene is laid out.
+  const clock = useDemoClock(assetsReady && layout !== null, reducedMotion);
+
   const onRootLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     if (changed(root?.width, width) || changed(root?.height, height)) setRoot({ width, height });
@@ -72,10 +80,20 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
 
   return (
     <View style={styles.root} onLayout={onRootLayout}>
-      {root && <Scene width={root.width} height={root.height} layout={layout} />}
+      {root && (
+        <Scene
+          width={root.width}
+          height={root.height}
+          layout={layout}
+          state={clock.state}
+          toastText={t.batteryLow}
+          onReady={onAssetsReady}
+        />
+      )}
 
       <View style={[styles.column, { paddingTop: insets.top, paddingBottom: insets.bottom + page.ctaBottomGap }]}>
         <View style={styles.topBar}>
+          {__DEV__ ? <DebugScrubber elapsed={clock.elapsed} paused={clock.paused} /> : <View />}
           <LanguageToggle value={lang} onChange={setLang} />
         </View>
 
@@ -119,7 +137,7 @@ const styles = StyleSheet.create({
   topBar: {
     height: page.topBarHeight,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   airAbove: { flexGrow: page.spareAbove },

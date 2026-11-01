@@ -22,11 +22,11 @@ export function CtaButton({ label, onPress }: Props) {
       <Pressable
         onPress={onPress}
         onPressIn={() => {
-          scale.value = withSpring(C.pressScale, SNAPPY);
+          scale.set(withSpring(C.pressScale, SNAPPY));
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
         }}
         onPressOut={() => {
-          scale.value = withSpring(1, SNAPPY);
+          scale.set(withSpring(1, SNAPPY));
         }}
         accessibilityRole="button"
         accessibilityLabel={label}

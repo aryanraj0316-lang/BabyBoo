@@ -1,0 +1,85 @@
+/**
+ * Dev-only QA control for the demo's master clock: pause / play, jump to any
+ * beat, step by 50 ms, and scrub along a bar covering one loop. The current
+ * time is shown (and exposed to UI automation as the readout's label).
+ *
+ * Rendered only when __DEV__ is true, so release builds never include it.
+ */
+import React, { useState } from 'react';
+import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import { runOnJS, useAnimatedReaction, type SharedValue } from 'react-native-reanimated';
+import { demo } from './tokens';
+
+interface Props {
+  elapsed: SharedValue<number>;
+  paused: SharedValue<boolean>;
+}
+
+const BEATS = Object.values(demo.beats);
+const BAR_WIDTH = 200;
+const STEP = 0.05;
+
+export function DebugScrubber({ elapsed, paused }: Props) {
+  const [time, setTime] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useAnimatedReaction(
+    () => Math.round((elapsed.value % demo.loop) * 100) / 100,
+    (t, prev) => {
+      if (t !== prev) runOnJS(setTime)(t);
+    },
+  );
+
+  const setT = (t: number) => {
+    elapsed.set(Math.max(0, Math.min(demo.loop - 0.001, t)));
+  };
+  const pause = (p: boolean) => {
+    paused.set(p);
+    setIsPaused(p);
+  };
+
+  const responder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (e) => {
+      pause(true);
+      setT((e.nativeEvent.locationX / BAR_WIDTH) * demo.loop);
+    },
+    onPanResponderMove: (e) => setT((e.nativeEvent.locationX / BAR_WIDTH) * demo.loop),
+  });
+
+  return (
+    <View style={styles.panel}>
+      <View style={styles.row}>
+        <Pressable accessibilityLabel={isPaused ? 'debug-play' : 'debug-pause'} onPress={() => pause(!isPaused)} style={styles.btn}>
+          <Text style={styles.label}>{isPaused ? '▶' : '❚❚'}</Text>
+        </Pressable>
+        <Pressable accessibilityLabel="debug-back" onPress={() => { pause(true); setT(time - STEP); }} style={styles.btn}>
+          <Text style={styles.label}>−</Text>
+        </Pressable>
+        <Pressable accessibilityLabel="debug-forward" onPress={() => { pause(true); setT(time + STEP); }} style={styles.btn}>
+          <Text style={styles.label}>+</Text>
+        </Pressable>
+        {BEATS.map((b, i) => (
+          <Pressable key={i} accessibilityLabel={`debug-beat-${i + 1}`} onPress={() => setT(b)} style={styles.btn}>
+            <Text style={styles.label}>{i + 1}</Text>
+          </Pressable>
+        ))}
+        <Text accessibilityLabel={`debug-time-${time.toFixed(2)}`} style={styles.readout}>{time.toFixed(2)}s</Text>
+      </View>
+      <View accessibilityLabel="debug-bar" style={styles.bar} {...responder.panHandlers}>
+        <View style={[styles.fill, { width: (time / demo.loop) * BAR_WIDTH }]} />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  panel: { backgroundColor: 'rgba(20,20,28,0.78)', borderRadius: 10, padding: 6, gap: 6 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  btn: { minWidth: 22, height: 22, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
+  label: { color: '#FFFFFF', fontSize: 11, fontWeight: '600' },
+  readout: { color: '#FFFFFF', fontSize: 11, marginLeft: 4, fontVariant: ['tabular-nums'] },
+  bar: { width: BAR_WIDTH, height: 18, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.14)', overflow: 'hidden' },
+  fill: { height: '100%', backgroundColor: '#7B6BE0' },
+});

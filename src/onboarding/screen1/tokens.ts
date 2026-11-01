@@ -29,7 +29,7 @@ export const palette = {
     camera: '#050506',
     screenOff: '#000000',
   },
-  statusBar: { ink: '#FFFFFF' },
+  statusBar: { ink: '#FFFFFF', inkOnLight: '#1B1A24' }, // white over reels, dark over the light home wallpaper
   reelUi: {
     icon: 'rgba(255,255,255,0.95)',
     skeleton: 'rgba(255,255,255,0.55)',
@@ -127,6 +127,8 @@ export const contactShadow = {
   overhangOfBuddy: 0.04,
   blurOfBuddy: 0.05, // Skia blur sigma as a fraction of Buddy's height
   opacity: 0.22,
+  /** Buddy's own part of the floor shadow (it reacts to his bounce), as a fraction of his canvas width. */
+  buddyWidthOfCanvas: 0.62,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -243,3 +245,229 @@ export const spring = {
 } as const;
 
 export const duration = { frame: 150, short: 250, medium: 400, long: 600 } as const;
+
+// ---------------------------------------------------------------------------
+// The demo (Phase 3): one master clock, named beats. Times in seconds.
+// ---------------------------------------------------------------------------
+
+export const demo = {
+  loop: 11.0,
+  beats: {
+    reels: 0, // Beat 1
+    battery: 3.5, // Beat 2
+    shutdown: 5.5, // Beat 3
+    unlock: 6.8, // Beat 4
+    unlocked: 8.1, // Beat 5
+    rest: 9.8, // Beat 6
+  },
+  /** Composed still for reduced motion: unlocked home screen, Buddy waving, warm halo. */
+  stillTime: 9.4,
+} as const;
+
+/**
+ * Reel swipes. Each swipe moves the feed up one reel with spring.snappy whose
+ * stiffness is scaled by `energy` (Beat 2's swipes slow down). The last one
+ * stalls: it travels `stall.reach` of a reel, then settles back.
+ */
+export const swipes = {
+  times: [0.6, 1.45, 2.3, 3.15, 3.95, 4.75],
+  energy: [1, 1, 1, 1, 0.45, 0.22],
+  stall: { time: 5.2, reach: 0.42, rise: 0.32, settle: 0.45 },
+  /** Vertical stretch at full swipe speed, released as it settles. */
+  stretch: 0.02,
+} as const;
+
+export const battery = {
+  start: 0.23,
+  end: 0.05,
+  drainFrom: 3.5,
+  drainTo: 5.5,
+  amberBelow: 0.15,
+  redBelow: 0.08,
+  /** Colour tween width around each threshold (battery fraction). */
+  blend: 0.015,
+  /** Fresh session after unlock. */
+  home: 0.8,
+} as const;
+
+export const toast = {
+  inAt: 4.0,
+  outAt: 5.5,
+  topOfScreen: 0.1, // resting top, below the status bar
+  heightOfScreen: 0.075,
+  widthOfScreen: 0.62,
+  fontSizeOfScreen: 0.052,
+  iconWidthOfScreen: 0.06,
+  fill: 'rgba(28,28,32,0.72)', // over a backdrop blur
+  blur: 10,
+  text: '#FFFFFF',
+} as const;
+
+export const emptyBattery = {
+  inAt: 5.5,
+  widthOfScreen: 0.26,
+  heightOfScreen: 0.12, // of the screen width
+  scaleFrom: 0.9,
+  stroke: 'rgba(255,255,255,0.9)',
+  sliverOfInner: 0.08,
+} as const;
+
+export const dim = {
+  at: 5.9,
+  length: 0.5,
+  /** Remaining saturation and contrast when fully dim (the screen loses colour as it fades). */
+  saturation: 0.15,
+  contrast: 0.8,
+} as const;
+
+export const homePill = {
+  inAt: 6.5,
+  widthOfScreen: 0.3,
+  height: 4,
+  bottomOfScreen: 0.025,
+  opacity: 0.35,
+  activeOpacity: 0.7, // brightened while the dot is on it
+  color: '#D9D9DE',
+} as const;
+
+/** Beat 4 timings, relative to demo.beats.unlock (seconds). */
+export const unlock = {
+  appear: [0, 0.15],
+  hold: [0.15, 0.35],
+  swipe: [0.35, 0.8],
+  release: [0.8, 1.05],
+  settle: [1.05, 1.3],
+  /** How far the dot travels, as a fraction of the screen height. */
+  travelOfScreen: 0.45,
+  lockFadeTo: 0.6,
+} as const;
+
+export const dot = {
+  diameterOfScreen: 0.11,
+  minDiameter: 20,
+  coreOfDiameter: 0.65,
+  ringWidthOfDiameter: 0.09,
+  glowRadiusOfDiameter: 0.4,
+  glowOpacity: 0.45,
+  glowPulse: 1.15,
+  appearScale: 0.6,
+  releaseScale: 0.85,
+  releaseCoreOpacity: 0.35,
+  /** Gap between the home pill and the dot's centre, as a fraction of the dot diameter. */
+  aboveHomePill: 0.9,
+  trailColor: [106, 134, 251] as const, // dot.glow as RGB
+  trailOpacity: 0.45,
+} as const;
+
+export const home = {
+  scaleFrom: 0.97,
+  wallpaper: ['#E6DEFF', '#FFE2D2'], // gentle lavender to peach
+  blobs: [
+    { x: 0.25, y: 0.3, r: 0.5, color: 'rgba(255,255,255,0.45)' },
+    { x: 0.8, y: 0.72, r: 0.45, color: 'rgba(255,196,170,0.45)' },
+  ],
+  blobBlurOfScreen: 0.12,
+  grid: { cols: 4, rows: 3, topOfScreen: 0.16, sideOfScreen: 0.1, iconOfScreen: 0.15, rowGapOfScreen: 0.075 },
+  iconRadiusOfIcon: 0.28,
+  glyphOfIcon: 0.46,
+  glyphColor: 'rgba(255,255,255,0.95)',
+  /** Soft pastel icon colours, one per icon. */
+  iconColors: [
+    '#FFB3A7', '#9ED9C8', '#A7C7FF', '#FFD98A',
+    '#C7B8FF', '#8FD3E8', '#FFC2DA', '#B9E59A',
+    '#FFCFA3', '#A3E3D0', '#D5C2FF', '#9EC9F0',
+  ],
+  iconsFrom: 1.05, // relative to the unlock beat: as the home screen settles
+  stagger: 0.025,
+  iconScaleFrom: 0.85,
+  iconDuration: 0.25,
+} as const;
+
+/** Scene halo states (palette.halo colours) and when they change. */
+export const haloTimeline = {
+  dimFactor: 0.08, // what is left of the halo at shutdown
+  warmAt: 7.85,
+  warmLength: 0.6,
+} as const;
+
+/** Loop seam: the phone screen and Buddy crossfade back to Beat 1. */
+export const loopSeam = { at: 10.6, length: 0.4 } as const;
+
+// ---------------------------------------------------------------------------
+// Buddy: performance (section 7)
+// ---------------------------------------------------------------------------
+
+/** Frame changes: [time, frame, big]. Big changes get anticipation. */
+export const buddyTimeline = [
+  [0, 'watch_34_left', false],
+  [3.5, 'worried_paws', false],
+  [4.6, 'worried_wavy', false],
+  [5.6, 'yawn', false],
+  [6.2, 'sleepy', false],
+  [6.8, 'surprised', true],
+  [7.15, 'point_left', false],
+  [8.1, 'arms_up', true],
+  [8.9, 'wave', false],
+  [9.8, 'happy_front', false],
+  [10.6, 'watch_34_left', false],
+] as const;
+
+export const buddyMotion = {
+  crossfade: 0.15, // duration.frame
+  pop: { down: 0.97, up: 1.03, downAt: 0.05, upAt: 0.16 },
+  anticipation: { dip: 2, lead: 0.08 },
+  breath: {
+    amplitude: 0.02,
+    period: 2.2,
+    sleepy: { period: 3.2, amplitude: 0.03, sink: 2, from: 6.2, to: 6.8 },
+    worried: { period: 1.5, amplitude: 0.012, lean: -1.5, from: 3.5, to: 5.6 }, // degrees; negative leans left, toward the phone
+    blend: 0.3,
+  },
+  sway: { degrees: 1, period: 3.4 },
+  bounce: {
+    at: 8.1 + 0.16, // after the arms-up pop
+    height: 8,
+    takeoff: 0.08,
+    air: 0.4,
+    land: 0.08,
+    recover: 0.19,
+    squash: { x: 1.04, y: 0.96 },
+    stretch: { x: 0.97, y: 1.03 },
+    shadowShrink: 0.25,
+    shadowLighten: 0.4,
+  },
+} as const;
+
+/** Phone light on Buddy: a gradient masked to his alpha (srcATop). */
+export const buddyLight = {
+  cool: { color: '#DCE6FF', intensity: 0.22 },
+  warm: { color: '#FFD7C2', intensity: 0.18 },
+  farShadow: { color: '#2A2560', intensity: 0.1 },
+  ambient: 0.04, // what remains in the dark
+  flicker: { amount: 0.04, decay: 0.25 },
+  /** The lit side spans this fraction of the canvas width from the phone side. */
+  reach: 0.75,
+} as const;
+
+/**
+ * The designed mini-scene in each reel (same order as `reels`). Positions and
+ * sizes are fractions of the reel: x and r of its width, y of its height.
+ * Each shape bobs by `bob` (fraction of the height) and may drift and spin,
+ * so every reel reads as video, not a still card.
+ */
+export const reelShapes = {
+  bobSpeed: 2.2, // radians per second
+  scenes: [
+    // balloons: [x, y, r, bob, phase]
+    { kind: 'balloons', items: [[0.32, 0.36, 0.11, 0.012, 0], [0.62, 0.28, 0.13, 0.012, 1.3], [0.48, 0.5, 0.1, 0.014, 2.4]] },
+    { kind: 'stars', items: [[0.28, 0.28, 0.08, 0.01, 0], [0.68, 0.4, 0.11, 0.01, 1], [0.44, 0.58, 0.065, 0.012, 2]] },
+    { kind: 'ball', items: [[0.5, 0.44, 0.16, 0.03, 0], [0.24, 0.24, 0.05, 0.008, 1.7], [0.78, 0.6, 0.04, 0.01, 0.6]] },
+    { kind: 'clouds', items: [[0.26, 0.36, 0.09, 0.008, 0], [0.62, 0.52, 0.08, 0.008, 1.5], [0.72, 0.22, 0.09, 0.006, 0.4]] },
+    { kind: 'bubbles', items: [[0.3, 0.32, 0.08, 0.016, 0], [0.64, 0.44, 0.12, 0.014, 1.1], [0.42, 0.62, 0.06, 0.018, 2.2]] },
+  ],
+  /** Star spin and cloud drift. */
+  spinSpeed: 0.6, // radians per second
+  drift: 0.03, // fraction of the width
+  balloonString: { lengthOfHeight: 0.16, width: 1, color: 'rgba(255,255,255,0.8)' },
+  highlight: 'rgba(255,255,255,0.45)',
+} as const;

@@ -5,20 +5,23 @@
 import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { Group, Path, RoundedRect, Skia, Text, matchFont } from '@shopify/react-native-skia';
+import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import type { Rect } from '../layout';
 import { palette, phone, statusBar as SB } from '../tokens';
 
 interface Props {
   screen: Rect;
-  /** 0..1 battery level. */
-  level: number;
+  /** 0..1 battery level (fixed, or animated by the demo clock). */
+  level: number | SharedValue<number>;
   /** Fill colour of the battery level. */
-  levelColor: string;
+  levelColor: string | SharedValue<string>;
+  /** Icon and text colour. */
+  ink?: string;
 }
 
 const FONT_FAMILY = Platform.select({ ios: 'Helvetica Neue', default: 'sans-serif' });
 
-export function PhoneStatusBar({ screen, level, levelColor }: Props) {
+export function PhoneStatusBar({ screen, level, levelColor, ink = palette.statusBar.ink }: Props) {
   const w = screen.width;
   const fontSize = SB.fontSizeOfScreen * w;
   const font = useMemo(
@@ -29,7 +32,6 @@ export function PhoneStatusBar({ screen, level, levelColor }: Props) {
   const pad = SB.sidePaddingOfScreen * w;
   // The status bar row is centred on the punch-hole camera, as on a real phone.
   const midY = screen.y + phone.camera.centreFromTopOfScreen * w;
-  const ink = palette.statusBar.ink;
 
   // Battery glyph, right-aligned.
   const bw = SB.battery.widthOfScreen * w;
@@ -48,6 +50,11 @@ export function PhoneStatusBar({ screen, level, levelColor }: Props) {
   const wifiX = bx - gap - wifiW;
   const sigW = iconH * 1.25;
   const sigX = wifiX - gap - sigW;
+
+  const fillW = useDerivedValue(() => {
+    const l = typeof level === 'number' ? level : level.value;
+    return Math.max(0, innerW * l);
+  });
 
   const wifi = useMemo(() => {
     // Three concentric arcs (a standard wifi glyph), as one SVG path.
@@ -86,7 +93,7 @@ export function PhoneStatusBar({ screen, level, levelColor }: Props) {
       <RoundedRect
         x={bx + inset}
         y={by + inset}
-        width={Math.max(0, innerW * level)}
+        width={fillW}
         height={bh - inset * 2}
         r={(bh - inset * 2) * 0.25}
         color={levelColor}
