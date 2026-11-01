@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: palette.bg.bottom },
   column: { flex: 1, paddingHorizontal: page.marginH },
   topBar: {
+    zIndex: 10, // the dev scrubber panel floats over the scene
     height: page.topBarHeight,
     flexDirection: 'row',
     justifyContent: 'space-between',
