@@ -96,7 +96,21 @@ def measure(ref_name: str, render_path: str, band: int, head_w: float) -> dict:
             rows.append((f'colour {key} dE00 vs sheet', float(deltaE_ciede2000(np.array(c1[key]), np.array(c2[key]))), limit, 'dE'))
         if key in cm and key in c2:
             rows.append((f'colour {key} dE00 vs master', float(deltaE_ciede2000(np.array(cm[key]), np.array(c2[key]))), limit, 'dE'))
-    return {'rows': rows}
+    # Fur lightness histogram vs the master (the shading gap as numbers): L* percentiles of
+    # the fur interior; within +-3 L* counts as matching.
+    master = np.array(Image.open(MATTE / 'master.png').convert('RGBA'))
+    pm, pr = fur_percentiles(master), fur_percentiles(ren)
+    for q, a, b in zip((5, 50, 95), pm, pr):
+        rows.append((f'fur L* p{q}: render {b:.1f} vs master {a:.1f}', abs(b - a), 3.0, 'dL'))
+    return {'rows': rows, 'furL': {'master': pm, 'render': pr}}
+
+
+def fur_percentiles(rgba: np.ndarray) -> list[float]:
+    from regions import classify, lab
+    fur = classify(rgba)['fur'] & (rgba[..., 3] >= 250)
+    fur = cv2.erode(fur.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+    L = lab(rgba[..., :3])[..., 0][fur]
+    return [float(v) for v in np.percentile(L, [5, 50, 95])]
 
 
 def table(rows) -> str:

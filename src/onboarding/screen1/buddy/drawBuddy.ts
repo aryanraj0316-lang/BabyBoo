@@ -6,10 +6,16 @@
  * harness verifies is exactly what the phone draws. The Skia API is passed in
  * through `BuddyResources` for that reason.
  *
- * Fur parts share one SkSL shader: superellipse coverage with a grain-broken
- * fuzzy edge (never a crisp outline), a dome normal for soft volume lighting
- * (key + ambient, soft terminator, rim), contact darkening near an occluding
- * part, and the baked fur grain from the references as the detail layer.
+ * Fur parts share one SkSL shader:
+ *  - coverage: the part's superellipse with a thin, velvety edge (no spiky strands)
+ *  - volume: a plush normal (flat in the middle, rounding over at the edge)
+ *  - lighting, two modes: 'procedural' (wrapped key light) or 'baked' (a
+ *    lightness field fitted to the reference in the part's own frame, so it
+ *    moves with the part); both darken fur that faces the ground
+ *  - contact occlusion, always dynamic: up to five occluding parts at their
+ *    current positions, each with a shadow offset, softness and strength
+ *  - rim light, suppressed where the part overlaps a part beneath it (no seams)
+ *  - the baked fur grain from the references as the detail layer
  */
 import type { SkCanvas, SkImage, SkPaint, SkRuntimeEffect, Skia as SkiaApi } from '@shopify/react-native-skia';
 import { BUDDY_MODEL as M, type BuddyView } from './buddyModel';
@@ -30,25 +36,47 @@ export interface BuddyPlacement {
   headWidth: number;
 }
 
+export type ShadingMode = 'procedural' | 'baked';
+
 export const FUR_SKSL = `
 uniform shader grain;
 uniform float2 c;
 uniform float rx;
-uniform float4 shp;      // ryTop, ryBot, nTop, nBot
+uniform float4 shp;        // ryTop, ryBot, nTop, nBot
 uniform float rot;
-uniform float edge;      // fuzz width in px
+uniform float edge;        // half-width of the soft edge, px
 uniform float3 cShadow;
 uniform float3 cBase;
 uniform float3 cHigh;
 uniform float3 cRim;
-uniform float3 light;    // light direction (x right, y down, z toward the viewer); flipped y for concave parts
-uniform float texScale;  // grain texture px per canvas px
+uniform float3 light;      // light direction (x right, y down, z toward the viewer)
+uniform float texScale;    // grain texture px per canvas px
 uniform float grainAmt;
 uniform float rimAmt;
-uniform float4 occ0;     // up to three occluding ellipses: cx, cy, rx, ry (rx = 0 for none)
-uniform float4 occ1;
-uniform float4 occ2;
-uniform float occAmt;
+uniform float plushPow;    // >1: flatter middle, rounder edge (a stuffed toy)
+uniform float ground;      // 0..1 darkening of downward-facing fur
+uniform float4 o0; uniform float4 o1; uniform float4 o2; uniform float4 o3; uniform float4 o4;
+uniform float4 q0; uniform float4 q1; uniform float4 q2; uniform float4 q3; uniform float4 q4;
+uniform float4 u0; uniform float4 u1;
+uniform float mode;        // 0 procedural, 1 baked
+uniform float4 pa; uniform float4 pb; uniform float2 pc;
+uniform float3 Lk;         // L* of cShadow, cBase, cHigh
+uniform float deepen;      // contact shadows deepen toward cShadow * deepen
+uniform float3 sheetTone;  // the reference sheet's fur L* (p5, p50, p95)
+uniform float3 masterTone; // the master's: baked lightness is re-toned from one to the other
+
+// Occluder o (cx, cy, rx, ry) with q = (offset x, offset y, softness, strength).
+float occlusion(float2 p, float4 o, float4 q) {
+  if (o.z <= 0.0) { return 1.0; }
+  float so = length((p - o.xy - q.xy) / o.zw);
+  return 1.0 - q.w * (1.0 - smoothstep(1.0, 1.0 + q.z, so));
+}
+
+// 1 where p lies over a part beneath this one (cx, cy, rx, ry).
+float beneath(float2 p, float4 b) {
+  if (b.z <= 0.0) { return 0.0; }
+  return 1.0 - smoothstep(0.92, 1.0, length((p - b.xy) / b.zw));
+}
 
 half4 main(float2 p) {
   float2 d = p - c;
@@ -57,37 +85,56 @@ half4 main(float2 p) {
   float2 q = float2(d.x * cs + d.y * sn, -d.x * sn + d.y * cs);
   float ry = q.y < 0.0 ? shp.x : shp.y;
   float n = q.y < 0.0 ? shp.z : shp.w;
-  float2 u = q / float2(rx, ry);
-  float s = pow(pow(abs(u.x), n) + pow(abs(u.y), n), 1.0 / n);
+  float2 uv = q / float2(rx, ry);
+  float s = pow(pow(abs(uv.x), n) + pow(abs(uv.y), n), 1.0 / n);
   float t = grain.eval(p * texScale).r - 0.5;
 
-  // Fuzzy edge centred on the outline (so the silhouette keeps its measured size),
-  // broken up by the grain.
+  // Velvety edge: thin and smooth, only lightly broken by the grain.
   float distPx = (1.0 - s) * min(rx, ry);
-  float alpha = smoothstep(-edge * 0.5, edge * 0.5, distPx + t * edge * 0.9);
+  float alpha = smoothstep(-edge, edge, distPx + t * edge * 0.6);
   if (alpha <= 0.0) { return half4(0.0); }
 
-  // Dome normal from the superellipse, rotated back to canvas space.
+  // Plush normal: flat in the middle, rounding over toward the edge.
   float sc = clamp(s, 0.0, 1.0);
-  float3 nl = normalize(float3(u.x, u.y, 1.25 * sqrt(max(0.0, 1.0 - sc * sc))));
+  float tilt = pow(sc, plushPow);
+  float2 dir = sc > 0.001 ? uv / sc : float2(0.0);
+  float3 nl = float3(dir * tilt, sqrt(max(0.0, 1.0 - tilt * tilt)));
   float3 nrm = float3(nl.x * cs - nl.y * sn, nl.x * sn + nl.y * cs, nl.z);
 
-  // Wrapped key light with a soft terminator, then a rim along the silhouette.
-  float k = clamp((dot(nrm, normalize(light)) + 0.45) / 1.45, 0.0, 1.0);
-  float3 col = mix(cShadow, cBase, smoothstep(0.08, 0.62, k));
-  col = mix(col, cHigh, smoothstep(0.72, 1.0, k));
-  col = mix(col, cRim, pow(1.0 - clamp(nrm.z, 0.0, 1.0), 3.0) * rimAmt);
-
-  // Contact darkening just outside each occluding part (under the chin, beside the arms).
-  float shade = 1.0;
-  for (int i = 0; i < 3; i++) {
-    float4 occ = i == 0 ? occ0 : (i == 1 ? occ1 : occ2);
-    if (occ.z > 0.0) {
-      float so = length((p - occ.xy) / occ.zw);
-      shade *= 1.0 - occAmt * exp(-max(so - 1.0, 0.0) * 9.0) * step(1.0, so);
+  float3 col;
+  if (mode < 0.5) {
+    float k = clamp((dot(nrm, normalize(light)) + 0.45) / 1.45, 0.0, 1.0);
+    col = mix(cShadow, cBase, smoothstep(0.08, 0.62, k));
+    col = mix(col, cHigh, smoothstep(0.72, 1.0, k));
+  } else {
+    float u = uv.x;
+    float v = uv.y;
+    float L = pa.x + pa.y * u + pa.z * v + pa.w * u * u + pb.x * u * v + pb.y * v * v
+            + pb.z * u * u * u + pb.w * u * u * v + pc.x * u * v * v + pc.y * v * v * v;
+    // Re-tone from the sheet's lightness to the master's (piecewise linear through p5, p50, p95).
+    L = L < sheetTone.y
+      ? masterTone.x + (L - sheetTone.x) * (masterTone.y - masterTone.x) / (sheetTone.y - sheetTone.x)
+      : masterTone.y + (L - sheetTone.y) * (masterTone.z - masterTone.y) / (sheetTone.z - sheetTone.y);
+    // Never darker than a little below the shadow colour (the fit extrapolates in areas it never saw).
+    L = clamp(L, Lk.x - 4.0, Lk.z + 4.0);
+    if (L < Lk.y) {
+      float a = (L - Lk.x) / (Lk.y - Lk.x);
+      col = a >= 0.0 ? mix(cShadow, cBase, a) : cShadow * (1.0 + a * 0.35);
+    } else {
+      col = mix(cBase, cHigh, clamp((L - Lk.y) / (Lk.z - Lk.y), 0.0, 1.0));
     }
   }
-  col *= shade;
+  // Fur facing the ground leans toward the (saturated) shadow lavender, never toward grey.
+  col = mix(col, cShadow, ground * clamp(nrm.y, 0.0, 1.0));
+
+  // Rim along the silhouette only: not where this part overlaps a part beneath it.
+  float over = max(beneath(p, u0), beneath(p, u1));
+  col = mix(col, cRim, pow(1.0 - clamp(nrm.z, 0.0, 1.0), 3.0) * rimAmt * (1.0 - over));
+
+  // Dynamic contact occlusion from the parts around this one. It deepens toward the shadow
+  // lavender (keeping the hue, as on the master) rather than multiplying toward grey.
+  float occ = occlusion(p, o0, q0) * occlusion(p, o1, q1) * occlusion(p, o2, q2) * occlusion(p, o3, q3) * occlusion(p, o4, q4);
+  col = mix(cShadow * deepen, col, occ);
 
   col *= 1.0 + t * grainAmt;
   return half4(col * alpha, alpha);
@@ -102,8 +149,13 @@ export function makeBuddyResources(Skia: SkiaT, grain: SkImage): BuddyResources 
 
 type Part = { cx: number; cy: number; rx: number; ryTop: number; ryBot: number; nTop: number; nBot: number; rot: number };
 type Rgb = readonly [number, number, number];
-type Occluder = { cx: number; cy: number; rx: number; ry: number };
-type Shading = { light: readonly number[]; rim: number; occluders: Occluder[]; contact: number };
+type Ellipse = { cx: number; cy: number; rx: number; ry: number };
+type Contact = { by: Ellipse; dx: number; dy: number; soft: number; strength: number };
+type Palette = { shadow: Rgb; base: Rgb; high: Rgb; rim: Rgb };
+type Shading = {
+  light: readonly number[]; rim: number; ground: number; contacts: Contact[]; beneath: Ellipse[];
+  poly: readonly number[] | null; plush: number;
+};
 
 function rgb01(hex: string): Rgb {
   'worklet';
@@ -111,9 +163,14 @@ function rgb01(hex: string): Rgb {
   return [((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
 }
 
+function ellipseOf(p: Part): Ellipse {
+  'worklet';
+  return { cx: p.cx, cy: p.cy, rx: p.rx, ry: Math.max(p.ryTop, p.ryBot) };
+}
+
 function drawFurPart(
-  canvas: SkCanvas, res: BuddyResources, part: Part, pl: BuddyPlacement,
-  palette: { shadow: Rgb; base: Rgb; high: Rgb; rim: Rgb }, shading: Shading,
+  canvas: SkCanvas, res: BuddyResources, part: Part, pl: BuddyPlacement, palette: Palette, sh: Shading, mode: ShadingMode,
+  tone: readonly number[],
 ) {
   'worklet';
   const { Skia } = res;
@@ -121,24 +178,46 @@ function drawFurPart(
   const cx = pl.x + part.cx * W;
   const cy = pl.y + part.cy * W;
   const rx = part.rx * W;
-  const reach = Math.max(rx, part.ryTop * W, part.ryBot * W) + LOOK.edgeOfHead * W * 2;
+  const edge = LOOK.edgeOfHead * W;
+  const reach = Math.max(rx, part.ryTop * W, part.ryBot * W) + edge * 3;
   const occ: number[] = [];
-  for (let i = 0; i < 3; i++) {
-    const o = shading.occluders[i];
-    if (o) occ.push(pl.x + o.cx * W, pl.y + o.cy * W, o.rx * W, o.ry * W);
-    else occ.push(0, 0, 0, 0);
+  const prm: number[] = [];
+  for (let i = 0; i < 5; i++) {
+    const k = sh.contacts[i];
+    if (k) {
+      occ.push(pl.x + k.by.cx * W, pl.y + k.by.cy * W, k.by.rx * W, k.by.ry * W);
+      prm.push(k.dx * W, k.dy * W, k.soft, k.strength);
+    } else {
+      occ.push(0, 0, 0, 0);
+      prm.push(0, 0, 0, 0);
+    }
   }
+  const under: number[] = [];
+  for (let i = 0; i < 2; i++) {
+    const b = sh.beneath[i];
+    if (b) under.push(pl.x + b.cx * W, pl.y + b.cy * W, b.rx * W, b.ry * W);
+    else under.push(0, 0, 0, 0);
+  }
+  const poly = sh.poly ?? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const Lab = M.coloursLab;
   const uniforms = [
     cx, cy, rx,
     part.ryTop * W, part.ryBot * W, part.nTop, part.nBot,
     part.rot,
-    LOOK.edgeOfHead * W,
+    edge,
     ...palette.shadow, ...palette.base, ...palette.high, ...palette.rim,
-    ...shading.light,
+    ...sh.light,
     LOOK.grainHeadPx / W,
     LOOK.grainAmount,
-    shading.rim,
-    ...occ, shading.contact,
+    sh.rim,
+    sh.plush,
+    sh.ground,
+    ...occ, ...prm, ...under,
+    mode === 'baked' && sh.poly ? 1 : 0,
+    ...poly,
+    Lab.furShadow[0], Lab.furBase[0], Lab.furHighlight[0],
+    LOOK.contactDeepen,
+    ...tone, ...M.masterTone,
   ];
   const grainShader = res.grain.makeShaderOptions(1, 1, 1, 0); // repeat, repeat, linear filter
   const shader = res.fur.makeShaderWithChildren(uniforms, [grainShader]);
@@ -154,6 +233,12 @@ function fill(res: BuddyResources, hex: string, alpha = 1): SkPaint {
   p.setAlphaf(alpha);
   p.setAntiAlias(true);
   return p;
+}
+
+function clearOf(hex: string): string {
+  'worklet';
+  const c = rgb01(hex);
+  return `rgba(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)},0)`;
 }
 
 /** A part's outline as a path (the same superellipse the shader draws), in canvas pixels. */
@@ -173,74 +258,119 @@ function superellipsePath(res: BuddyResources, part: Part, pl: BuddyPlacement) {
     const n = top ? part.nTop : part.nBot;
     const px = part.rx * W * Math.sign(ct) * Math.pow(Math.abs(ct), 2 / n);
     const py = ry * Math.sign(st) * Math.pow(Math.abs(st), 2 / n);
-    const x = pl.x + part.cx * W + px * cs - py * sn;
-    const y = pl.y + part.cy * W + px * sn + py * cs;
-    d += `${i === 0 ? 'M' : 'L'} ${x} ${y} `;
+    d += `${i === 0 ? 'M' : 'L'} ${pl.x + part.cx * W + px * cs - py * sn} ${pl.y + part.cy * W + px * sn + py * cs} `;
   }
   return res.Skia.Path.MakeFromSVGString(d + 'Z')!;
 }
 
 const HEART_SVG = 'M 0 0.85 C -0.35 0.55 -1 0.2 -1 -0.25 C -1 -0.7 -0.45 -0.95 0 -0.5 C 0.45 -0.95 1 -0.7 1 -0.25 C 1 0.2 0.35 0.55 0 0.85 Z';
 
-/** A heart pad, pointing down, centred at (cx, cy) with half-width r (positioned by the canvas, no path mutation). */
-function drawHeart(canvas: SkCanvas, res: BuddyResources, cx: number, cy: number, r: number, paint: SkPaint) {
+/**
+ * A puffy, raised pad: soft contact shadow under it, a gradient that is lighter
+ * up-left and deeper at the edge, and one small soft highlight.
+ */
+function drawPad(canvas: SkCanvas, res: BuddyResources, cx: number, cy: number, r: number, heart: boolean) {
   'worklet';
-  canvas.save();
-  canvas.translate(cx, cy);
-  canvas.scale(r, r);
-  canvas.drawPath(res.Skia.Path.MakeFromSVGString(HEART_SVG)!, paint);
-  canvas.restore();
+  const { Skia } = res;
+  const P = LOOK.pad;
+  const path = heart ? Skia.Path.MakeFromSVGString(HEART_SVG)! : null;
+  const shape = (paint: SkPaint, dy: number) => {
+    canvas.save();
+    canvas.translate(cx, cy + dy);
+    canvas.scale(r, r);
+    if (path) canvas.drawPath(path, paint);
+    else canvas.drawCircle(0, 0, 1, paint);
+    canvas.restore();
+  };
+  const shadow = fill(res, P.shadow, P.shadowOpacity);
+  shadow.setMaskFilter(Skia.MaskFilter.MakeBlur(0, P.shadowBlur, true));
+  shape(shadow, P.shadowDrop);
+  // The gradient is defined in the pad's unit space (it is drawn under canvas.scale).
+  const body = fill(res, M.colours.pad);
+  body.setShader(Skia.Shader.MakeRadialGradient({ x: -P.lightOffset, y: -P.lightOffset }, P.gradientReach,
+    [Skia.Color(P.light), Skia.Color(M.colours.pad), Skia.Color(P.deep)], [0, 0.55, 1], 0));
+  shape(body, 0);
+  const hl = fill(res, P.highlight, P.highlightOpacity);
+  hl.setMaskFilter(Skia.MaskFilter.MakeBlur(0, r * P.highlightBlur, true));
+  canvas.drawOval(Skia.XYWHRect(cx - r * (P.highlightX + P.highlightR), cy - r * (P.highlightY + P.highlightR * 0.7),
+    r * P.highlightR * 2, r * P.highlightR * 1.4), hl);
 }
 
-/** Draw Buddy in one of the measured views (F1: static likeness). */
-export function drawBuddy(canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, viewName: BuddyView = 'front'): void {
+/** Draw Buddy in one of the measured views. */
+export function drawBuddy(
+  canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, viewName: BuddyView = 'front', mode: ShadingMode = LOOK.shadingMode,
+): void {
   'worklet';
   const { Skia } = res;
   const W = pl.headWidth;
   const C = M.colours;
   const V = M.views[viewName];
   const P = V.parts;
-  const fur = { shadow: rgb01(C.furShadow), base: rgb01(C.furBase), high: rgb01(C.furHighlight), rim: rgb01(C.furRim) };
-  // Ears sit in the head's shade: their own measured fur colour.
-  const earFur = { shadow: rgb01(C.furShadow), base: rgb01(C.earFur), high: rgb01(C.furBase), rim: rgb01(C.furRim) };
-  const earPink = { shadow: rgb01(LOOK.innerEarShadow), base: rgb01(C.innerEar), high: rgb01(LOOK.innerEarHigh), rim: rgb01(C.innerEar) };
+  const fur: Palette = { shadow: rgb01(C.furShadow), base: rgb01(C.furBase), high: rgb01(C.furHighlight), rim: rgb01(C.furRim) };
   const X = (v: number) => pl.x + v * W;
   const Y = (v: number) => pl.y + v * W;
-  const head = P.head;
-  const chin: Occluder = { cx: head.cx, cy: head.cy, rx: head.rx, ry: head.ryBot };
-  const asOcc = (p: Part): Occluder => ({ cx: p.cx, cy: p.cy, rx: p.rx, ry: Math.max(p.ryTop, p.ryBot) });
-  const lit = (rim: number, occluders: Occluder[] = []): Shading => ({ light: LOOK.light, rim, occluders, contact: LOOK.contact });
-  const cup: Shading = { light: LOOK.cupLight, rim: 0, occluders: [], contact: 0 };
+  const K = LOOK.contact;
+  const headShadow: Contact = { by: ellipseOf(P.head), ...K.headShadow };
+  const beside = (p: Part, k: { soft: number; strength: number; dy?: number }): Contact => ({ by: ellipseOf(p), dx: 0, ...k, dy: k.dy ?? 0 });
+  const polys = V.lightPoly as Record<string, readonly number[] | null>;
+  const shading = (name: string, contacts: Contact[], beneath: Ellipse[], rim: number): Shading => ({
+    light: LOOK.light, rim, ground: LOOK.ground, contacts, beneath, plush: LOOK.plush, poly: polys[name] ?? null,
+  });
 
-  // Back to front: ears (with their pink cups), body, arms, feet with pads, head, face.
+  // Ears, darkened where they meet the head, each with a recessed pink cup.
   for (const side of ['earL', 'earR'] as const) {
-    drawFurPart(canvas, res, P[side], pl, earFur, lit(LOOK.rim.ear));
+    // The master's ears are the same light fur as the head, shaded a little where they meet it.
+    drawFurPart(canvas, res, P[side], pl, fur, shading(side, [beside(P.head, K.earByHead)], [], LOOK.rim.ear), mode, V.tone);
     for (const ie of V.innerEars) {
       if (ie.side !== side) continue;
-      drawFurPart(canvas, res, { cx: ie.c[0], cy: ie.c[1], rx: ie.r, ryTop: ie.r, ryBot: ie.r, nTop: 2, nBot: 2, rot: 0 }, pl, earPink, cup);
+      const cx = X(ie.c[0]);
+      const cy = Y(ie.c[1]);
+      const r = ie.r * W;
+      const I = LOOK.innerEar;
+      canvas.save();
+      canvas.clipPath(superellipsePath(res, P[side], pl), 1, true);
+      // The cup: lit from below (it is concave), deeper toward its rim.
+      const cup = fill(res, C.innerEar);
+      cup.setShader(Skia.Shader.MakeRadialGradient({ x: cx, y: cy + r * I.lightDrop }, r * I.reach,
+        [Skia.Color(I.light), Skia.Color(C.innerEar), Skia.Color(I.deep)], [0, 0.5, 1], 0));
+      cup.setMaskFilter(Skia.MaskFilter.MakeBlur(0, r * I.edgeBlur, true));
+      canvas.drawCircle(cx, cy, r, cup);
+      // The ear's rim overhangs the cup: a soft shadow along its upper edge.
+      const lip = Skia.Paint();
+      lip.setShader(Skia.Shader.MakeRadialGradient({ x: cx, y: cy + r * I.lipDrop }, r * I.lipReach,
+        [Skia.Color(clearOf(I.lip)), Skia.Color(clearOf(I.lip)), Skia.Color(I.lip)], [0, 0.7, 1], 0));
+      lip.setAlphaf(I.lipOpacity);
+      canvas.drawCircle(cx, cy, r, lip);
+      canvas.restore();
     }
   }
-  drawFurPart(canvas, res, P.body, pl, fur, lit(LOOK.rim.body, [chin, asOcc(P.armL), asOcc(P.armR)]));
-  drawFurPart(canvas, res, P.armL, pl, fur, lit(LOOK.rim.arm, [chin, asOcc(P.footL)]));
-  drawFurPart(canvas, res, P.armR, pl, fur, lit(LOOK.rim.arm, [chin, asOcc(P.footR)]));
+
+  // Body: the head's shadow falls on it, and it darkens between the limbs.
+  drawFurPart(canvas, res, P.body, pl, fur, shading('body', [
+    headShadow, beside(P.armL, K.bodyByArm), beside(P.armR, K.bodyByArm), beside(P.footL, K.bodyByFoot), beside(P.footR, K.bodyByFoot),
+  ], [], LOOK.rim.body), mode, V.tone);
+  // Arms: chubby tubes in front of the body, shaded by the head and by the feet they rest on.
+  for (const side of ['armL', 'armR'] as const) {
+    const foot = side === 'armL' ? P.footL : P.footR;
+    drawFurPart(canvas, res, P[side], pl, fur, shading(side, [headShadow, beside(foot, K.armByFoot)], [ellipseOf(P.body)], LOOK.rim.arm), mode, V.tone);
+  }
+  // Feet with puffy pads.
   for (const side of ['footL', 'footR'] as const) {
-    drawFurPart(canvas, res, P[side], pl, fur, lit(LOOK.rim.foot));
+    const arm = side === 'footL' ? P.armL : P.armR;
+    drawFurPart(canvas, res, P[side], pl, fur, shading(side, [], [ellipseOf(P.body), ellipseOf(arm)], LOOK.rim.foot), mode, V.tone);
     for (const pad of V.pads) {
       if (pad.side !== side) continue;
-      drawHeart(canvas, res, X(pad.heart.c[0]), Y(pad.heart.c[1]), pad.heart.r * W * LOOK.heartScale, fill(res, C.pad));
-      for (const [bx, by, br] of pad.beans) {
-        canvas.drawOval(Skia.XYWHRect(X(bx) - br * W, Y(by) - br * W, br * W * 2, br * W * 2), fill(res, C.bean));
-      }
+      drawPad(canvas, res, X(pad.heart.c[0]), Y(pad.heart.c[1]), pad.heart.r * W * LOOK.heartScale, true);
+      for (const [bx, by, br] of pad.beans) drawPad(canvas, res, X(bx), Y(by), br * W, false);
     }
   }
-  drawFurPart(canvas, res, head, pl, fur, lit(LOOK.rim.head));
+  drawFurPart(canvas, res, P.head, pl, fur, shading('head', [], [ellipseOf(P.body)], LOOK.rim.head), mode, V.tone);
 
-  // The face is painted on the head: clip it to the head's outline (the far blush in the
-  // 3/4 view would otherwise spill past the cheek).
+  // The face is painted on the head: clip it to the head's outline.
   canvas.save();
-  canvas.clipPath(superellipsePath(res, head, pl), 1, true);
+  canvas.clipPath(superellipsePath(res, P.head, pl), 1, true);
 
-  // Eyes: glossy black; highlights fixed to the light (same offset in both eyes).
+  // Eyes: glossy black with ONE highlight (upper right), fixed to the light.
   for (const e of V.eyes) {
     const ex = X(e.c[0]);
     const ey = Y(e.c[1]);
@@ -255,39 +385,41 @@ export function drawBuddy(canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacem
     const er = Math.sqrt(erx * ery);
     const h = M.highlight;
     canvas.drawCircle(ex + h.dx * er, ey + h.dy * er, h.r * er, fill(res, C.eyeHighlight));
-    const hs = M.highlightSmall;
-    canvas.drawCircle(ex + hs.dx * er, ey + hs.dy * er, hs.r * er, fill(res, C.eyeHighlight, hs.opacity));
   }
 
   // Blush: fades to transparent blush (not transparent black, which would darken the edge).
-  const bc = rgb01(C.blush);
-  const clear = Skia.Color(`rgba(${Math.round(bc[0] * 255)},${Math.round(bc[1] * 255)},${Math.round(bc[2] * 255)},0)`);
   for (const b of V.blush) {
     const r = b.r * W * LOOK.blushSpread;
     const paint = Skia.Paint();
     paint.setShader(Skia.Shader.MakeRadialGradient({ x: X(b.c[0]), y: Y(b.c[1]) }, r,
-      [Skia.Color(C.blush), Skia.Color(C.blush), clear], [0, LOOK.blushCore, 1], 0));
+      [Skia.Color(C.blush), Skia.Color(C.blush), Skia.Color(clearOf(C.blush))], [0, LOOK.blushCore, 1], 0));
     paint.setAlphaf(LOOK.blushOpacity);
     canvas.drawCircle(X(b.c[0]), Y(b.c[1]), r, paint);
   }
 
-  // Mouth: a smile with a gently curved top edge and a rounded bottom, tongue inside.
+  // Mouth: two corners, a gently arched top edge and a rounded bottom, tongue inside.
   const Mo = V.mouth;
-  const left = X(Mo.cx - Mo.width / 2);
-  const right = X(Mo.cx + Mo.width / 2);
-  const top = Y(Mo.cornerY);
-  const bottom = Y(Mo.cornerY + Mo.depth);
-  const mid = X(Mo.cx);
+  const lx = X(Mo.left[0]);
+  const ly = Y(Mo.left[1]);
+  const rxp = X(Mo.right[0]);
+  const ryp = Y(Mo.right[1]);
+  const bx = X(Mo.bottom[0]);
+  const byp = Y(Mo.bottom[1]);
+  const midX = (lx + rxp) / 2;
+  const midY = (ly + ryp) / 2 + Mo.topSag * W * 2;
+  const belly = LOOK.mouthBelly;
+  const round = LOOK.mouthRound;
   const mouth = Skia.Path.MakeFromSVGString(
-    `M ${left} ${top} Q ${mid} ${top + Mo.topSag * W * 2} ${right} ${top} ` +
-    `C ${right} ${top + (bottom - top) * LOOK.mouthBelly} ${mid + (right - mid) * LOOK.mouthRound} ${bottom} ${mid} ${bottom} ` +
-    `C ${mid - (mid - left) * LOOK.mouthRound} ${bottom} ${left} ${top + (bottom - top) * LOOK.mouthBelly} ${left} ${top} Z`,
+    `M ${lx} ${ly} Q ${midX} ${midY} ${rxp} ${ryp} ` +
+    `C ${rxp} ${ryp + (byp - ryp) * belly} ${bx + (rxp - bx) * round} ${byp} ${bx} ${byp} ` +
+    `C ${bx - (bx - lx) * round} ${byp} ${lx} ${ly + (byp - ly) * belly} ${lx} ${ly} Z`,
   )!;
   canvas.drawPath(mouth, fill(res, C.mouth));
   canvas.save();
   canvas.clipPath(mouth, 1, true);
   const T = Mo.tongue;
-  canvas.drawOval(Skia.XYWHRect(X(T.cx - T.rx), Y(T.cy - T.ry), T.rx * 2 * W, T.ry * 2 * W * LOOK.tongueDepth), fill(res, C.tongue));
+  const tongue = fill(res, C.tongue);
+  canvas.drawOval(Skia.XYWHRect(X(T.cx - T.rx), Y(T.cy - T.ry), T.rx * 2 * W, T.ry * 2 * W * LOOK.tongueDepth), tongue);
   canvas.restore();
   canvas.restore(); // head clip
 }

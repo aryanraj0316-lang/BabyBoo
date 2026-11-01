@@ -68,8 +68,13 @@ class ToModel:
         return v / self.unit
 
 
+# The master's mouth top edge arches gently (top-edge mid point vs the corner line,
+# as a fraction of the mouth width); the master wins on the face.
+MASTER_TOP_SAG = -0.047
+
+
 def mouth_shape(rgba: np.ndarray, T: ToModel) -> dict:
-    """Mouth outline: corners, top-edge sag and bottom depth, plus the tongue."""
+    """Mouth outline: left and right corners, the deepest point, the top-edge arch, the tongue."""
     reg = classify(rgba)
     # The mouth is the largest dark-interior blob (stray specks elsewhere can share its colour).
     _, labm, statm, _ = cv2.connectedComponentsWithStats(reg['mouth'].astype(np.uint8))
@@ -82,23 +87,30 @@ def mouth_shape(rgba: np.ndarray, T: ToModel) -> dict:
     joined = cv2.morphologyEx(whole.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
     _, lab_, _, _ = cv2.connectedComponentsWithStats(joined)
     i = int(np.bincount(lab_[m]).argmax())
-    ys, xs = np.nonzero(lab_ == i)
+    shape_mask = lab_ == i
+    ys, xs = np.nonzero(shape_mask)
     x0, x1 = xs.min(), xs.max()
-    cols = np.arange(x0, x1 + 1)
-    top = np.array([ys[xs == c].min() for c in cols])
-    bottom = np.array([ys[xs == c].max() for c in cols])
-    corner_y = (top[:3].mean() + top[-3:].mean()) / 2
-    mid = len(cols) // 2
-    cx, cy = T((x0 + x1) / 2, corner_y)
-    out = {'cx': cx, 'cornerY': cy, 'width': T.scale(x1 - x0 + 1),
-           'topSag': T.scale(top[mid] - corner_y), 'depth': T.scale(bottom[mid] - corner_y)}
-    tongue = (lab_ == i) & reg['pink']
+    left_y = ys[xs <= x0 + 1].min()
+    right_y = ys[xs >= x1 - 1].min()
+    deepest = int(np.argmax(ys))
+    width = x1 - x0 + 1
+    out = {
+        'left': T(x0, left_y), 'right': T(x1, right_y), 'bottom': T(xs[deepest], ys[deepest]),
+        'topSag': T.scale(MASTER_TOP_SAG * width),
+    }
+    tongue = shape_mask & reg['pink']
     ty, tx = np.nonzero(tongue)
     if ty.size:
         tcx, tcy = T(tx.mean(), ty.mean())
         out['tongue'] = {'cx': tcx, 'cy': tcy, 'rx': T.scale((tx.max() - tx.min() + 1) / 2),
                          'ry': T.scale((ty.max() - ty.min() + 1) / 2)}
     return out
+
+
+def fur_tone(rgba: np.ndarray) -> list[float]:
+    fur = classify(rgba)['fur'] & (rgba[..., 3] >= 250)
+    fur = cv2.erode(fur.astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+    return [float(v) for v in np.percentile(lab(rgba[..., :3])[..., 0][fur], [5, 50, 95])]
 
 
 def build_view(ref: str, unit_px: float) -> tuple[dict, list[float]]:
@@ -133,7 +145,9 @@ def build_view(ref: str, unit_px: float) -> tuple[dict, list[float]]:
         (x, y), r = cv2.minEnclosingCircle(max(cnts, key=cv2.contourArea))
         inner.append({'side': side, 'c': T(x, y), 'r': T.scale(r)})
 
-    # Pads: heart = largest pad blob on each foot; beans = the smaller ones on that foot.
+    # Pads: the heart is measured on this view; the toe beans follow the master's arrangement
+    # around it (the master wins on pads), mirrored to each foot's outer side.
+    foot_beans = json.loads((FIT / 'master_pads.json').read_text())['footBeans']
     pads = []
     blobs = _components(reg['pad'], 6)
     for side in ('footL', 'footR'):
@@ -142,8 +156,11 @@ def build_view(ref: str, unit_px: float) -> tuple[dict, list[float]]:
         if not mine:
             continue
         heart = mine[0]
-        pads.append({'side': side, 'heart': {'c': T(*heart['c']), 'r': T.scale(np.sqrt(heart['area'] / np.pi))},
-                     'beans': [[*T(*b['c']), T.scale(np.sqrt(b['area'] / np.pi))] for b in mine[1:4]]})
+        hr = np.sqrt(heart['area'] / np.pi)
+        outer = -1 if side == 'footL' else 1
+        hx, hy = heart['c']
+        pads.append({'side': side, 'heart': {'c': T(hx, hy), 'r': T.scale(hr)},
+                     'beans': [[*T(hx + outer * bx * hr, hy + by * hr), T.scale(br * hr)] for bx, by, br in foot_beans]})
 
     # Ear fur sits in the head's shade: measure its own colour (ear minus head minus pink).
     ear_fur = np.zeros(shape, bool)
@@ -152,8 +169,12 @@ def build_view(ref: str, unit_px: float) -> tuple[dict, list[float]]:
     ear_fur &= ~mask(head, shape) & reg['fur'] & (rgba[..., 3] >= 200)
     ear_lab = [float(v) for v in np.median(lab(rgba[..., :3])[ear_fur], axis=0)]
 
+    polys = json.loads((FIT / 'light_poly.json').read_text())[ref]
     view = {
+        # This sheet's fur lightness (L* p5, p50, p95): the baked lighting is re-toned to the master's.
+        'tone': fur_tone(rgba),
         'parts': parts,
+        'lightPoly': {k: (v['coef'] if v else None) for k, v in polys.items()},
         'eyes': eyes,
         'blush': blush,
         'innerEars': inner,
@@ -183,6 +204,7 @@ def build() -> dict:
         'r': float(np.mean([h['r'] / e['r_equiv'] for h, e in mh])),
     }
 
+    master_tone = fur_tone(np.array(Image.open(MATTE / 'master.png').convert('RGBA')))
     lab_colours = dict(colours['master'])
     lab_colours['earFur'] = ear_fur
     model = {
@@ -190,7 +212,7 @@ def build() -> dict:
         'colours': {k: hex_of(v) for k, v in lab_colours.items()},
         'coloursLab': lab_colours,
         'highlight': highlight,
-        'highlightSmall': {'dx': -0.42, 'dy': 0.45, 'r': 0.13, 'opacity': 0.35},
+        'masterTone': master_tone,
         'views': views,
     }
     if OVERRIDES.exists():

@@ -114,12 +114,14 @@ def main() -> None:
 THREE_Q_PARAMS = [
     ('head_cx', 255, 235, 275), ('head_cy', 190, 165, 215), ('head_rx', 165, 135, 195),
     ('head_ryTop', 140, 110, 170), ('head_ryBot', 130, 100, 165), ('head_nTop', 2.3, 1.8, 4.0), ('head_nBot', 2.5, 1.8, 4.0),
-    ('earF_cx', 165, 140, 190), ('earF_cy', 65, 45, 90), ('earF_r', 55, 40, 72),
-    ('earN_cx', 395, 370, 420), ('earN_cy', 95, 70, 120), ('earN_r', 63, 48, 80),
+    # Ear size is fixed to the front view's (same sheet, same scale): r = 64.69 +-0.5%.
+    ('earF_cx', 165, 140, 190), ('earF_cy', 65, 45, 90), ('earF_r', 64.69, 64.36, 65.01),
+    ('earN_cx', 395, 370, 420), ('earN_cy', 95, 70, 120), ('earN_r', 64.69, 64.36, 65.01),
     ('body_cx', 262, 240, 285), ('body_cy', 395, 375, 420), ('body_rx', 125, 105, 150),
     ('body_ryTop', 100, 80, 125), ('body_ryBot', 92, 75, 110), ('body_n', 2.3, 2.0, 3.0),
     ('armN_cx', 268, 245, 295), ('armN_cy', 388, 365, 410), ('armN_rx', 40, 32, 50), ('armN_ry', 70, 58, 85), ('armN_rot', -0.15, -0.5, 0.3),
-    ('armF_cx', 150, 125, 175), ('armF_cy', 375, 355, 400), ('armF_rx', 36, 28, 46), ('armF_ry', 62, 50, 78), ('armF_rot', 0.15, -0.3, 0.5),
+    # The far arm shows as a bulge under the head on the left, outside the body's outline.
+    ('armF_cx', 118, 100, 132), ('armF_cy', 368, 345, 395), ('armF_rx', 38, 30, 48), ('armF_ry', 62, 50, 78), ('armF_rot', 0.2, -0.3, 0.6),
     ('footF_cx', 95, 75, 120), ('footF_cy', 432, 410, 455), ('footF_rx', 52, 40, 66), ('footF_ry', 52, 40, 66), ('footF_rot', 0.0, -0.6, 0.6),
     ('footN_cx', 322, 300, 345), ('footN_cy', 446, 425, 470), ('footN_rx', 64, 50, 80), ('footN_ry', 56, 42, 70), ('footN_rot', 0.0, -0.6, 0.6),
     ('foot_n', 2.1, 1.8, 3.0),
