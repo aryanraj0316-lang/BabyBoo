@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { Group, Path, RoundedRect, Skia, Text, matchFont } from '@shopify/react-native-skia';
 import type { Rect } from '../layout';
-import { palette, statusBar as SB } from '../tokens';
+import { palette, phone, statusBar as SB } from '../tokens';
 
 interface Props {
   screen: Rect;
@@ -27,8 +27,8 @@ export function PhoneStatusBar({ screen, level, levelColor }: Props) {
   );
 
   const pad = SB.sidePaddingOfScreen * w;
-  const bandH = SB.heightOfScreen * screen.height;
-  const midY = screen.y + bandH / 2 + bandH * 0.12; // sits just below the camera pill line
+  // The status bar row is centred on the punch-hole camera, as on a real phone.
+  const midY = screen.y + phone.camera.centreFromTopOfScreen * w;
   const ink = palette.statusBar.ink;
 
   // Battery glyph, right-aligned.

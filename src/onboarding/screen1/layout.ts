@@ -5,6 +5,10 @@
  * tokens.buddy.maxHeightPt tall, the phone is 1 / heightOfPhone times his
  * height, and the composition only shrinks when the space is too small. Extra
  * space on large screens becomes air around the scene, never a bigger phone.
+ *
+ * Vertically the scene is measured from the phone's top to the floor (the
+ * phone's bottom edge, where Buddy sits). The soft floor shadow below it is
+ * drawn into the fixed gap above the headline.
  */
 import { BUDDY_BASELINE_PT, BUDDY_BOUNDS, BUDDY_CANVAS_PT } from './buddyMetrics.generated';
 import { buddy as B, contactShadow as CS, halo as H, page, phone as P, radius } from './tokens';
@@ -22,8 +26,10 @@ export interface SceneLayout {
   screen: Rect & { radius: number };
   halo: { cx: number; cy: number; r: number };
   floorShadow: Rect;
-  /** Bounding box of the phone, Buddy (any frame) and the floor shadow. */
+  /** Bounding box from the phone's top to the floor, across the phone, Buddy (any frame) and the floor shadow's overhang. */
   bounds: Rect;
+  /** The floor line: the phone's bottom edge, Buddy's baseline. */
+  floorY: number;
 }
 
 const WATCH = BUDDY_BOUNDS.watch_34_left;
@@ -42,21 +48,28 @@ function unitExtents() {
   const phoneW = phoneH / P.aspect;
   const overlap = B.overlapOfWidth * WATCH_WIDTH_PT * s;
   const buddyRight = phoneW - overlap + (MAX_RIGHT_PT - WATCH.x0) * s;
-  const shadowBelow = (CS.heightOfBuddy / 2 + CS.blurOfBuddy * 2) * b;
   return {
     // The floor shadow overhangs both ends of the phone + Buddy group.
     width: CS.overhangOfBuddy * b + buddyRight + CS.overhangOfBuddy * b,
-    height: phoneH + shadowBelow,
+    height: phoneH,
   };
 }
 
 const UNIT = unitExtents();
 
-/** Buddy's displayed height for a scene region, capped at the token maximum. */
+/**
+ * Buddy's displayed height for a scene region (its height runs from the
+ * phone's top to the floor), capped at the token maximum.
+ */
 export function fitBuddyHeight(region: { width: number; height: number }): number {
   const fitW = (region.width - page.marginH * 2) / UNIT.width;
   const fitH = region.height / UNIT.height;
   return Math.max(0, Math.min(B.maxHeightPt, fitW, fitH));
+}
+
+/** Height of the scene region (phone top to floor) for a given Buddy height. */
+export function sceneHeightFor(buddyHeight: number): number {
+  return UNIT.height * buddyHeight;
 }
 
 /** Full scene geometry, centred in `region` (screen coordinates). */
@@ -108,5 +121,6 @@ export function computeScene(region: Rect): SceneLayout {
     },
     floorShadow: { x: floorLeft, y: phoneBottom - shadowH / 2, width: floorRight - floorLeft, height: shadowH },
     bounds: { x: compX, y: compY, width: compW, height: compH },
+    floorY: phoneBottom,
   };
 }

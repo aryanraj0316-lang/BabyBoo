@@ -26,7 +26,7 @@ export const palette = {
     bezelBottom: '#0E0E10',
     hairline: '#3A3A42', // the 1px lighter outer edge
     button: '#26262B',
-    cameraPill: '#050506',
+    camera: '#050506',
     screenOff: '#000000',
   },
   statusBar: { ink: '#FFFFFF' },
@@ -36,7 +36,7 @@ export const palette = {
     skeletonSoft: 'rgba(255,255,255,0.35)',
     progressTrack: 'rgba(255,255,255,0.30)',
     progressFill: 'rgba(255,255,255,0.95)',
-    scrim: 'rgba(10,8,30,0.28)', // soft bottom shade so the overlay UI reads
+    scrim: 'rgba(0,0,0,0.22)', // neutral soft bottom shade so the overlay UI reads
   },
   /** Scene halo colours per phone state (Phase 3 tweens between them). */
   halo: {
@@ -95,7 +95,8 @@ export const phone = {
   /** Outer radius at the reference outer width below; scaled with the phone. */
   radiusRefWidth: 193,
   hairlineWidth: 1,
-  cameraPill: { widthOfScreen: 0.24, heightOfScreen: 0.062, topOfScreen: 0.03 },
+  /** Small round punch-hole camera at the top centre (Android style). */
+  camera: { diameterOfScreen: 0.052, centreFromTopOfScreen: 0.058 },
   buttons: {
     thickness: 1.6, // how far each button stands out from the bezel
     // Positions as fractions of the outer height, from the top.
@@ -133,10 +134,9 @@ export const contactShadow = {
 // ---------------------------------------------------------------------------
 
 export const statusBar = {
-  heightOfScreen: 0.065, // band at the top of the screen
   fontSizeOfScreen: 0.055, // relative to the screen width
   sidePaddingOfScreen: 0.075,
-  time: '9:41',
+  time: '7:30',
   battery: {
     widthOfScreen: 0.085,
     heightOfScreen: 0.04,
@@ -161,13 +161,18 @@ export const reelUi = {
   scrimOfScreen: 0.42, // height of the soft bottom shade
 } as const;
 
-/** Five designed reel clips: background gradient and shape colours. */
+/**
+ * Five designed reel clips: background gradient (top, bottom) and shape colours.
+ * No lavender or violet anywhere, so Buddy and the page always stand apart
+ * from the phone screen. Reel 1 is the one seen at rest and in the
+ * reduced-motion still, so its lower half (where Buddy overlaps) is mint.
+ */
 export const reels = [
-  { id: 'balloons', bg: ['#7FD0FF', '#B7A8FF'], shapes: ['#FF8FB1', '#FFD36E', '#8EF0C0'] },
-  { id: 'stars', bg: ['#5B4BD8', '#9C6BFF'], shapes: ['#FFE27A', '#FFFFFF', '#FFB4E1'] },
-  { id: 'ball', bg: ['#FFB36B', '#FF7FA8'], shapes: ['#FFFFFF', '#4CC3FF', '#FFE27A'] },
-  { id: 'clouds', bg: ['#6EE7C8', '#56B8FF'], shapes: ['#FFFFFF', '#FFFFFF', '#FFE27A'] },
-  { id: 'bubbles', bg: ['#FF9AD5', '#A88BFF'], shapes: ['#FFFFFF', '#7FF2E6', '#FFE27A'] },
+  { id: 'balloons', bg: ['#3CC6CC', '#A8F0C8'], shapes: ['#FF7A8A', '#FFD45E', '#FFFFFF'] }, // teal to mint
+  { id: 'stars', bg: ['#16406A', '#2B8FB0'], shapes: ['#FFE27A', '#FFFFFF', '#FF9E80'] }, // night ocean
+  { id: 'ball', bg: ['#FFC48C', '#FF7F6E'], shapes: ['#FFFFFF', '#3CC6CC', '#FFE27A'] }, // sunset peach to coral
+  { id: 'clouds', bg: ['#4FB3F6', '#8FE3D8'], shapes: ['#FFFFFF', '#FFFFFF', '#FFE27A'] }, // sky to aqua
+  { id: 'bubbles', bg: ['#C8EB7A', '#4FC48A'], shapes: ['#FFFFFF', '#FFE27A', '#3CC6CC'] }, // lime to green
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -177,10 +182,13 @@ export const reels = [
 export const page = {
   marginH: 24,
   topBarHeight: 44,
-  /** Minimum air between the scene and the text block. */
-  sceneTextGapMin: 16,
-  /** Minimum air above the scene. */
-  sceneTopGapMin: 8,
+  /** Fixed gap from the floor (phone bottom, Buddy's baseline) to the headline. */
+  floorToHeadline: 36,
+  /** Spare height is shared out above the scene and below the CTA. */
+  spareAbove: 0.6,
+  spareBelow: 0.4,
+  /** Minimum air between the language toggle and the top of the phone. */
+  minAirAbove: 8,
   /** Air below the CTA, added to the bottom safe-area inset. */
   ctaBottomGap: 16,
 } as const;

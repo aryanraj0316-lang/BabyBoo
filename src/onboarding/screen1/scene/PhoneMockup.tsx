@@ -1,10 +1,10 @@
 /**
  * The phone: near-black bezel with a soft vertical gradient and a 1px lighter
- * hairline, side buttons, a camera pill, screen content clipped exactly to the
+ * hairline, side buttons, a punch-hole camera, screen content clipped exactly to the
  * screen shape, and a faint glass sheen that stays visible on a black screen.
  */
 import React from 'react';
-import { Group, LinearGradient, RoundedRect, Shadow, rrect, rect, vec } from '@shopify/react-native-skia';
+import { Circle, Group, LinearGradient, RoundedRect, Shadow, rrect, rect, vec } from '@shopify/react-native-skia';
 import type { SceneLayout } from '../layout';
 import { palette, phone as P, shadow } from '../tokens';
 import { tint } from './colour';
@@ -33,9 +33,8 @@ export function PhoneMockup({ layout, children }: Props) {
     />
   );
 
-  const pillW = P.cameraPill.widthOfScreen * screen.width;
-  const pillH = P.cameraPill.heightOfScreen * screen.width;
-  const pillY = screen.y + P.cameraPill.topOfScreen * screen.width;
+  const camR = (P.camera.diameterOfScreen * screen.width) / 2;
+  const camY = screen.y + P.camera.centreFromTopOfScreen * screen.width;
 
   return (
     <Group>
@@ -76,15 +75,8 @@ export function PhoneMockup({ layout, children }: Props) {
       <RoundedRect rect={screenShape} color={palette.phone.screenOff} />
       <Group clip={screenShape}>{children}</Group>
 
-      {/* Camera pill. */}
-      <RoundedRect
-        x={screen.x + (screen.width - pillW) / 2}
-        y={pillY}
-        width={pillW}
-        height={pillH}
-        r={pillH / 2}
-        color={palette.phone.cameraPill}
-      />
+      {/* Punch-hole camera. */}
+      <Circle cx={screen.x + screen.width / 2} cy={camY} r={camR} color={palette.phone.camera} />
 
       {/* Glass sheen: faint diagonal light across the screen, always on top. */}
       <Group clip={screenShape}>

@@ -2716,7 +2716,8 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
+      {/* Onboarding screen 1 draws its page gradient behind the status bar and applies the top inset itself. */}
+      <SafeAreaView style={styles.root} edges={currentScreen === 'splash' ? ['left', 'right'] : ['top', 'left', 'right']}>
         <StatusBar barStyle="dark-content" />
 
         {/* Screen Router */}

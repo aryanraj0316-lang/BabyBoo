@@ -130,7 +130,7 @@ export function ReelClip({ rect, index, t = 0, progress = 0.15 }: Props) {
 
       {/* Soft bottom shade so the overlay UI reads on any clip. */}
       <Rect x={x} y={y + h * (1 - U.scrimOfScreen)} width={w} height={h * U.scrimOfScreen}>
-        <LinearGradient start={vec(0, y + h * (1 - U.scrimOfScreen))} end={vec(0, y + h)} colors={['rgba(10,8,30,0)', palette.reelUi.scrim]} />
+        <LinearGradient start={vec(0, y + h * (1 - U.scrimOfScreen))} end={vec(0, y + h)} colors={['rgba(0,0,0,0)', palette.reelUi.scrim]} />
       </Rect>
 
       {/* Action rail: icon with a skeleton count under it. */}

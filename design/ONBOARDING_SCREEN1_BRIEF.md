@@ -340,3 +340,11 @@ Decisions made during the build. Where these differ from the brief above, these 
 - **Text:** centred, matching the old screen. Headline 26/semibold, subline 16/regular; Devanagari line heights 1.5 and 1.7 (Latin 1.18 and 1.45). Large accessibility fonts are honoured up to 1.4x; the CTA grows with them (54pt minimum).
 - **CTA haptic:** expo-haptics light impact (already a dependency, used by the old screen 1). `Vibration` is avoided because iOS ignores its duration.
 - Screenshots are taken on an Android emulator set to each exact point size at 3x, with gesture navigation, so Android's status-bar and navigation insets are included.
+
+### Checkpoint 2 fixes
+
+- **Vertical spacing:** fixed 36pt from the floor (phone bottom, Buddy's baseline) to the headline on every size. Spare height splits 60% above the scene, 40% below the CTA. The scene region is measured phone top to floor; the soft floor shadow falls into the 36pt gap.
+- **Status bar:** the app is already edge-to-edge (RN 0.88) with a transparent status bar and dark icons; the grey band was the root `SafeAreaView`'s top padding. `app/index.tsx` now drops that top edge while screen 1 shows, and screen 1 applies the top inset itself.
+- **Reel palette:** no lavender or violet. Reel 1 (rest frame and reduced-motion still) is teal to mint; the others are night ocean, sunset peach to coral, sky to aqua, lime to green. The reel's bottom shade is neutral black.
+- **Phone:** a small round punch-hole camera replaces the pill; status bar time is 7:30 and its row is centred on the camera.
+- Deleted the old prompt document and `docs/hero-feasibility.md` (both remain in git history).
