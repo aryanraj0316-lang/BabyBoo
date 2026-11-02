@@ -113,6 +113,63 @@ def fur_percentiles(rgba: np.ndarray) -> list[float]:
     return [float(v) for v in np.percentile(L, [5, 50, 95])]
 
 
+def head_region(fit_parts: dict, shape) -> np.ndarray:
+    """The master's head on its own: above the chin, ears and the raised arm/paw removed.
+
+    Built from the master's fit (head frame, tilt included) and applied to both images, so
+    the head outlines are compared like for like.
+    """
+    from shapes import grid, mask
+    h = fit_parts['head']
+    xs, ys = grid(shape, 1.0)
+    c, s_ = np.cos(h['rot']), np.sin(h['rot'])
+    dx, dy = xs - h['cx'], ys - h['cy']
+    qx = dx * c + dy * s_
+    qy = -dx * s_ + dy * c
+    region = (qy < h['ryBot'] * 0.9) & (np.abs(qx) < h['rx'] * 1.25) & (qy > -h['ryTop'] * 1.25)
+    for k in ('earL', 'earR', 'armL', 'pawL'):
+        p = dict(fit_parts[k])
+        p['rx'] *= 1.06
+        p['ryTop'] *= 1.06
+        p['ryBot'] *= 1.06
+        region &= ~mask(p, shape)
+    return region
+
+
+def head_aspect(alpha: np.ndarray, region: np.ndarray, h: dict) -> float:
+    """Height / width of an ellipse fitted to the head's outline (in the head's own frame)."""
+    m = ((alpha > 128) & region).astype(np.uint8)
+    edge = cv2.morphologyEx(m, cv2.MORPH_GRADIENT, np.ones((3, 3), np.uint8)) > 0
+    # Keep only true silhouette edges (alpha boundary), not the region's cut lines.
+    cut = cv2.morphologyEx(region.astype(np.uint8), cv2.MORPH_GRADIENT, np.ones((7, 7), np.uint8)) > 0
+    sil = cv2.morphologyEx((alpha > 128).astype(np.uint8), cv2.MORPH_GRADIENT, np.ones((3, 3), np.uint8)) > 0
+    ys, xs = np.nonzero(edge & sil & ~cut)
+    c, s_ = np.cos(h['rot']), np.sin(h['rot'])
+    dx, dy = xs - h['cx'], ys - h['cy']
+    pts = np.stack([dx * c + dy * s_, -dx * s_ + dy * c], 1).astype(np.float32)
+    (_, _), (a, b), ang = cv2.fitEllipse(pts)
+    # fitEllipse's axes are unordered: pick the one closer to vertical as the height.
+    vertical = abs(np.cos(np.radians(ang))) > abs(np.sin(np.radians(ang)))
+    height, width = (b, a) if vertical else (a, b)
+    return float(height / width)
+
+
+def master_head_metrics(render_path: str) -> list:
+    """Two head metrics against the MASTER (not the sheet): head-only IoU and head aspect."""
+    fitp = json.loads((FIT / 'master_silhouette.json').read_text())['parts']
+    master = np.array(Image.open(MATTE / 'master.png').convert('RGBA'))
+    ren = np.array(Image.open(render_path).convert('RGBA'))
+    region = head_region(fitp, master.shape[:2])
+    a, b = master[..., 3] > 128, ren[..., 3] > 128
+    iou = float((a & b & region).sum() / max(1, ((a | b) & region).sum()))
+    am = head_aspect(master[..., 3], region, fitp['head'])
+    ar = head_aspect(ren[..., 3], region, fitp['head'])
+    return [
+        ('head-only IoU vs master', iou, 0.95, 'min'),
+        (f'head aspect h/w: render {ar:.3f} vs master {am:.3f} (% diff)', abs(ar - am) / am * 100, 3.0, '%r'),
+    ]
+
+
 def table(rows) -> str:
     lines = [f"{'metric':40s}{'value':>9s}{'limit':>9s}  result"]
     for name, v, lim, unit in rows:
@@ -124,6 +181,9 @@ def table(rows) -> str:
 
 def main() -> None:
     ref_name, render_path = sys.argv[1:3]
+    if ref_name == 'master':
+        print(table(master_head_metrics(render_path)))
+        return
     band = int(sys.argv[3]) if len(sys.argv) > 3 else 5
     head_w = 2 * json.loads((FIT / f'{ref_name}_silhouette.json').read_text())['parts']['head']['rx']
     res = measure(ref_name, render_path, band, head_w)

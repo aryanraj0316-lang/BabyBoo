@@ -52,12 +52,20 @@ def font(size: int):
 
 
 def master_frame():
+    """The master and its fitted head: centre, width and tilt (renders are placed on it)."""
     m = Image.open(MATTE / 'master.png').convert('RGBA')
-    e = extract(np.array(m))['eyes']
-    unit = abs(e[1]['cx'] - e[0]['cx']) / FRONT_EYE_SPACING
-    cx = (e[0]['cx'] + e[1]['cx']) / 2
-    cy = (e[0]['cy'] + e[1]['cy']) / 2 - FRONT_EYE_Y * unit
-    return m, unit, cx, cy
+    h = json.loads((FIT / 'master_silhouette.json').read_text())['parts']['head']
+    return m, 2 * h['rx'], h['cx'], h['cy'], h['rot']
+
+
+def mouth_box(img: Image.Image, pad: int = 40):
+    """Bounding box of the mouth (dark interior plus tongue), padded."""
+    from colours import tongue_mask
+    from regions import classify
+    reg = classify(np.array(img))
+    m = reg['mouth'] | tongue_mask(reg)
+    ys, xs = np.nonzero(m)
+    return (int(xs.min()) - pad, int(ys.min()) - pad, int(xs.max()) + pad, int(ys.max()) + pad)
 
 
 def model_parts() -> dict:
@@ -90,16 +98,17 @@ def main() -> None:
                             f'F1 iteration {it}: {view}, {mode} shading'], cwd=ROOT, check=True)
 
     # The front render beside the master at the master's head scale, every mode in one sheet.
-    m, unit, cx, cy = master_frame()
+    m, unit, cx, cy, tilt = master_frame()
     cols = [('master', m)]
     for mode in modes:
         p = FIT / f'render_master_scale_{mode}.png'
-        harness({'out': str(p), 'width': m.width, 'height': m.height, 'x': cx, 'y': cy, 'headWidth': unit, 'view': 'front', 'mode': mode})
+        harness({'out': str(p), 'width': m.width, 'height': m.height, 'x': cx, 'y': cy, 'headWidth': unit, 'view': 'front',
+                 'mode': mode, 'rotate': tilt})
         cols.append((f'render ({mode})', Image.open(p).convert('RGBA')))
     f = font(26)
     sheet = Image.new('RGB', (len(cols) * (m.width + 10) + 10, 2 * (m.height + 10) + 60), (60, 60, 68))
     d = ImageDraw.Draw(sheet)
-    d.text((10, 10), f'F1 iteration {it}: master vs renders (neutral front, no rig), same head scale', font=f, fill=(240, 240, 245))
+    d.text((10, 10), f'F1 iteration {it}: master vs renders (neutral front, no rig) placed on the master head: same size, position and tilt', font=f, fill=(240, 240, 245))
     for row, bg in enumerate([(0xF6, 0xF3, 0xFF), (0x1A, 0x1A, 0x1E)]):
         for col, (name, img) in enumerate(cols):
             x, y = 10 + col * (m.width + 10), 50 + row * (m.height + 10)
@@ -107,21 +116,18 @@ def main() -> None:
             d.text((x + 10, y + 10), name, font=f, fill=(110, 110, 125) if row == 0 else (200, 200, 210))
     sheet.resize((sheet.width // 2, sheet.height // 2), Image.LANCZOS).save(OUT / f'cmp_master_it{it}.png')
 
-    # Crops: each image on its own parts.
-    model = model_parts()
+    # Crops: the render sits on the master's head, so the same boxes compare like for like;
+    # the mouth crop is found on each image by its own mouth.
     rows = []
     for name, box in MASTER_CROPS.items():
-        tiles = [on((0x1A, 0x1A, 0x1E), m).crop(box)]
-        bw, bh = box[2] - box[0], box[3] - box[1]
-        part, _ = RENDER_PARTS[name]
-        if part == 'junction':
-            hp = model['head']
-            px, py = cx + hp['cx'] * unit, cy + (hp['cy'] + hp['ryBot']) * unit
-        else:
-            px, py = cx + model[part]['cx'] * unit, cy + model[part]['cy'] * unit
-        rbox = (int(px - bw / 2), int(py - bh / 2), int(px + bw / 2), int(py + bh / 2))
-        tiles += [on((0x1A, 0x1A, 0x1E), img).crop(rbox) for _, img in cols[1:]]
-        rows.append((name, tiles))
+        rows.append((name, [on((0x1A, 0x1A, 0x1E), img).crop(box).resize(((box[2] - box[0]) * 2, (box[3] - box[1]) * 2), Image.LANCZOS) for _, img in cols]))
+    mb = [mouth_box(img) for _, img in cols]
+    side = max(max(b[2] - b[0], b[3] - b[1]) for b in mb)
+    tiles = []
+    for (_, img), b in zip(cols, mb):
+        cxm, cym = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
+        tiles.append(on((0xF6, 0xF3, 0xFF), img).crop((cxm - side // 2, cym - side // 2, cxm + side // 2, cym + side // 2)).resize((side * 2, side * 2), Image.LANCZOS))
+    rows.append(('mouth (2x, page background)', tiles))
     tw = max(t.width for _, ts in rows for t in ts)
     th = max(t.height for _, ts in rows for t in ts)
     crop_sheet = Image.new('RGB', (len(cols) * (tw + 10) + 10, len(rows) * (th + 40) + 50), (60, 60, 68))

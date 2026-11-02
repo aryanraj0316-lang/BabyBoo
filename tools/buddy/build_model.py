@@ -185,15 +185,168 @@ def build_view(ref: str, unit_px: float) -> tuple[dict, list[float]]:
     return view, ear_lab
 
 
+# Terms of the baked lighting cubic that are odd in u (flip sign to mirror left/right).
+ODD_U = (1, 4, 6, 8)
+
+
+def mirror_poly(coef):
+    return None if coef is None else [(-c if i in ODD_U else c) for i, c in enumerate(coef)]
+
+
+class Derot:
+    """Master pixels -> model units with the head's tilt undone (for head-attached features)."""
+
+    def __init__(self, head: dict):
+        self.hx, self.hy, self.w = head['cx'], head['cy'], 2 * head['rx']
+        self.c, self.s = np.cos(-head['rot']), np.sin(-head['rot'])
+
+    def __call__(self, x, y):
+        dx, dy = x - self.hx, y - self.hy
+        return [(dx * self.c - dy * self.s) / self.w, (dx * self.s + dy * self.c) / self.w]
+
+    def scale(self, v):
+        return v / self.w
+
+
+def build_front_from_master() -> dict:
+    """The neutral front view, built from the locked master (it wins on proportions).
+
+    The master is waving with its head tilted and turned slightly. Head-attached features
+    are un-tilted around the head centre and the face is re-centred on the head; every
+    left/right pair is mirror-averaged into a symmetric neutral pose. The resting arm
+    (viewer's right) and its paw are mirrored onto both sides; the raised arm is not used.
+    Units: the master's head width = 1, origin at the head centre.
+    """
+    sil = json.loads((FIT / 'master_silhouette.json').read_text())
+    P = sil['parts']
+    head = P['head']
+    D = Derot(head)
+    W = D.w
+    rgba = np.array(Image.open(MATTE / 'master.png').convert('RGBA'))
+    f = extract(rgba)
+    reg = classify(rgba)
+    shape = rgba.shape[:2]
+
+    # Face: un-tilt, then centre on the head (the master is turned a little to the right).
+    eyes = sorted([(D(e['cx'], e['cy']), e) for e in f['eyes']], key=lambda t: t[0][0])
+    face_x = (eyes[0][0][0] + eyes[1][0][0]) / 2
+    eye_dx = (eyes[1][0][0] - eyes[0][0][0]) / 2
+    eye_y = (eyes[0][0][1] + eyes[1][0][1]) / 2
+    erx = float(np.mean([min(e['rx'], e['ry']) for _, e in eyes])) / W
+    ery = float(np.mean([max(e['rx'], e['ry']) for _, e in eyes])) / W
+    eyes_m = [{'c': [-eye_dx, eye_y], 'rx': erx, 'ry': ery}, {'c': [eye_dx, eye_y], 'rx': erx, 'ry': ery}]
+
+    bl = sorted([(D(b['cx'], b['cy']), b['r']) for b in f['blush']], key=lambda t: t[0][0])
+    b_dx = (bl[1][0][0] - bl[0][0][0]) / 2
+    b_y = (bl[0][0][1] + bl[1][0][1]) / 2
+    b_r = float(np.mean([r for _, r in bl])) / W
+    blush = [{'c': [-b_dx, b_y], 'r': b_r}, {'c': [b_dx, b_y], 'r': b_r}]
+
+    # Ears and their pink cups (symmetric about the head centre).
+    ears = {k: D(P[k]['cx'], P[k]['cy']) for k in ('earL', 'earR')}
+    ear_dx = (ears['earR'][0] - ears['earL'][0]) / 2
+    ear_y = (ears['earL'][1] + ears['earR'][1]) / 2
+    ear_r = (P['earL']['rx'] + P['earR']['rx']) / 2 / W
+    cups = []
+    for side in ('earL', 'earR'):
+        pink = reg['pink'] & mask(P[side], shape)
+        cnts, _ = cv2.findContours(pink.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        (x, y), r = cv2.minEnclosingCircle(max(cnts, key=cv2.contourArea))
+        c = D(x, y)
+        sign = -1 if side == 'earL' else 1
+        cups.append(((c[0] - ears[side][0]) * sign, c[1] - ears[side][1], r / W))
+    cup_dx, cup_dy, cup_r = [float(np.mean([c[i] for c in cups])) for i in range(3)]
+    inner = [{'side': 'earL', 'c': [-ear_dx - cup_dx, ear_y + cup_dy], 'r': cup_r},
+             {'side': 'earR', 'c': [ear_dx + cup_dx, ear_y + cup_dy], 'r': cup_r}]
+
+    # Mouth: measured un-tilted, then made symmetric and centred.
+    mo = mouth_shape(rgba, D)
+    half = (mo['right'][0] - mo['left'][0]) / 2
+    corner_y = (mo['left'][1] + mo['right'][1]) / 2
+    mouth = {'left': [-half, corner_y], 'right': [half, corner_y], 'bottom': [0.0, mo['bottom'][1]], 'topSag': mo['topSag']}
+    if 'tongue' in mo:
+        t = mo['tongue']
+        mouth['tongue'] = {'cx': 0.0, 'cy': t['cy'], 'rx': t['rx'], 'ry': t['ry']}
+
+    # Body parts are not tilted: plain scale, made symmetric about the feet's axis.
+    fL, fR = P['footL'], P['footR']
+    axis = (fL['cx'] + fR['cx']) / 2
+
+    def ell(cx, cy, rx, ry, rot, n=2.0):
+        return {'cx': cx, 'cy': cy, 'rx': rx, 'ryTop': ry, 'ryBot': ry, 'nTop': n, 'nBot': n, 'rot': rot}
+
+    foot_dx = (fR['cx'] - fL['cx']) / 2 / W
+    foot_y = ((fL['cy'] + fR['cy']) / 2 - head['cy']) / W
+    foot_rx = (fL['rx'] + fR['rx']) / 2 / W
+    foot_ry = (fL['ryTop'] + fR['ryTop']) / 2 / W
+    foot_rot = (fL['rot'] - fR['rot']) / 2
+    arm, paw = P['armR'], P['pawR']
+    arm_dx = (arm['cx'] - axis) / W
+    paw_dx = (paw['cx'] - axis) / W
+    body = P['body']
+    parts = {
+        'earL': ell(-ear_dx, ear_y, ear_r, ear_r, 0.0),
+        'earR': ell(ear_dx, ear_y, ear_r, ear_r, 0.0),
+        'body': {'cx': 0.0, 'cy': (body['cy'] - head['cy']) / W, 'rx': body['rx'] / W, 'ryTop': body['ryTop'] / W,
+                 'ryBot': body['ryBot'] / W, 'nTop': body['nTop'], 'nBot': body['nBot'], 'rot': 0.0},
+        'armL': ell(-arm_dx, (arm['cy'] - head['cy']) / W, arm['rx'] / W, arm['ryTop'] / W, -arm['rot']),
+        'armR': ell(arm_dx, (arm['cy'] - head['cy']) / W, arm['rx'] / W, arm['ryTop'] / W, arm['rot']),
+        'footL': ell(-foot_dx, foot_y, foot_rx, foot_ry, foot_rot, fL['nTop']),
+        'footR': ell(foot_dx, foot_y, foot_rx, foot_ry, -foot_rot, fL['nTop']),
+        'pawL': ell(-paw_dx, (paw['cy'] - head['cy']) / W, paw['rx'] / W, paw['rx'] / W, 0.0),
+        'pawR': ell(paw_dx, (paw['cy'] - head['cy']) / W, paw['rx'] / W, paw['rx'] / W, 0.0),
+        'head': {'cx': 0.0, 'cy': 0.0, 'rx': 0.5, 'ryTop': head['ryTop'] / W, 'ryBot': head['ryBot'] / W,
+                 'nTop': head['nTop'], 'nBot': head['nBot'], 'rot': 0.0},
+    }
+
+    # Pads on each foot, relative to the foot, mirror-averaged.
+    blobs = _components(reg['pad'], 6)
+    per_foot = []
+    for side in ('footL', 'footR'):
+        fm = mask(P[side], shape)
+        mine = sorted([b for b in blobs if fm[int(b['c'][1]), int(b['c'][0])]], key=lambda b: -b['area'])
+        heart = mine[0]
+        sign = -1 if side == 'footL' else 1
+        hr = np.sqrt(heart['area'] / np.pi)
+        beans = sorted(mine[1:4], key=lambda b: np.arctan2(b['c'][1] - heart['c'][1], (b['c'][0] - heart['c'][0]) * sign))
+        per_foot.append({'heart': [(heart['c'][0] - P[side]['cx']) * sign / W, (heart['c'][1] - P[side]['cy']) / W, hr / W],
+                         'beans': [[(b['c'][0] - P[side]['cx']) * sign / W, (b['c'][1] - P[side]['cy']) / W,
+                                    np.sqrt(b['area'] / np.pi) / W] for b in beans]})
+    hx_, hy_, hr_ = [float(np.mean([p['heart'][i] for p in per_foot])) for i in range(3)]
+    beans_avg = np.mean([p['beans'] for p in per_foot], axis=0)
+    pads = []
+    for side, sign in (('footL', -1), ('footR', 1)):
+        fp = parts[side]
+        pads.append({'side': side, 'heart': {'c': [fp['cx'] + sign * hx_, fp['cy'] + hy_], 'r': hr_},
+                     'beans': [[fp['cx'] + sign * bx, fp['cy'] + by, br] for bx, by, br in beans_avg]})
+
+    polys = json.loads((FIT / 'light_poly.json').read_text())['master']
+    coef = {k: (v['coef'] if v else None) for k, v in polys.items()}
+    light = {'earL': coef['earL'], 'earR': coef['earR'], 'body': coef['body'], 'head': coef['head'],
+             'footL': coef['footL'], 'footR': coef['footR'],
+             'armR': coef['armR'], 'armL': mirror_poly(coef['armR']),
+             'pawR': coef['pawR'], 'pawL': mirror_poly(coef['pawR'])}
+    return {
+        'tone': fur_tone(rgba),
+        'parts': parts,
+        'lightPoly': light,
+        'eyes': eyes_m,
+        'blush': blush,
+        'innerEars': inner,
+        'mouth': mouth,
+        'pads': pads,
+        'floorY': max(parts[k]['cy'] + parts[k]['ryBot'] for k in ('footL', 'footR')),
+        'faceOffset': face_x,
+    }
+
+
 def build() -> dict:
     colours = json.loads((FIT / 'colours.json').read_text())
     unit_px = 2 * json.loads((FIT / 'front_silhouette.json').read_text())['parts']['head']['rx']
 
-    views, ear_fur = {}, None
-    for key, ref in VIEWS.items():
-        views[key], ear = build_view(ref, unit_px)
-        if key == 'front':
-            ear_fur = ear
+    # The front view is built from the master; the 3/4 view from the turnaround sheet.
+    views = {'front': build_front_from_master()}
+    views['threeQuarter'], ear_fur = build_view('turn_34_left', unit_px)
 
     # Highlights come from the master and are fixed to the light (same offset in both eyes).
     mf = extract(np.array(Image.open(MATTE / 'master.png').convert('RGBA')))
@@ -208,7 +361,7 @@ def build() -> dict:
     lab_colours = dict(colours['master'])
     lab_colours['earFur'] = ear_fur
     model = {
-        'units': 'front head width = 1; origin at each view head centre; y down',
+        'units': 'head width = 1; origin at each view head centre; y down',
         'colours': {k: hex_of(v) for k, v in lab_colours.items()},
         'coloursLab': lab_colours,
         'highlight': highlight,

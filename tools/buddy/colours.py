@@ -9,6 +9,17 @@ from features import _components, _filled
 from regions import classify, lab
 
 
+def tongue_mask(regions: dict) -> np.ndarray:
+    _, labm, statm, _ = cv2.connectedComponentsWithStats(regions['mouth'].astype(np.uint8))
+    if labm.max() == 0:
+        return np.zeros_like(regions['mouth'])
+    mouth = labm == 1 + int(np.argmax(statm[1:, cv2.CC_STAT_AREA]))
+    near = cv2.dilate(mouth.astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+    _, lab_p, _, _ = cv2.connectedComponentsWithStats(regions['pink'].astype(np.uint8))
+    ids = np.unique(lab_p[near & regions['pink']])
+    return np.isin(lab_p, ids[ids > 0])
+
+
 def sample(rgba: np.ndarray) -> dict[str, list[float]]:
     regions = classify(rgba)
     L = lab(rgba[..., :3])
@@ -38,7 +49,9 @@ def sample(rgba: np.ndarray) -> dict[str, list[float]]:
     mouth = regions['mouth']
     mouth_box = _filled(cv2.dilate(mouth.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0) if mouth.any() else np.zeros_like(mouth)
     out['mouth'] = med(mouth)
-    tongue = regions['pink'] & mouth_box
+    # The tongue is the whole pink blob touching the dark mouth interior (not just the thin
+    # ring inside the interior's outline, which is the darker blend into the mouth).
+    tongue = tongue_mask(regions)
     if tongue.any():
         out['tongue'] = med(tongue)
     pinks = _components(regions['pink'] & ~mouth_box, 50)

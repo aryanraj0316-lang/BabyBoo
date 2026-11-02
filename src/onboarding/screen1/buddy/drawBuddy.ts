@@ -354,15 +354,26 @@ export function drawBuddy(
     const foot = side === 'armL' ? P.footL : P.footR;
     drawFurPart(canvas, res, P[side], pl, fur, shading(side, [headShadow, beside(foot, K.armByFoot)], [ellipseOf(P.body)], LOOK.rim.arm), mode, V.tone);
   }
-  // Feet with puffy pads.
+  // Paws are separate parts (the rig waves them later); views measured without them skip them.
+  const parts = P as unknown as Record<string, Part | undefined>;
+  // Feet with puffy pads, shaded where their paw rests on them.
   for (const side of ['footL', 'footR'] as const) {
     const arm = side === 'footL' ? P.armL : P.armR;
-    drawFurPart(canvas, res, P[side], pl, fur, shading(side, [], [ellipseOf(P.body), ellipseOf(arm)], LOOK.rim.foot), mode, V.tone);
+    const paw = parts[side === 'footL' ? 'pawL' : 'pawR'];
+    const contacts = paw ? [beside(paw, K.footByPaw)] : [];
+    drawFurPart(canvas, res, P[side], pl, fur, shading(side, contacts, [ellipseOf(P.body), ellipseOf(arm)], LOOK.rim.foot), mode, V.tone);
     for (const pad of V.pads) {
       if (pad.side !== side) continue;
       drawPad(canvas, res, X(pad.heart.c[0]), Y(pad.heart.c[1]), pad.heart.r * W * LOOK.heartScale, true);
       for (const [bx, by, br] of pad.beans) drawPad(canvas, res, X(bx), Y(by), br * W, false);
     }
+  }
+  // Round paws at the ends of the arms, resting on the tummy just above the feet.
+  for (const side of ['pawL', 'pawR'] as const) {
+    const paw = parts[side];
+    if (!paw) continue;
+    const foot = side === 'pawL' ? P.footL : P.footR;
+    drawFurPart(canvas, res, paw, pl, fur, shading(side, [headShadow], [ellipseOf(P.body), ellipseOf(foot)], LOOK.rim.paw), mode, V.tone);
   }
   drawFurPart(canvas, res, P.head, pl, fur, shading('head', [], [ellipseOf(P.body)], LOOK.rim.head), mode, V.tone);
 

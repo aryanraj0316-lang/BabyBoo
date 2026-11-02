@@ -20,7 +20,7 @@ export const BUDDY_LOOK = {
   /** Darkening of fur that faces the ground. */
   ground: 0.12,
   /** Rim light per part (suppressed wherever a part overlaps one beneath it). */
-  rim: { head: 0.3, ear: 0.3, foot: 0.22, arm: 0.12, body: 0.1 },
+  rim: { head: 0.3, ear: 0.3, foot: 0.22, arm: 0.3, body: 0.1, paw: 0.3 },
   /**
    * Dynamic contact occlusion (computed from the current part positions, never baked).
    * soft: falloff width as a fraction of the occluder's size; strength: darkening at contact.
@@ -28,10 +28,11 @@ export const BUDDY_LOOK = {
   contact: {
     // The head's shadow: the head ellipse dropped onto the body and arms.
     headShadow: { dx: 0.0, dy: 0.05, soft: 0.3, strength: 0.55 },
-    bodyByArm: { soft: 0.22, strength: 0.45, dy: 0.03 }, // cast downward: no dark ring over the arm's top
+    bodyByArm: { soft: 0.16, strength: 0.6, dy: 0.02 }, // the arm's crease on the body: the arm reads as a limb in front
     bodyByFoot: { soft: 0.2, strength: 0.4 },
     armByFoot: { soft: 0.18, strength: 0.4 },
     earByHead: { soft: 0.1, strength: 0.3 },
+    footByPaw: { soft: 0.18, strength: 0.4, dy: 0.02 }, // the paw resting on the foot
   },
   /** Contact shadows blend toward the shadow lavender times this (1 = exactly the shadow colour). */
   contactDeepen: 0.92,
@@ -75,8 +76,8 @@ export const BUDDY_LOOK = {
   /** Tongue height as a multiple of its measured half-height (the master's measured pink, flat). */
   tongueDepth: 1.0,
   /** Mouth outline: how far down the sides run straight (0..1 of the depth) and how round the bottom is. */
-  mouthBelly: 0.75,
-  mouthRound: 0.55,
+  mouthBelly: 0.3,
+  mouthRound: 0.95,
   /** Points used to trace a part's outline as a clip path. */
   outlineSteps: 96,
 } as const;

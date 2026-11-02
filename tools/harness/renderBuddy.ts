@@ -12,7 +12,12 @@ import { drawBuddy, makeBuddyResources } from '../../src/onboarding/screen1/budd
 const ROOT = process.cwd();
 
 export async function main(argJson: string) {
-  const args = JSON.parse(argJson) as { out: string; width: number; height: number; x: number; y: number; headWidth: number; view?: 'front' | 'threeQuarter'; mode?: 'baked' | 'procedural' };
+  const args = JSON.parse(argJson) as {
+    out: string; width: number; height: number; x: number; y: number; headWidth: number;
+    view?: 'front' | 'threeQuarter'; mode?: 'baked' | 'procedural';
+    /** Rotate the whole figure about the head centre (radians), e.g. to match the master's head tilt. */
+    rotate?: number;
+  };
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   (globalThis as any).CanvasKit = await require(path.join(ROOT, 'node_modules/canvaskit-wasm/bin/full/canvaskit.js'))();
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -24,7 +29,10 @@ export async function main(argJson: string) {
   const surface = makeOffscreenSurface(args.width, args.height);
   const canvas = surface.getCanvas();
   canvas.clear(Skia.Color('transparent'));
+  canvas.save();
+  if (args.rotate) canvas.rotate((args.rotate * 180) / Math.PI, args.x, args.y);
   drawBuddy(canvas, res, { x: args.x, y: args.y, headWidth: args.headWidth }, args.view ?? 'front', args.mode);
+  canvas.restore();
   surface.flush();
   fs.writeFileSync(args.out, Buffer.from(surface.makeImageSnapshot().encodeToBytes()));
 }

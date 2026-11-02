@@ -29,6 +29,8 @@ ROOT = Path(__file__).resolve().parents[2]
 FIT = ROOT / 'design/buddy/_work/fit'
 MATTE = ROOT / 'design/buddy/_work/matte'
 DRAW_ORDER = ['earL', 'earR', 'body', 'armL', 'armR', 'footL', 'footR', 'head']
+# The master: the resting paw sits in front of its foot; the raised arm and paw are in front of the head.
+DRAW_ORDERS = {'master': ['earL', 'earR', 'body', 'armR', 'footL', 'footR', 'pawR', 'head', 'armL', 'pawL']}
 BAND = 6  # px kept clear of every part boundary (where contact shading lives)
 RIDGE = 1e-3
 
@@ -61,9 +63,10 @@ def bake(ref: str) -> dict:
     masks = {k: mask(p, (h, w)) for k, p in parts.items()}
     ys, xs = np.mgrid[0:h, 0:w].astype(np.float32)
     out = {}
-    for i, name in enumerate(DRAW_ORDER):
+    order = DRAW_ORDERS.get(ref, DRAW_ORDER)
+    for i, name in enumerate(order):
         own = masks[name].copy()
-        for above in DRAW_ORDER[i + 1:]:
+        for above in order[i + 1:]:
             own &= ~masks[above]
         # Stay clear of every boundary (the part's own and the parts in front of it).
         own = cv2.erode(own.astype(np.uint8), np.ones((2 * BAND + 1, 2 * BAND + 1), np.uint8)) > 0
@@ -80,7 +83,7 @@ def bake(ref: str) -> dict:
 
 
 def main() -> None:
-    res = {ref: bake(ref) for ref in ['front', 'turn_34_left']}
+    res = {ref: bake(ref) for ref in ['front', 'turn_34_left', 'master']}
     (FIT / 'light_poly.json').write_text(json.dumps(res, indent=1))
     for ref, parts in res.items():
         print(ref, {k: (round(v['rmsL'], 2), v['pixels']) if v else None for k, v in parts.items()})

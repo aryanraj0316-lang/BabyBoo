@@ -82,7 +82,7 @@ def fit(name: str, params, parts_fn, scale: float = 0.3, iters: int = 6000) -> d
     x0 = np.array([p[1] for p in params], float)
     lo = np.array([p[2] for p in params], float)
     hi = np.array([p[3] for p in params], float)
-    span = hi - lo
+    span = np.maximum(hi - lo, 1e-9)  # lo == hi fixes a parameter
 
     def unpack(z):
         return dict(zip(names, lo + np.clip(z, 0, 1) * span))
@@ -102,7 +102,7 @@ def main() -> None:
     name = sys.argv[1] if len(sys.argv) > 1 else 'front'
     OUT.mkdir(parents=True, exist_ok=True)
     params, parts_fn = VIEWS[name]
-    result = fit(name, params, parts_fn, iters=9000)
+    result = fit(name, params, parts_fn, scale=0.15 if name == 'master' else 0.3, iters=9000)
     (OUT / f'{name}_silhouette.json').write_text(json.dumps(result, indent=1))
     print(name, 'silhouette IoU', round(result['iou'], 4))
 
@@ -112,11 +112,13 @@ def main() -> None:
 # left (viewer's right), far = Buddy's right (viewer's left). Arm limits come from the
 # visible creases, as for the front view.
 THREE_Q_PARAMS = [
-    ('head_cx', 255, 235, 275), ('head_cy', 190, 165, 215), ('head_rx', 165, 135, 195),
-    ('head_ryTop', 140, 110, 170), ('head_ryBot', 130, 100, 165), ('head_nTop', 2.3, 1.8, 4.0), ('head_nBot', 2.5, 1.8, 4.0),
-    # Ear size is fixed to the front view's (same sheet, same scale): r = 64.69 +-0.5%.
-    ('earF_cx', 165, 140, 190), ('earF_cy', 65, 45, 90), ('earF_r', 64.69, 64.36, 65.01),
-    ('earN_cx', 395, 370, 420), ('earN_cy', 95, 70, 120), ('earN_r', 64.69, 64.36, 65.01),
+    # The head keeps the master's shape when it turns (a round head stays round); only its
+    # position is fitted. Sizes in this sheet's pixels (front head width = 344.17 px).
+    ('head_cx', 255, 235, 275), ('head_cy', 190, 165, 215), ('head_rx', 172.085, 172.085, 172.085),
+    ('head_ryTop', 159.798, 159.798, 159.798), ('head_ryBot', 138.012, 138.012, 138.012), ('head_nTop', 1.800, 1.800, 1.800), ('head_nBot', 2.300, 2.300, 2.300),
+    # Ear size is fixed to the master's (relative to head width).
+    ('earF_cx', 165, 140, 190), ('earF_cy', 65, 45, 90), ('earF_r', 62.914, 62.914, 62.914),
+    ('earN_cx', 395, 370, 420), ('earN_cy', 95, 70, 120), ('earN_r', 62.914, 62.914, 62.914),
     ('body_cx', 262, 240, 285), ('body_cy', 395, 375, 420), ('body_rx', 125, 105, 150),
     ('body_ryTop', 100, 80, 125), ('body_ryBot', 92, 75, 110), ('body_n', 2.3, 2.0, 3.0),
     ('armN_cx', 268, 245, 295), ('armN_cy', 388, 365, 410), ('armN_rx', 40, 32, 50), ('armN_ry', 70, 58, 85), ('armN_rot', -0.15, -0.5, 0.3),
@@ -147,6 +149,52 @@ def three_q_parts(v: dict) -> dict[str, dict]:
 
 
 VIEWS = {'front': (FRONT_PARAMS, front_parts), 'turn_34_left': (THREE_Q_PARAMS, three_q_parts)}
+
+
+
+# The locked master (waving). Its head is tilted ~9 degrees and its left arm (viewer's
+# left) is raised; the resting arm (viewer's right) ends in a round paw on the tummy,
+# above the foot. Arms and paws are separate parts so the rig can wave the paw later.
+# The resting arm sits inside the outline, so its limits come from its visible creases.
+MASTER_PARAMS = [
+    ('head_cx', 555, 520, 590), ('head_cy', 410, 370, 450), ('head_rx', 350, 300, 400),
+    # The chin sits at about y 690 and curves smoothly into the body (no flat 'bun' bottom).
+    ('head_ryTop', 285, 240, 330), ('head_ryBot', 262, 240, 285), ('head_nTop', 2.0, 1.8, 2.6), ('head_nBot', 2.05, 1.8, 2.3),
+    ('head_rot', 0.15, -0.05, 0.3),
+    ('earL_cx', 305, 260, 350), ('earL_cy', 175, 130, 220), ('earL_r', 120, 95, 145),
+    ('earR_cx', 838, 790, 880), ('earR_cy', 200, 155, 245), ('earR_r', 115, 90, 140),
+    ('body_cx', 555, 520, 590), ('body_cy', 840, 800, 880), ('body_rx', 260, 220, 300),
+    ('body_ryTop', 220, 160, 300), ('body_ryBot', 200, 170, 240), ('body_n', 2.2, 2.0, 3.0),
+    ('armUp_cx', 220, 170, 270), ('armUp_cy', 610, 560, 660), ('armUp_rx', 80, 60, 105), ('armUp_ry', 150, 110, 190), ('armUp_rot', 0.6, 0.2, 1.0),
+    ('pawUp_cx', 125, 90, 170), ('pawUp_cy', 465, 420, 510), ('pawUp_r', 95, 75, 120),
+    ('armRest_cx', 712, 690, 735), ('armRest_cy', 790, 765, 815), ('armRest_rx', 72, 60, 85), ('armRest_ry', 110, 90, 130), ('armRest_rot', -0.12, -0.35, 0.1),
+    ('pawRest_cx', 692, 670, 715), ('pawRest_cy', 875, 855, 895), ('pawRest_r', 62, 50, 75),
+    ('footL_cx', 345, 310, 380), ('footL_cy', 905, 875, 935), ('footL_rx', 140, 115, 165), ('footL_ry', 125, 100, 150), ('footL_rot', 0.0, -0.5, 0.5),
+    ('footR_cx', 830, 795, 865), ('footR_cy', 935, 905, 965), ('footR_rx', 120, 100, 145), ('footR_ry', 115, 95, 140), ('footR_rot', 0.0, -0.5, 0.5),
+    ('foot_n', 2.1, 1.8, 3.0),
+]
+
+
+def master_parts(v: dict) -> dict[str, dict]:
+    def ell(cx, cy, rx, ry, rot=0.0, n=2.0):
+        return {'cx': cx, 'cy': cy, 'rx': rx, 'ryTop': ry, 'ryBot': ry, 'nTop': n, 'nBot': n, 'rot': rot}
+    return {
+        'earL': ell(v['earL_cx'], v['earL_cy'], v['earL_r'], v['earL_r']),
+        'earR': ell(v['earR_cx'], v['earR_cy'], v['earR_r'], v['earR_r']),
+        'body': {'cx': v['body_cx'], 'cy': v['body_cy'], 'rx': v['body_rx'], 'ryTop': v['body_ryTop'], 'ryBot': v['body_ryBot'],
+                 'nTop': v['body_n'], 'nBot': v['body_n'], 'rot': 0.0},
+        'armL': ell(v['armUp_cx'], v['armUp_cy'], v['armUp_rx'], v['armUp_ry'], v['armUp_rot']),
+        'pawL': ell(v['pawUp_cx'], v['pawUp_cy'], v['pawUp_r'], v['pawUp_r']),
+        'armR': ell(v['armRest_cx'], v['armRest_cy'], v['armRest_rx'], v['armRest_ry'], v['armRest_rot']),
+        'pawR': ell(v['pawRest_cx'], v['pawRest_cy'], v['pawRest_r'], v['pawRest_r']),
+        'footL': ell(v['footL_cx'], v['footL_cy'], v['footL_rx'], v['footL_ry'], v['footL_rot'], v['foot_n']),
+        'footR': ell(v['footR_cx'], v['footR_cy'], v['footR_rx'], v['footR_ry'], v['footR_rot'], v['foot_n']),
+        'head': {'cx': v['head_cx'], 'cy': v['head_cy'], 'rx': v['head_rx'], 'ryTop': v['head_ryTop'], 'ryBot': v['head_ryBot'],
+                 'nTop': v['head_nTop'], 'nBot': v['head_nBot'], 'rot': v['head_rot']},
+    }
+
+
+VIEWS['master'] = (MASTER_PARAMS, master_parts)
 
 
 if __name__ == '__main__':
