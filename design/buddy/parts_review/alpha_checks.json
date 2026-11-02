@@ -1,0 +1,58 @@
+[
+  {
+    "part": "ear_viewer_left",
+    "transparent_pixel_count": 26698,
+    "partial_alpha_pixel_count": 3858,
+    "opaque_pixel_count": 44511,
+    "border_clear": true
+  },
+  {
+    "part": "ear_viewer_right",
+    "transparent_pixel_count": 26564,
+    "partial_alpha_pixel_count": 3979,
+    "opaque_pixel_count": 44524,
+    "border_clear": true
+  },
+  {
+    "part": "head_blank",
+    "transparent_pixel_count": 138412,
+    "partial_alpha_pixel_count": 14823,
+    "opaque_pixel_count": 434645,
+    "border_clear": true
+  },
+  {
+    "part": "torso",
+    "transparent_pixel_count": 53797,
+    "partial_alpha_pixel_count": 10324,
+    "opaque_pixel_count": 190679,
+    "border_clear": true
+  },
+  {
+    "part": "arm_viewer_left",
+    "transparent_pixel_count": 48654,
+    "partial_alpha_pixel_count": 4518,
+    "opaque_pixel_count": 52924,
+    "border_clear": true
+  },
+  {
+    "part": "arm_viewer_right",
+    "transparent_pixel_count": 360775,
+    "partial_alpha_pixel_count": 882233,
+    "opaque_pixel_count": 0,
+    "border_clear": true
+  },
+  {
+    "part": "foot_viewer_left",
+    "transparent_pixel_count": 201723,
+    "partial_alpha_pixel_count": 640745,
+    "opaque_pixel_count": 0,
+    "border_clear": true
+  },
+  {
+    "part": "foot_viewer_right",
+    "transparent_pixel_count": 231887,
+    "partial_alpha_pixel_count": 649686,
+    "opaque_pixel_count": 1,
+    "border_clear": true
+  }
+]

@@ -1,0 +1,287 @@
+﻿{
+  "master_head_width_px": 706,
+  "measurement_note": "Master head intrinsic width excluding ears/fuzz, rounded from previous silhouette fit (705.452 px); Approximate prior fitted reference, not a new subpixel measurement. Proposed part sizes are uniform-scale assembly targets; hidden shoulder/body extent cannot be measured from the single master. Alpha bounds use >8/255; PNGs have 8 px transparent margins. These are not assembled-pose likeness metrics.",
+  "parts": [
+    {
+      "name": "ear_viewer_left",
+      "label": "Ear / viewer left",
+      "source": "buddy_parts.png",
+      "source_crop": [
+        40,
+        90,
+        320,
+        380
+      ],
+      "alpha_bbox_within_crop": [
+        15,
+        18,
+        276,
+        273
+      ],
+      "visible_pixels": [
+        261,
+        255
+      ],
+      "png_pixels": [
+        277,
+        271
+      ],
+      "reference_scale_width_px": 264,
+      "reference_scale_height_px": 257.9,
+      "width_per_head": 0.3739,
+      "height_per_head": 0.3653,
+      "uniform_scale": 1.01149,
+      "generation_attempts": 0,
+      "reference_crop": [
+        265,
+        177,
+        539,
+        441
+      ]
+    },
+    {
+      "name": "ear_viewer_right",
+      "label": "Ear / viewer right",
+      "source": "buddy_parts.png",
+      "source_crop": [
+        930,
+        90,
+        1210,
+        380
+      ],
+      "alpha_bbox_within_crop": [
+        6,
+        18,
+        267,
+        273
+      ],
+      "visible_pixels": [
+        261,
+        255
+      ],
+      "png_pixels": [
+        277,
+        271
+      ],
+      "reference_scale_width_px": 245,
+      "reference_scale_height_px": 239.4,
+      "width_per_head": 0.347,
+      "height_per_head": 0.339,
+      "uniform_scale": 0.9387,
+      "generation_attempts": 0,
+      "reference_crop": [
+        804,
+        214,
+        1058,
+        483
+      ]
+    },
+    {
+      "name": "head_blank",
+      "label": "Head / blank face",
+      "source": "buddy_parts_fix.png",
+      "source_crop": [
+        180,
+        30,
+        1060,
+        735
+      ],
+      "alpha_bbox_within_crop": [
+        25,
+        19,
+        861,
+        693
+      ],
+      "visible_pixels": [
+        836,
+        674
+      ],
+      "png_pixels": [
+        852,
+        690
+      ],
+      "reference_scale_width_px": 706,
+      "reference_scale_height_px": 569.2,
+      "width_per_head": 1.0,
+      "height_per_head": 0.8062,
+      "uniform_scale": 0.8445,
+      "generation_attempts": 0,
+      "reference_crop": [
+        280,
+        260,
+        1000,
+        835
+      ]
+    },
+    {
+      "name": "torso",
+      "label": "Torso",
+      "source": "buddy_parts_fix.png",
+      "source_crop": [
+        330,
+        735,
+        910,
+        1200
+      ],
+      "alpha_bbox_within_crop": [
+        18,
+        10,
+        562,
+        449
+      ],
+      "visible_pixels": [
+        544,
+        439
+      ],
+      "png_pixels": [
+        560,
+        455
+      ],
+      "reference_scale_width_px": 470,
+      "reference_scale_height_px": 379.3,
+      "width_per_head": 0.6657,
+      "height_per_head": 0.5372,
+      "uniform_scale": 0.86397,
+      "generation_attempts": 0,
+      "reference_crop": [
+        354,
+        790,
+        826,
+        1160
+      ]
+    },
+    {
+      "name": "arm_viewer_left",
+      "label": "Arm / viewer left / palm",
+      "source": "buddy_parts.png",
+      "source_crop": [
+        45,
+        500,
+        360,
+        855
+      ],
+      "alpha_bbox_within_crop": [
+        15,
+        11,
+        303,
+        344
+      ],
+      "visible_pixels": [
+        288,
+        333
+      ],
+      "png_pixels": [
+        304,
+        349
+      ],
+      "reference_scale_width_px": 314,
+      "reference_scale_height_px": 363.1,
+      "width_per_head": 0.4448,
+      "height_per_head": 0.5143,
+      "uniform_scale": 1.09028,
+      "generation_attempts": 0,
+      "reference_crop": [
+        126,
+        542,
+        470,
+        899
+      ]
+    },
+    {
+      "name": "arm_viewer_right",
+      "label": "Arm / viewer right / back",
+      "source": "generated/arm_viewer_right_attempt3.png",
+      "source_crop": null,
+      "alpha_bbox_within_crop": [
+        83,
+        89,
+        1003,
+        1401
+      ],
+      "visible_pixels": [
+        920,
+        1312
+      ],
+      "png_pixels": [
+        936,
+        1328
+      ],
+      "reference_scale_width_px": 210,
+      "reference_scale_height_px": 299.5,
+      "width_per_head": 0.2975,
+      "height_per_head": 0.4242,
+      "uniform_scale": 0.22826,
+      "generation_attempts": 3,
+      "reference_crop": [
+        697,
+        804,
+        902,
+        1088
+      ]
+    },
+    {
+      "name": "foot_viewer_left",
+      "label": "Foot / viewer left",
+      "source": "generated/foot_viewer_left_attempt1.png",
+      "source_crop": null,
+      "alpha_bbox_within_crop": [
+        167,
+        246,
+        1085,
+        1132
+      ],
+      "visible_pixels": [
+        918,
+        886
+      ],
+      "png_pixels": [
+        934,
+        902
+      ],
+      "reference_scale_width_px": 245,
+      "reference_scale_height_px": 236.5,
+      "width_per_head": 0.347,
+      "height_per_head": 0.3349,
+      "uniform_scale": 0.26688,
+      "generation_attempts": 1,
+      "reference_crop": [
+        322,
+        954,
+        566,
+        1187
+      ]
+    },
+    {
+      "name": "foot_viewer_right",
+      "label": "Foot / viewer right",
+      "source": "generated/foot_viewer_right_attempt1.png",
+      "source_crop": null,
+      "alpha_bbox_within_crop": [
+        185,
+        307,
+        1216,
+        1133
+      ],
+      "visible_pixels": [
+        1031,
+        826
+      ],
+      "png_pixels": [
+        1047,
+        842
+      ],
+      "reference_scale_width_px": 270,
+      "reference_scale_height_px": 216.3,
+      "width_per_head": 0.3824,
+      "height_per_head": 0.3064,
+      "uniform_scale": 0.26188,
+      "generation_attempts": 1,
+      "reference_crop": [
+        744,
+        956,
+        1024,
+        1189
+      ]
+    }
+  ]
+}
