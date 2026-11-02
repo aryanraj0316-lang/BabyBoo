@@ -168,30 +168,30 @@ export function makeBuddyResources(Skia: SkiaT, grain: SkImage): BuddyResources 
   return { Skia, fur, grain };
 }
 
-type Part = { cx: number; cy: number; rx: number; ryTop: number; ryBot: number; nTop: number; nBot: number; rot: number };
+export type Part = { cx: number; cy: number; rx: number; ryTop: number; ryBot: number; nTop: number; nBot: number; rot: number };
 /** A limb: one tapered capsule from the shoulder (a) to the round paw (b). */
-type Limb = { ax: number; ay: number; bx: number; by: number; ra: number; rb: number };
-type Rgb = readonly [number, number, number];
-type Ellipse = { cx: number; cy: number; rx: number; ry: number };
-type Contact = { by: Ellipse; dx: number; dy: number; soft: number; strength: number };
-type Palette = { shadow: Rgb; base: Rgb; high: Rgb; rim: Rgb };
-type Shading = {
+export type Limb = { ax: number; ay: number; bx: number; by: number; ra: number; rb: number };
+export type Rgb = readonly [number, number, number];
+export type Ellipse = { cx: number; cy: number; rx: number; ry: number };
+export type Contact = { by: Ellipse; dx: number; dy: number; soft: number; strength: number };
+export type Palette = { shadow: Rgb; base: Rgb; high: Rgb; rim: Rgb };
+export type Shading = {
   light: readonly number[]; rim: number; ground: number; contacts: Contact[]; beneath: Ellipse[];
   poly: readonly number[] | null; plush: number;
 };
 
-function rgb01(hex: string): Rgb {
+export function rgb01(hex: string): Rgb {
   'worklet';
   const v = parseInt(hex.slice(1), 16);
   return [((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
 }
 
-function ellipseOf(p: Part): Ellipse {
+export function ellipseOf(p: Part): Ellipse {
   'worklet';
   return { cx: p.cx, cy: p.cy, rx: p.rx, ry: Math.max(p.ryTop, p.ryBot) };
 }
 
-function drawFurPart(
+export function drawFurPart(
   canvas: SkCanvas, res: BuddyResources, part: Part, pl: BuddyPlacement, palette: Palette, sh: Shading, mode: ShadingMode,
   tone: readonly number[], limb?: Limb,
 ) {
@@ -259,7 +259,7 @@ function drawFurPart(
   canvas.drawRect(box, paint);
 }
 
-function fill(res: BuddyResources, hex: string, alpha = 1): SkPaint {
+export function fill(res: BuddyResources, hex: string, alpha = 1): SkPaint {
   'worklet';
   const p = res.Skia.Paint();
   p.setColor(res.Skia.Color(hex));
@@ -268,14 +268,14 @@ function fill(res: BuddyResources, hex: string, alpha = 1): SkPaint {
   return p;
 }
 
-function clearOf(hex: string): string {
+export function clearOf(hex: string): string {
   'worklet';
   const c = rgb01(hex);
   return `rgba(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)},0)`;
 }
 
 /** A part's outline as a path (the same superellipse the shader draws), in canvas pixels. */
-function superellipsePath(res: BuddyResources, part: Part, pl: BuddyPlacement) {
+export function superellipsePath(res: BuddyResources, part: Part, pl: BuddyPlacement) {
   'worklet';
   const W = pl.headWidth;
   const steps = LOOK.outlineSteps;
@@ -302,7 +302,7 @@ const HEART_SVG = 'M 0 0.85 C -0.35 0.55 -1 0.2 -1 -0.25 C -1 -0.7 -0.45 -0.95 0
  * A puffy, raised pad: soft contact shadow under it, a gradient that is lighter
  * up-left and deeper at the edge, and one small soft highlight.
  */
-function drawPad(canvas: SkCanvas, res: BuddyResources, cx: number, cy: number, r: number, heart: boolean) {
+export function drawPad(canvas: SkCanvas, res: BuddyResources, cx: number, cy: number, r: number, heart: boolean) {
   'worklet';
   const { Skia } = res;
   const P = LOOK.pad;

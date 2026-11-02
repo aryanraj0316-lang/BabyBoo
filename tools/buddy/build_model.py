@@ -211,7 +211,7 @@ class Derot:
 # The master's resting arm (viewer's right), placed by hand from its visible crease
 # (master pixels): the shoulder emerges from under the head, the paw rests on the tummy
 # just above the foot. One limb: shoulder circle -> paw circle.
-MASTER_ARM = {'shoulder': (730, 740), 'ra': 60, 'paw': (690, 880), 'rb': 78}
+MASTER_ARM = {'shoulder': (748, 735), 'ra': 72, 'paw': (697, 870), 'rb': 74, 'pawR': 86}
 OUTLINE_POINTS = 72
 
 
@@ -229,6 +229,9 @@ def polar_outline(m: np.ndarray, to_model, mirror_x: float) -> list:
     r = np.interp(grid, ang, rad, period=2 * np.pi)
     r_mirror = np.interp(np.pi - grid, ang, rad, period=2 * np.pi)
     r = (r + r_mirror) / 2
+    # Smooth the outline (a soft, even edge; no pixel lumps).
+    k = 1
+    r = np.convolve(np.concatenate([r[-k:], r, r[:k]]), np.ones(2 * k + 1) / (2 * k + 1), mode='same')[k:-k]
     return [[float(np.cos(a) * rr), float(cy + np.sin(a) * rr)] for a, rr in zip(grid, r)]
 
 
@@ -344,6 +347,8 @@ def build_front_from_master() -> dict:
     ra, rb = MASTER_ARM['ra'] / W, MASTER_ARM['rb'] / W
     limbs = {'armR': {'ax': a[0], 'ay': a[1], 'bx': b[0], 'by': b[1], 'ra': ra, 'rb': rb},
              'armL': {'ax': -a[0], 'ay': a[1], 'bx': -b[0], 'by': b[1], 'ra': ra, 'rb': rb}}
+    # The rig's arm at rest (viewer-right side; the left mirrors it): shoulder, paw, radii.
+    arm_rest = {'shoulder': a, 'paw': b, 'ra': ra, 'rb': rb, 'pawR': MASTER_ARM['pawR'] / W}
     for side, lm in limbs.items():
         cx_, cy_ = (lm['ax'] + lm['bx']) / 2, (lm['ay'] + lm['by']) / 2
         half_len = np.hypot(lm['bx'] - lm['ax'], lm['by'] - lm['ay']) / 2
@@ -388,9 +393,36 @@ def build_front_from_master() -> dict:
         'mouthOutline': mouth_outline,
         'tongueOutline': tongue_outline,
         'limbs': limbs,
+        'armRest': arm_rest,
         'pads': pads,
         'floorY': max(parts[k]['cy'] + parts[k]['ryBot'] for k in ('footL', 'footR')),
         'faceOffset': face_x,
+    }
+
+
+def turn_delta(unit_px: float) -> dict:
+    """How each face feature moves from the front sheet to the 3/4 sheet (headTurn -0.5).
+
+    Both come from the same turnaround sheet at one scale, in head widths around each
+    view's head centre, so the delta can be applied to the master-based front face.
+    """
+    f, _ = build_view('front', unit_px)
+    q, _ = build_view('turn_34_left', unit_px)
+    d = lambda a, b: [b[0] - a[0], b[1] - a[1]]
+    ears = {k: d([f['parts'][k]['cx'], f['parts'][k]['cy']], [q['parts'][k]['cx'], q['parts'][k]['cy']]) for k in ('earL', 'earR')}
+    inner = {}
+    for side in ('earL', 'earR'):
+        a = next(i for i in f['innerEars'] if i['side'] == side)
+        b = next(i for i in q['innerEars'] if i['side'] == side)
+        inner[side] = {'d': d(a['c'], b['c']), 'r': b['r'] / a['r']}
+    mid = lambda m: [(m['left'][0] + m['right'][0]) / 2, (m['left'][1] + m['right'][1]) / 2]
+    mw = lambda m: m['right'][0] - m['left'][0]
+    return {
+        'eyes': [{'d': d(a['c'], b['c']), 'rx': b['rx'] / a['rx'], 'ry': b['ry'] / a['ry']} for a, b in zip(f['eyes'], q['eyes'])],
+        'blush': [{'d': d(a['c'], b['c']), 'r': b['r'] / a['r']} for a, b in zip(f['blush'], q['blush'])],
+        'ears': ears,
+        'innerEars': inner,
+        'mouth': {'d': d(mid(f['mouth']), mid(q['mouth'])), 'width': mw(q['mouth']) / mw(f['mouth'])},
     }
 
 
@@ -416,12 +448,17 @@ def build() -> dict:
     lab_colours = dict(colours['master'])
     from colours import tongue_mask
     tm = tongue_mask(classify(master_rgba))
-    ty = np.nonzero(tm)[0]
-    top = tm & (np.arange(tm.shape[0])[:, None] <= np.percentile(ty, 30))
-    lab_colours['tongueTop'] = [float(v) for v in np.median(lab(master_rgba[..., :3])[top], axis=0)]
+    # The lit part of the tongue: its brightest quarter (the top rows blend into the dark mouth).
+    tl = lab(master_rgba[..., :3])[tm]
+    lab_colours['tongueTop'] = [float(v) for v in np.median(tl[tl[:, 0] >= np.percentile(tl[:, 0], 75)], axis=0)]
     lab_colours['earFur'] = ear_fur
+    rig = json.loads((FIT / 'rig_measure.json').read_text())
     model = {
         'units': 'head width = 1; origin at each view head centre; y down',
+        'turnDelta': turn_delta(unit_px),
+        'pawPads': rig['pawPads'],
+        # Gaze slides the face on the head (measured on the gaze grid), in eye radii at full gaze.
+        'gaze': {'faceX': 0.5, 'faceY': 0.45, 'eyeExtra': 0.15},
         'colours': {k: hex_of(v) for k, v in lab_colours.items()},
         'coloursLab': lab_colours,
         'highlight': highlight,

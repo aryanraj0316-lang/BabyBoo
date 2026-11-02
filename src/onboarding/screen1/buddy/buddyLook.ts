@@ -20,7 +20,7 @@ export const BUDDY_LOOK = {
   /** Darkening of fur that faces the ground. */
   ground: 0.12,
   /** Rim light per part (suppressed wherever a part overlaps one beneath it). */
-  rim: { head: 0.3, ear: 0.3, foot: 0.22, arm: 0.3, body: 0.1, paw: 0.3 },
+  rim: { head: 0.3, ear: 0.3, foot: 0.22, arm: 0.5, body: 0.1, paw: 0.5 },
   /**
    * Dynamic contact occlusion (computed from the current part positions, never baked).
    * soft: falloff width as a fraction of the occluder's size; strength: darkening at contact.
@@ -79,6 +79,10 @@ export const BUDDY_LOOK = {
   /** Mouth outline: how far down the sides run straight (0..1 of the depth) and how round the bottom is. */
   mouthBelly: 0.3,
   mouthRound: 0.95,
+  /** Soft inner edge of the mouth: fur colour bleeding in from the outline (head widths). */
+  mouthLip: { width: 0.01, blur: 0.005, opacity: 0.3 },
+  /** Arms: a soft shadow cast onto the body (the crease), offset down. */
+  limbShadow: { opacity: 0.55, blur: 0.02, dy: 0.02, spread: 1.14 },
   /** Points used to trace a part's outline as a clip path. */
   outlineSteps: 96,
 } as const;

@@ -1,0 +1,14 @@
+preset      reference              eye L   eye R   mouth   (distance, % of figure height; limit 3%)
+watching    turn_34_left            7.1%    6.9%    5.8%
+delighted   expr_happy              2.8%    4.0%    3.7%
+giggle      expr_laugh_closed       0.7%    1.2%    2.2%
+worried     act_worried_paws       15.5%   16.4%     n/a
+scared      expr_worried            0.4%    5.2%     n/a
+startled    expr_surprised          4.7%    7.1%    5.7%
+yawn        act_yawn                 n/a     n/a     n/a
+sleepy      act_sleepy               n/a     n/a     n/a
+asleep      eyes_closed_smile        n/a     n/a     n/a
+pointing    act_point_right (mirrored)    3.6%    7.3%    4.2%
+celebrate   joy_arms_up             8.0%    5.9%   10.3%
+wave        joy_wave                3.2%    5.0%    5.1%
+happy       cel_settle              3.1%    7.4%    3.2%

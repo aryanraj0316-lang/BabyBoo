@@ -8,7 +8,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 
 const ROOT = path.resolve(__dirname, '../..');
-const ENTRIES = { buddy: 'tools/harness/renderBuddy.ts' };
+const ENTRIES = { buddy: 'tools/harness/renderBuddy.ts', rig: 'tools/harness/renderRig.ts' };
 
 (async () => {
   const [entry, args] = process.argv.slice(2);
