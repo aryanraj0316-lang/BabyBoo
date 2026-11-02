@@ -331,9 +331,10 @@ export function drawPad(canvas: SkCanvas, res: BuddyResources, cx: number, cy: n
 
 /** Draw Buddy in one of the measured views. */
 export function drawBuddy(
-  canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, viewName: BuddyView = 'front', mode: ShadingMode = LOOK.shadingMode,
+  canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, viewName: BuddyView = 'front', modeIn?: ShadingMode,
 ): void {
   'worklet';
+  const mode = modeIn ?? LOOK.shadingMode;
   const { Skia } = res;
   const W = pl.headWidth;
   const C = M.colours as typeof M.colours & { tongueTop?: string };

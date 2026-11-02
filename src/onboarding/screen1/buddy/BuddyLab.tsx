@@ -8,10 +8,10 @@
  *    export button that logs the current pose for the render harness.
  * `record=1` hides every control (for screen recordings).
  */
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { Canvas, Image as SkImageView, Picture, Rect, Skia, useImage } from '@shopify/react-native-skia';
-import { runOnJS, useAnimatedReaction, useDerivedValue, useFrameCallback, useSharedValue } from 'react-native-reanimated';
+import { useDerivedValue, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { makeBuddyResources } from './drawBuddy';
 import { drawBuddyPosed } from './drawPosed';
 import { BUDDY_LOOK } from './buddyLook';
@@ -62,13 +62,15 @@ export function BuddyLab({ record = false }: { record?: boolean }) {
   const lightSV = useSharedValue<number[]>([...BUDDY_LOOK.light]);
   const cost = useSharedValue(0);
 
-  scripted.value = mode === 'script';
-  manual.value = params;
-  lightSV.value = light;
+  useEffect(() => {
+    scripted.set(mode === 'script');
+    manual.set(params);
+    lightSV.set(light);
+  }, [mode, params, light, scripted, manual, lightSV]);
 
   useFrameCallback((info) => {
     'worklet';
-    time.value += Math.min(info.timeSincePreviousFrame ?? 16, 100) / 1000;
+    time.set(time.get() + Math.min(info.timeSincePreviousFrame ?? 16, 100) / 1000);
   });
 
   const canvasW = width;
@@ -82,7 +84,7 @@ export function BuddyLab({ record = false }: { record?: boolean }) {
         const now = (globalThis as unknown as { performance?: { now(): number } }).performance;
         const t0 = now ? now.now() : 0;
         p = rigAt(script, time.value);
-        if (now) cost.value = cost.value * 0.95 + (now.now() - t0) * 0.05;
+        if (now) cost.set(cost.get() * 0.95 + (now.now() - t0) * 0.05);
       } else {
         p = manual.value;
       }
@@ -94,19 +96,16 @@ export function BuddyLab({ record = false }: { record?: boolean }) {
     return rec.finishRecordingAsPicture();
   });
 
-  useAnimatedReaction(
-    () => Math.floor(time.value * 4),
-    (q, prev) => {
-      if (q !== prev && scripted.value) runOnJS(setStats)({ label: labelAt(LAB_SCRIPT, time.value % LAB_SCRIPT.loop), t: time.value % LAB_SCRIPT.loop, ms: cost.value });
-    },
-  );
-  // The re-simulation cost goes to the device log too (adb logcat), every 2 s.
-  useAnimatedReaction(
-    () => Math.floor(time.value / 2),
-    (q, prev) => {
-      if (q !== prev && scripted.value) console.log(`[BuddyLab] rigAt ms=${cost.value.toFixed(3)} t=${(time.value % LAB_SCRIPT.loop).toFixed(1)}`);
-    },
-  );
+  // Caption and cost readout: a JS-thread timer reads the shared values (no UI->JS calls).
+  useEffect(() => {
+    let n = 0;
+    const id = setInterval(() => {
+      const t = time.get() % LAB_SCRIPT.loop;
+      setStats({ label: labelAt(LAB_SCRIPT, t), t, ms: cost.get() });
+      if (++n % 8 === 0) console.log(`[BuddyLab] rigAt ms=${cost.get().toFixed(3)} t=${t.toFixed(1)}`);
+    }, 250);
+    return () => clearInterval(id);
+  }, [time, cost]);
 
   const applyPreset = (name: PresetName) => {
     setMode('manual');

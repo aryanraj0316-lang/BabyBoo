@@ -32,11 +32,14 @@ function segEllipse(s: Seg): Ellipse {
 }
 
 export function drawBuddyPosed(
-  canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, posed: Posed, mode: ShadingMode = LOOK.shadingMode,
+  canvas: SkCanvas, res: BuddyResources, pl: BuddyPlacement, posed: Posed, modeIn?: ShadingMode,
   /** Light direction override (the phone relights Buddy; Buddy Lab's light controls). */
-  light: readonly number[] = LOOK.light,
+  lightIn?: readonly number[],
 ): void {
   'worklet';
+  // Defaults are resolved here: worklets do not capture constants used in parameter defaults.
+  const mode = modeIn ?? LOOK.shadingMode;
+  const light = lightIn ?? LOOK.light;
   const { Skia } = res;
   const W = pl.headWidth;
   const C = M.colours as typeof M.colours & { tongueTop?: string };
