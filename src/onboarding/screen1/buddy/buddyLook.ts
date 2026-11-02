@@ -37,7 +37,8 @@ export const BUDDY_LOOK = {
   /** Contact shadows blend toward the shadow lavender times this (1 = exactly the shadow colour). */
   contactDeepen: 0.92,
   /** Glossy eyes: dark centre set slightly high, a soft lighter rim toward the bottom. */
-  eyeGloss: { centreUp: 0.25, reach: 1.25, from: 0.62, rim: '#3A3550' },
+  /** Glossy eyes: dark centre set high; the master's subtle bluish rim light low on the edge. */
+  eyeGloss: { centreUp: 0.3, reach: 1.25, from: 0.66, rim: '#4B4F92' },
   /** Inner ears: recessed pink cups. */
   innerEar: {
     light: '#F7B6F6', // the cup's lower, lit part

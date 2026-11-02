@@ -73,11 +73,14 @@ def iou(a: np.ndarray, b: np.ndarray) -> float:
     return float((a & b).sum() / max(1, (a | b).sum()))
 
 
-def fit(name: str, params, parts_fn, scale: float = 0.3, iters: int = 6000) -> dict:
+def fit(name: str, params, parts_fn, scale: float = 0.3, iters: int = 6000, ignore=None) -> dict:
     rgba = np.array(Image.open(MATTE / f'{name}.png').convert('RGBA'))
     full = rgba[..., 3] > 128
     h, w = full.shape
     small = np.array(Image.fromarray(full.astype(np.uint8) * 255).resize((int(w * scale), int(h * scale)), Image.BILINEAR)) > 127
+    keep = np.ones_like(small)
+    if ignore is not None:
+        keep = ~(np.array(Image.fromarray(ignore.astype(np.uint8) * 255).resize(small.shape[::-1], Image.BILINEAR)) > 127)
     names = [p[0] for p in params]
     x0 = np.array([p[1] for p in params], float)
     lo = np.array([p[2] for p in params], float)
@@ -88,18 +91,23 @@ def fit(name: str, params, parts_fn, scale: float = 0.3, iters: int = 6000) -> d
         return dict(zip(names, lo + np.clip(z, 0, 1) * span))
 
     def loss(z):
-        return 1.0 - iou(union(parts_fn(unpack(z)), small.shape, scale), small)
+        u = union(parts_fn(unpack(z)), small.shape, scale)
+        return 1.0 - iou(u & keep, small & keep)
 
     z0 = (x0 - lo) / span
     res = minimize(loss, z0, method='Powell', options={'maxfev': iters, 'xtol': 1e-3, 'ftol': 1e-5})
     v = unpack(res.x)
     parts = parts_fn(v)
-    score = iou(union(parts, full.shape, 1.0), full)
+    full_keep = ~ignore if ignore is not None else np.ones_like(full)
+    score = iou(union(parts, full.shape, 1.0) & full_keep, full & full_keep)
     return {'values': v, 'parts': parts, 'iou': score, 'shape': [w, h]}
 
 
 def main() -> None:
     name = sys.argv[1] if len(sys.argv) > 1 else 'front'
+    if name == 'master_head':
+        refit_master_head()
+        return
     OUT.mkdir(parents=True, exist_ok=True)
     params, parts_fn = VIEWS[name]
     result = fit(name, params, parts_fn, scale=0.15 if name == 'master' else 0.3, iters=9000)
@@ -195,6 +203,36 @@ def master_parts(v: dict) -> dict[str, dict]:
 
 
 VIEWS['master'] = (MASTER_PARAMS, master_parts)
+
+
+
+def refit_master_head() -> None:
+    """Refit only the master's head, with the raised arm and paw masked out (they overlap the
+    head and stretched its crown) and a tighter crown limit. Every other part stays as fitted."""
+    from shapes import mask as part_mask
+    path = OUT / 'master_silhouette.json'
+    prev = json.loads(path.read_text())
+    rgba = np.array(Image.open(MATTE / 'master.png').convert('RGBA'))
+    ignore = np.zeros(rgba.shape[:2], bool)
+    for k in ('armL', 'pawL'):
+        p = dict(prev['parts'][k])
+        for key in ('rx', 'ryTop', 'ryBot'):
+            p[key] *= 1.12
+        ignore |= part_mask(p, rgba.shape[:2])
+    v = prev['values']
+    params = []
+    for name, start, lo, hi in MASTER_PARAMS:
+        if name.startswith('head_'):
+            params.append((name, start, lo, hi))
+        else:
+            params.append((name, v[name], v[name], v[name]))
+    params = [(n, *{'head_ryTop': (275, 245, 300), 'head_nTop': (2.1, 1.95, 2.5), 'head_ryBot': (262, 240, 280),
+                                    'head_cx': (555, 545, 565), 'head_cy': (440, 420, 460), 'head_rx': (352, 340, 365), 'head_rot': (0.085, 0.05, 0.13)}.get(n, (st, lo, hi)))
+              for n, st, lo, hi in params]
+    result = fit('master', params, master_parts, scale=0.15, iters=4000, ignore=ignore)
+    path.write_text(json.dumps(result, indent=1))
+    print('master head refit IoU (raised paw masked)', round(result['iou'], 4),
+          {k: round(x, 2) for k, x in result['values'].items() if k.startswith('head_')})
 
 
 if __name__ == '__main__':

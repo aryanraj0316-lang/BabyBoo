@@ -208,6 +208,30 @@ class Derot:
         return v / self.w
 
 
+# The master's resting arm (viewer's right), placed by hand from its visible crease
+# (master pixels): the shoulder emerges from under the head, the paw rests on the tummy
+# just above the foot. One limb: shoulder circle -> paw circle.
+MASTER_ARM = {'shoulder': (730, 740), 'ra': 60, 'paw': (690, 880), 'rb': 78}
+OUTLINE_POINTS = 72
+
+
+def polar_outline(m: np.ndarray, to_model, mirror_x: float) -> list:
+    """A star-shaped region's outline, resampled by angle and mirror-averaged (symmetric)."""
+    ys, xs = np.nonzero(m)
+    cnts, _ = cv2.findContours(m.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    pts = np.array([to_model(x, y) for x, y in max(cnts, key=cv2.contourArea)[:, 0, :]])
+    cy = pts[:, 1].mean()
+    ang = np.arctan2(pts[:, 1] - cy, pts[:, 0] - mirror_x)
+    rad = np.hypot(pts[:, 1] - cy, pts[:, 0] - mirror_x)
+    order = np.argsort(ang)
+    ang, rad = ang[order], rad[order]
+    grid = np.linspace(-np.pi, np.pi, OUTLINE_POINTS, endpoint=False)
+    r = np.interp(grid, ang, rad, period=2 * np.pi)
+    r_mirror = np.interp(np.pi - grid, ang, rad, period=2 * np.pi)
+    r = (r + r_mirror) / 2
+    return [[float(np.cos(a) * rr), float(cy + np.sin(a) * rr)] for a, rr in zip(grid, r)]
+
+
 def build_front_from_master() -> dict:
     """The neutral front view, built from the locked master (it wins on proportions).
 
@@ -264,6 +288,19 @@ def build_front_from_master() -> dict:
     half = (mo['right'][0] - mo['left'][0]) / 2
     corner_y = (mo['left'][1] + mo['right'][1]) / 2
     mouth = {'left': [-half, corner_y], 'right': [half, corner_y], 'bottom': [0.0, mo['bottom'][1]], 'topSag': mo['topSag']}
+    # Traced outlines (un-tilted, centred on the mouth, mirror-averaged).
+    from colours import tongue_mask
+    _, labm, statm, _ = cv2.connectedComponentsWithStats(reg['mouth'].astype(np.uint8))
+    mouth_dark = labm == 1 + int(np.argmax(statm[1:, cv2.CC_STAT_AREA]))
+    tongue_px = tongue_mask(reg)
+    whole = cv2.morphologyEx((mouth_dark | tongue_px).astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)) > 0
+    mouth_cx = (mo['left'][0] + mo['right'][0]) / 2
+
+    def centred(x, y):
+        u, v = D(x, y)
+        return [u - mouth_cx, v]
+    mouth_outline = polar_outline(whole, centred, 0.0)
+    tongue_outline = polar_outline(tongue_px, centred, 0.0)
     if 'tongue' in mo:
         t = mo['tongue']
         mouth['tongue'] = {'cx': 0.0, 'cy': t['cy'], 'rx': t['rx'], 'ry': t['ry']}
@@ -298,6 +335,20 @@ def build_front_from_master() -> dict:
         'head': {'cx': 0.0, 'cy': 0.0, 'rx': 0.5, 'ryTop': head['ryTop'] / W, 'ryBot': head['ryBot'] / W,
                  'nTop': head['nTop'], 'nBot': head['nBot'], 'rot': 0.0},
     }
+
+    # Arms: one hand-placed limb each (mirrored); the arm 'parts' become the limb's bounding
+    # ellipse, used for contact shading and draw order. No separate paws in this view.
+    (sx, sy), (px_, py_) = MASTER_ARM['shoulder'], MASTER_ARM['paw']
+    a = [(sx - axis) / W, (sy - head['cy']) / W]
+    b = [(px_ - axis) / W, (py_ - head['cy']) / W]
+    ra, rb = MASTER_ARM['ra'] / W, MASTER_ARM['rb'] / W
+    limbs = {'armR': {'ax': a[0], 'ay': a[1], 'bx': b[0], 'by': b[1], 'ra': ra, 'rb': rb},
+             'armL': {'ax': -a[0], 'ay': a[1], 'bx': -b[0], 'by': b[1], 'ra': ra, 'rb': rb}}
+    for side, lm in limbs.items():
+        cx_, cy_ = (lm['ax'] + lm['bx']) / 2, (lm['ay'] + lm['by']) / 2
+        half_len = np.hypot(lm['bx'] - lm['ax'], lm['by'] - lm['ay']) / 2
+        parts[side] = ell(cx_, cy_, max(ra, rb), half_len + max(ra, rb), 0.0)
+    del parts['pawL'], parts['pawR']
 
     # Pads on each foot, relative to the foot, mirror-averaged.
     blobs = _components(reg['pad'], 6)
@@ -334,6 +385,9 @@ def build_front_from_master() -> dict:
         'blush': blush,
         'innerEars': inner,
         'mouth': mouth,
+        'mouthOutline': mouth_outline,
+        'tongueOutline': tongue_outline,
+        'limbs': limbs,
         'pads': pads,
         'floorY': max(parts[k]['cy'] + parts[k]['ryBot'] for k in ('footL', 'footR')),
         'faceOffset': face_x,
@@ -357,8 +411,14 @@ def build() -> dict:
         'r': float(np.mean([h['r'] / e['r_equiv'] for h, e in mh])),
     }
 
-    master_tone = fur_tone(np.array(Image.open(MATTE / 'master.png').convert('RGBA')))
+    master_rgba = np.array(Image.open(MATTE / 'master.png').convert('RGBA'))
+    master_tone = fur_tone(master_rgba)
     lab_colours = dict(colours['master'])
+    from colours import tongue_mask
+    tm = tongue_mask(classify(master_rgba))
+    ty = np.nonzero(tm)[0]
+    top = tm & (np.arange(tm.shape[0])[:, None] <= np.percentile(ty, 30))
+    lab_colours['tongueTop'] = [float(v) for v in np.median(lab(master_rgba[..., :3])[top], axis=0)]
     lab_colours['earFur'] = ear_fur
     model = {
         'units': 'head width = 1; origin at each view head centre; y down',

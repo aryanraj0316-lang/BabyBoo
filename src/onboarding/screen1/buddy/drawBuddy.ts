@@ -64,6 +64,9 @@ uniform float3 Lk;         // L* of cShadow, cBase, cHigh
 uniform float deepen;      // contact shadows deepen toward cShadow * deepen
 uniform float3 sheetTone;  // the reference sheet's fur L* (p5, p50, p95)
 uniform float3 masterTone; // the master's: baked lightness is re-toned from one to the other
+uniform float limb;        // 1: a limb (tapered capsule shoulder -> paw) instead of a superellipse
+uniform float4 lb;         // limb: shoulder centre (xy), paw centre (zw)
+uniform float2 lr;         // limb: shoulder radius, paw radius
 
 // Occluder o (cx, cy, rx, ry) with q = (offset x, offset y, softness, strength).
 float occlusion(float2 p, float4 o, float4 q) {
@@ -79,27 +82,45 @@ float beneath(float2 p, float4 b) {
 }
 
 half4 main(float2 p) {
-  float2 d = p - c;
-  float cs = cos(rot);
-  float sn = sin(rot);
-  float2 q = float2(d.x * cs + d.y * sn, -d.x * sn + d.y * cs);
-  float ry = q.y < 0.0 ? shp.x : shp.y;
-  float n = q.y < 0.0 ? shp.z : shp.w;
-  float2 uv = q / float2(rx, ry);
-  float s = pow(pow(abs(uv.x), n) + pow(abs(uv.y), n), 1.0 / n);
+  float s;
+  float rmin;
+  float2 uv;
+  float2 dirc;   // outward direction in canvas space
+  if (limb > 0.5) {
+    // One continuous limb: a capsule whose radius grows from the shoulder to the round paw.
+    float2 ba = lb.zw - lb.xy;
+    float tt = clamp(dot(p - lb.xy, ba) / dot(ba, ba), 0.0, 1.0);
+    float2 cl = lb.xy + ba * tt;
+    float rr = mix(lr.x, lr.y, tt);
+    float dd = length(p - cl);
+    s = dd / rr;
+    rmin = rr;
+    uv = float2(s, tt * 2.0 - 1.0);
+    dirc = dd > 0.001 ? (p - cl) / dd : float2(0.0);
+  } else {
+    float2 d = p - c;
+    float cs = cos(rot);
+    float sn = sin(rot);
+    float2 q = float2(d.x * cs + d.y * sn, -d.x * sn + d.y * cs);
+    float ry = q.y < 0.0 ? shp.x : shp.y;
+    float n = q.y < 0.0 ? shp.z : shp.w;
+    uv = q / float2(rx, ry);
+    s = pow(pow(abs(uv.x), n) + pow(abs(uv.y), n), 1.0 / n);
+    rmin = min(rx, ry);
+    float2 dl = s > 0.001 ? uv / s : float2(0.0);
+    dirc = float2(dl.x * cs - dl.y * sn, dl.x * sn + dl.y * cs);
+  }
   float t = grain.eval(p * texScale).r - 0.5;
 
   // Velvety edge: thin and smooth, only lightly broken by the grain.
-  float distPx = (1.0 - s) * min(rx, ry);
+  float distPx = (1.0 - s) * rmin;
   float alpha = smoothstep(-edge, edge, distPx + t * edge * 0.6);
   if (alpha <= 0.0) { return half4(0.0); }
 
   // Plush normal: flat in the middle, rounding over toward the edge.
   float sc = clamp(s, 0.0, 1.0);
   float tilt = pow(sc, plushPow);
-  float2 dir = sc > 0.001 ? uv / sc : float2(0.0);
-  float3 nl = float3(dir * tilt, sqrt(max(0.0, 1.0 - tilt * tilt)));
-  float3 nrm = float3(nl.x * cs - nl.y * sn, nl.x * sn + nl.y * cs, nl.z);
+  float3 nrm = float3(dirc * tilt, sqrt(max(0.0, 1.0 - tilt * tilt)));
 
   float3 col;
   if (mode < 0.5) {
@@ -148,6 +169,8 @@ export function makeBuddyResources(Skia: SkiaT, grain: SkImage): BuddyResources 
 }
 
 type Part = { cx: number; cy: number; rx: number; ryTop: number; ryBot: number; nTop: number; nBot: number; rot: number };
+/** A limb: one tapered capsule from the shoulder (a) to the round paw (b). */
+type Limb = { ax: number; ay: number; bx: number; by: number; ra: number; rb: number };
 type Rgb = readonly [number, number, number];
 type Ellipse = { cx: number; cy: number; rx: number; ry: number };
 type Contact = { by: Ellipse; dx: number; dy: number; soft: number; strength: number };
@@ -170,7 +193,7 @@ function ellipseOf(p: Part): Ellipse {
 
 function drawFurPart(
   canvas: SkCanvas, res: BuddyResources, part: Part, pl: BuddyPlacement, palette: Palette, sh: Shading, mode: ShadingMode,
-  tone: readonly number[],
+  tone: readonly number[], limb?: Limb,
 ) {
   'worklet';
   const { Skia } = res;
@@ -180,6 +203,13 @@ function drawFurPart(
   const rx = part.rx * W;
   const edge = LOOK.edgeOfHead * W;
   const reach = Math.max(rx, part.ryTop * W, part.ryBot * W) + edge * 3;
+  let box = Skia.XYWHRect(cx - reach, cy - reach, reach * 2, reach * 2);
+  if (limb) {
+    const r = Math.max(limb.ra, limb.rb) * W + edge * 3;
+    const x0 = pl.x + Math.min(limb.ax, limb.bx) * W - r;
+    const y0 = pl.y + Math.min(limb.ay, limb.by) * W - r;
+    box = Skia.XYWHRect(x0, y0, Math.abs(limb.bx - limb.ax) * W + r * 2, Math.abs(limb.by - limb.ay) * W + r * 2);
+  }
   const occ: number[] = [];
   const prm: number[] = [];
   for (let i = 0; i < 5; i++) {
@@ -218,12 +248,15 @@ function drawFurPart(
     Lab.furShadow[0], Lab.furBase[0], Lab.furHighlight[0],
     LOOK.contactDeepen,
     ...tone, ...M.masterTone,
+    ...(limb
+      ? [1, pl.x + limb.ax * W, pl.y + limb.ay * W, pl.x + limb.bx * W, pl.y + limb.by * W, limb.ra * W, limb.rb * W]
+      : [0, 0, 0, 0, 0, 0, 0]),
   ];
   const grainShader = res.grain.makeShaderOptions(1, 1, 1, 0); // repeat, repeat, linear filter
   const shader = res.fur.makeShaderWithChildren(uniforms, [grainShader]);
   const paint = Skia.Paint();
   paint.setShader(shader);
-  canvas.drawRect(Skia.XYWHRect(cx - reach, cy - reach, reach * 2, reach * 2), paint);
+  canvas.drawRect(box, paint);
 }
 
 function fill(res: BuddyResources, hex: string, alpha = 1): SkPaint {
@@ -303,7 +336,7 @@ export function drawBuddy(
   'worklet';
   const { Skia } = res;
   const W = pl.headWidth;
-  const C = M.colours;
+  const C = M.colours as typeof M.colours & { tongueTop?: string };
   const V = M.views[viewName];
   const P = V.parts;
   const fur: Palette = { shadow: rgb01(C.furShadow), base: rgb01(C.furBase), high: rgb01(C.furHighlight), rim: rgb01(C.furRim) };
@@ -350,22 +383,34 @@ export function drawBuddy(
     headShadow, beside(P.armL, K.bodyByArm), beside(P.armR, K.bodyByArm), beside(P.footL, K.bodyByFoot), beside(P.footR, K.bodyByFoot),
   ], [], LOOK.rim.body), mode, V.tone);
   // Arms: chubby tubes in front of the body, shaded by the head and by the feet they rest on.
-  for (const side of ['armL', 'armR'] as const) {
-    const foot = side === 'armL' ? P.footL : P.footR;
-    drawFurPart(canvas, res, P[side], pl, fur, shading(side, [headShadow, beside(foot, K.armByFoot)], [ellipseOf(P.body)], LOOK.rim.arm), mode, V.tone);
+  const limbs = (V as unknown as { limbs?: Record<'armL' | 'armR', Limb> }).limbs;
+  if (!limbs) {
+    for (const side of ['armL', 'armR'] as const) {
+      const foot = side === 'armL' ? P.footL : P.footR;
+      drawFurPart(canvas, res, P[side], pl, fur, shading(side, [headShadow, beside(foot, K.armByFoot)], [ellipseOf(P.body)], LOOK.rim.arm), mode, V.tone);
+    }
   }
   // Paws are separate parts (the rig waves them later); views measured without them skip them.
   const parts = P as unknown as Record<string, Part | undefined>;
   // Feet with puffy pads, shaded where their paw rests on them.
   for (const side of ['footL', 'footR'] as const) {
     const arm = side === 'footL' ? P.armL : P.armR;
-    const paw = parts[side === 'footL' ? 'pawL' : 'pawR'];
+    const lm = limbs ? limbs[side === 'footL' ? 'armL' : 'armR'] : null;
+    const paw = lm ? { cx: lm.bx, cy: lm.by, rx: lm.rb, ryTop: lm.rb, ryBot: lm.rb, nTop: 2, nBot: 2, rot: 0 } : parts[side === 'footL' ? 'pawL' : 'pawR'];
     const contacts = paw ? [beside(paw, K.footByPaw)] : [];
     drawFurPart(canvas, res, P[side], pl, fur, shading(side, contacts, [ellipseOf(P.body), ellipseOf(arm)], LOOK.rim.foot), mode, V.tone);
     for (const pad of V.pads) {
       if (pad.side !== side) continue;
       drawPad(canvas, res, X(pad.heart.c[0]), Y(pad.heart.c[1]), pad.heart.r * W * LOOK.heartScale, true);
       for (const [bx, by, br] of pad.beans) drawPad(canvas, res, X(bx), Y(by), br * W, false);
+    }
+  }
+  // Arms as single limbs: a stubby arm ending in a round paw on the tummy, in front of the foot.
+  if (limbs) {
+    for (const side of ['armL', 'armR'] as const) {
+      const foot = side === 'armL' ? P.footL : P.footR;
+      drawFurPart(canvas, res, P[side], pl, fur, shading('limb', [headShadow], [ellipseOf(P.body), ellipseOf(foot)], LOOK.rim.arm),
+        mode, V.tone, limbs[side]);
     }
   }
   // Round paws at the ends of the arms, resting on the tummy just above the feet.
@@ -408,29 +453,41 @@ export function drawBuddy(
     canvas.drawCircle(X(b.c[0]), Y(b.c[1]), r, paint);
   }
 
-  // Mouth: two corners, a gently arched top edge and a rounded bottom, tongue inside.
-  const Mo = V.mouth;
-  const lx = X(Mo.left[0]);
-  const ly = Y(Mo.left[1]);
-  const rxp = X(Mo.right[0]);
-  const ryp = Y(Mo.right[1]);
-  const bx = X(Mo.bottom[0]);
-  const byp = Y(Mo.bottom[1]);
-  const midX = (lx + rxp) / 2;
-  const midY = (ly + ryp) / 2 + Mo.topSag * W * 2;
-  const belly = LOOK.mouthBelly;
-  const round = LOOK.mouthRound;
-  const mouth = Skia.Path.MakeFromSVGString(
-    `M ${lx} ${ly} Q ${midX} ${midY} ${rxp} ${ryp} ` +
-    `C ${rxp} ${ryp + (byp - ryp) * belly} ${bx + (rxp - bx) * round} ${byp} ${bx} ${byp} ` +
-    `C ${bx - (bx - lx) * round} ${byp} ${lx} ${ly + (byp - ly) * belly} ${lx} ${ly} Z`,
-  )!;
+  // Mouth: the traced outline (a deep D with an arched top) when the view has one, else the
+  // parametric smile. The tongue is lit lighter at the top.
+  const traced = V as unknown as { mouthOutline?: number[][]; tongueOutline?: number[][] };
+  const outlinePath = (pts: number[][]) =>
+    Skia.Path.MakeFromSVGString(pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${X(x)} ${Y(y)}`).join(' ') + ' Z')!;
+  let mouth;
+  if (traced.mouthOutline) {
+    mouth = outlinePath(traced.mouthOutline);
+  } else {
+    const Mo = V.mouth;
+    const lx = X(Mo.left[0]);
+    const ly = Y(Mo.left[1]);
+    const rxp = X(Mo.right[0]);
+    const ryp = Y(Mo.right[1]);
+    const bx = X(Mo.bottom[0]);
+    const byp = Y(Mo.bottom[1]);
+    const midX = (lx + rxp) / 2;
+    const midY = (ly + ryp) / 2 + Mo.topSag * W * 2;
+    const belly = LOOK.mouthBelly;
+    const round = LOOK.mouthRound;
+    mouth = Skia.Path.MakeFromSVGString(
+      `M ${lx} ${ly} Q ${midX} ${midY} ${rxp} ${ryp} ` +
+      `C ${rxp} ${ryp + (byp - ryp) * belly} ${bx + (rxp - bx) * round} ${byp} ${bx} ${byp} ` +
+      `C ${bx - (bx - lx) * round} ${byp} ${lx} ${ly + (byp - ly) * belly} ${lx} ${ly} Z`,
+    )!;
+  }
   canvas.drawPath(mouth, fill(res, C.mouth));
   canvas.save();
   canvas.clipPath(mouth, 1, true);
-  const T = Mo.tongue;
+  const T = V.mouth.tongue;
   const tongue = fill(res, C.tongue);
-  canvas.drawOval(Skia.XYWHRect(X(T.cx - T.rx), Y(T.cy - T.ry), T.rx * 2 * W, T.ry * 2 * W * LOOK.tongueDepth), tongue);
+  tongue.setShader(Skia.Shader.MakeLinearGradient({ x: 0, y: Y(T.cy - T.ry) }, { x: 0, y: Y(T.cy + T.ry) },
+    [Skia.Color(C.tongueTop ?? C.tongue), Skia.Color(C.tongue)], [0, 1], 0));
+  if (traced.tongueOutline) canvas.drawPath(outlinePath(traced.tongueOutline), tongue);
+  else canvas.drawOval(Skia.XYWHRect(X(T.cx - T.rx), Y(T.cy - T.ry), T.rx * 2 * W, T.ry * 2 * W * LOOK.tongueDepth), tongue);
   canvas.restore();
   canvas.restore(); // head clip
 }
