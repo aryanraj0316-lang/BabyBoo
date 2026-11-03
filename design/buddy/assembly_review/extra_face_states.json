@@ -1,0 +1,72 @@
+[
+  {
+    "name": "eye_closed_left",
+    "source": "buddy_eyes_closed.png",
+    "sourceCrop": [
+      350,
+      475,
+      530,
+      560
+    ],
+    "pixels": [
+      151,
+      54
+    ]
+  },
+  {
+    "name": "eye_closed_right",
+    "source": "buddy_eyes_closed.png",
+    "sourceCrop": [
+      725,
+      500,
+      900,
+      585
+    ],
+    "pixels": [
+      148,
+      57
+    ]
+  },
+  {
+    "name": "mouth_o",
+    "source": "buddy_expressions.png",
+    "sourceCrop": [
+      930,
+      737,
+      982,
+      800
+    ],
+    "pixels": [
+      33,
+      39
+    ]
+  },
+  {
+    "name": "mouth_closed",
+    "source": "buddy_expressions.png",
+    "sourceCrop": [
+      918,
+      242,
+      990,
+      281
+    ],
+    "pixels": [
+      57,
+      20
+    ]
+  },
+  {
+    "name": "mouth_worried",
+    "source": "buddy_expressions.png",
+    "sourceCrop": [
+      1297,
+      740,
+      1379,
+      787
+    ],
+    "pixels": [
+      58,
+      14
+    ]
+  }
+]

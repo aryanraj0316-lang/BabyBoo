@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Builds a harness entry with esbuild (TypeScript, the app's own drawing code)
  * and runs it in Node. Dev-only; never part of the app bundle.
  *
@@ -8,7 +8,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 
 const ROOT = path.resolve(__dirname, '../..');
-const ENTRIES = { buddy: 'tools/harness/renderBuddy.ts', rig: 'tools/harness/renderRig.ts' };
+const ENTRIES = { buddy: 'tools/harness/renderBuddy.ts', rig: 'tools/harness/renderRig.ts', cutout: 'tools/harness/renderCutout.ts' };
 
 (async () => {
   const [entry, args] = process.argv.slice(2);

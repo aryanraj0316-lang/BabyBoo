@@ -1,0 +1,16 @@
+{
+  "depth": 0.34214134462692125,
+  "yawThreeQuarter": -0.7040957176717003,
+  "cameraDistance": 7.026592712617639,
+  "target": [
+    0.4995674134629017,
+    0.9535297908897016,
+    1.0567930753130164
+  ],
+  "fitted": [
+    0.49956742695398887,
+    0.9535297647595101,
+    1.0567930175759217
+  ],
+  "method": "Least-squares fit of projected 160-point rendered eye contours to ellipse-fit far/near width and height ratios plus near-eye width relative to front reference; no arbitrary per-eye scale."
+}

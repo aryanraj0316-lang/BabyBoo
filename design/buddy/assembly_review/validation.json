@@ -1,0 +1,99 @@
+{
+  "verifiedAt": "2026-11-03T11:42:56.931Z",
+  "phase": "static assembly; phone verification pending",
+  "checks": {
+    "sourceTypeScript": "passed; tsconfig.app.json includes src only",
+    "faceProjectionTests": "4 passed",
+    "headlessSkiaRender": "passed",
+    "reviewComposites": [
+      {
+        "source": "assembled_master.png",
+        "target": "master_pose_on_light.png",
+        "maxChannelDifference": 0
+      },
+      {
+        "source": "assembled_neutral.png",
+        "target": "neutral_on_light.png",
+        "maxChannelDifference": 0
+      }
+    ],
+    "phone": "Recorded on Vivo V2432; both 2fps contact sheets plus frames 65/156/168 reviewed; lab controls and warning overlay absent.",
+    "pythonMeasurements": "preserved from prior session; interpreter inaccessible"
+  },
+  "renderHashes": {
+    "assembled_master": {
+      "sha256": "59f6ef43d86a8c7d2b98718b4fac2190d0f79c49d062f6a3202b0134ee31c957",
+      "width": 1254,
+      "height": 1254
+    },
+    "assembled_neutral": {
+      "sha256": "28adf5fcd9271449b61b7d15ffd91f5de7a70e91aa5a307e558cfa610e4096b0",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_0": {
+      "sha256": "c2229f8aa71a37085c4cbf8c78553a3f90336fe167b4229b505e8bb2153f49f7",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_1": {
+      "sha256": "62435a59c9e68a6081f9d2f25d02204eb91c1a930d0de870991abf48c13627b1",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_2": {
+      "sha256": "c2d98298663b7aad3f0e9ead5fae8a028ea1f2127fa0eaa1d0193fe012468e86",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_3": {
+      "sha256": "21382ff0e2e5cfafb32e54cdc363ebf50ec4fef66ab6e8ed2abcde19e949a9b2",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_4": {
+      "sha256": "5379ab84980a723bfe8941e27628e1a168114296e99eee954a9628fcf0d2a301",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_5": {
+      "sha256": "3331e40d1bcdbe16bc6f1c1a2a0c1946aa507f09e52b6bd247bda0a79472764f",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_6": {
+      "sha256": "306e4a37608791fcef1d6fd5d7de5cb695d539ddbc519d3f66088c95e2751408",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_7": {
+      "sha256": "cb8911a87c871e54ab9c1b321c471c5bea0d51e2dfbcd476b61b3f3d7ef976e5",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_8": {
+      "sha256": "b75d9fb63723c99f7b58ba87e407a4181a1c1349f84366e1c3b18cea73d87898",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_9": {
+      "sha256": "6d19b9f21ef9b4510ff7225ecd4b58239a1a6c895cc26c4b4084da560a51b024",
+      "width": 1254,
+      "height": 1254
+    },
+    "head_aspect": {
+      "sha256": "b364b6fc461ec30605b9e1614fa6ec719366c21c7bf06fe3011dd06864cbae5f",
+      "width": 1254,
+      "height": 1254
+    }
+  },
+  "phoneCapture": {
+    "path": "recording/20261103-203519/buddy-assembly-phone.mp4",
+    "durationSeconds": 19.674056,
+    "width": 720,
+    "height": 1600,
+    "framesExtractedAt10fps": 197,
+    "kind": "discrete static diagnostics",
+    "smoothMotionVerified": false
+  }
+}

@@ -1,6 +1,6 @@
 ﻿# Buddy parts checkpoint
 
-Status: prepared for user review; approval pending. No assembly, runtime rig or screen changes have been made.
+Status: approved by the user on 2026-11-03. The review below records the original parts checkpoint. Assembly work is now in `../assembly_review/`; see its README for the current handoff and verification status.
 
 ## Deliverables
 
@@ -55,4 +55,4 @@ Viewed both final boards, matched-scale master comparisons, and enlarged edge cr
 
 Rebuild assets with `tools/.venv/Scripts/python.exe tools/buddy/prepare_cutout_parts.py` using the existing image-processing environment (Pillow, NumPy, SciPy, OpenCV). No new dependencies were installed.
 
-Stop here for the user's parts approval before assembly or rig work.
+The user approved these parts on 2026-11-03 and authorized the static assembly and face-projection diagnostic checkpoint. Animation approval remains separate.

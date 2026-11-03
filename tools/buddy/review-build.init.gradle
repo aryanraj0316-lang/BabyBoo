@@ -1,0 +1,11 @@
+// Local Buddy Lab verification only. Keeps __DEV__ routes in the bundled debug APK.
+// Does not change release settings or the checked-in Android application.
+gradle.projectsEvaluated {
+    // Init scripts also run for included plugin builds, which have no :app.
+    def appProject = rootProject.findProject(':app')
+    if (appProject != null) {
+        appProject.tasks.matching { it.name == 'createBundleDebugJsAndAssets' }.configureEach {
+            devEnabled.set(true)
+        }
+    }
+}

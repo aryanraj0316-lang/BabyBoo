@@ -1,0 +1,31 @@
+{
+  "head_target_aspect": 0.856,
+  "head_source_aspect": 0.80622009569378,
+  "vertical_stretch": 1.0617448071216617,
+  "reference_far_near_width": 0.4995674134629017,
+  "reference_far_near_height": 0.9535297908897016,
+  "rendered_far_near_width": 0.4955748115090819,
+  "rendered_far_near_height": 0.9540265658332823,
+  "rendered_eyes": [
+    {
+      "center": [
+        404.068115234375,
+        568.6671142578125
+      ],
+      "axes": [
+        61.369449615478516,
+        130.1714630126953
+      ]
+    },
+    {
+      "center": [
+        653.2536010742188,
+        568.881591796875
+      ],
+      "axes": [
+        123.83488464355469,
+        136.44427490234375
+      ]
+    }
+  ]
+}
