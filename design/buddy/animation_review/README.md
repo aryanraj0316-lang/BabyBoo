@@ -1,27 +1,28 @@
-﻿# Buddy animation spike — in progress
+﻿# Buddy animation checkpoint
 
-Static appearance was explicitly approved on 2026-11-03. This folder contains the subsequent head/ear/overlap refinements and animation harness outputs. The approved static checkpoint remains preserved in ../assembly_review/.
+Recorded and frame-reviewed on Vivo V2432,2026-11-03. Static appearance was approved after50b944e; final animation approval is pending. Current source is isolated in Buddy Lab; no onboarding timeline or other screen changed.
 
-## Scope
+## Deliverables
 
-- Head yaw is clamped at the fitted top-middle turnaround angle (40.34 degrees on the reference side). The other direction is more conservative because the source face is asymmetric. Head width compensation preserves a broad silhouette. A rendered contour check verifies both eyes inside the head, including a clear margin.
-- Ears use the full original 277x271 transparent textures with cubic sampling and broad cards instead of sampling head curvature. Width never falls below 96% of the source placement width. No source artwork was regenerated, recoloured or replaced.
-- Head boundary has a small source-space feather. Both arm shoulders remain behind the head throughout a lift; source-arm crossfade is preserved without a layer switch. Weighted mesh rotation bends the elbow continuously.
-- Motion model: 20-second cycle with breathing, five rendered-image blinks, clamped turn, nod, +/-8 degree tilt, damped ear jiggles, one two-beat elbow wave, one hop with anticipation/stretch/landing squash and a shrinking ground shadow.
-- Live lab uses a shared Skia picture driven on the UI thread, rendered at small and large size. Pauses in background; reduced-motion mode holds a neutral still. Recording mode hides lab controls and warnings.
+- recording/final-phone/buddy-motion-phone-20s.mp4: actual adb recording,20.004seconds,720x1600. Debug controls and warnings hidden.
+- recording/final-phone/contact-01.png and contact-02.png: entire clip sampled at2fps; reviewed.
+- recording/final-phone/master-and-phone.png: master beside a crop from the phone video.
+- clamped_reference_comparison.png: maximum turn beside turnaround top-middle at matched head-width scale.
+- ears_at_matched_scale.png,refined_assembly_light.png and refined_assembly_dark.png: local artwork comparisons.
+- refinement_metrics.json: actual final rendered contour measurements. Eye margins23.19px/22px (3.29%/3.12% of706px head width), both complete contours. Width/height1.111/1.131 at turn extremes. Reference-side far/near eye width0.508 versus reference0.500.
 
-## Verification so far
+## Changes
 
-- Source TypeScript check and 8 focused geometry/motion tests passed. Tests cover oversized-turn clamp, eye contour facing, tilt/turn bounds, one-hop count, closed-eye state and loop continuity.
-- Offscreen renders use the same drawing and motion code as the phone lab.
-- refinement_metrics.json records actual image-mask measurements, not just parameter values. Regenerate with node tools/harness/run.cjs cutout motion, then tools/.venv/Scripts/python.exe tools/buddy/review_animation.py.
-- Final Android review APK built successfully in 2m18s. The local preflight contains 600 exact-clock frames at 30fps; its two contact sheets were reviewed for blink, turn/nod/tilt, arm lift/wave and hop/landing. It was rendered before the last opposite-yaw safety/landing-tail adjustments and remains internal QA only. Final static/keyframe boards were regenerated afterward.
-- adb currently reports an empty device list. The user has been asked asynchronously to reconnect the phone. No animation installation, runtime/performance pass or new phone recording has been verified yet. Do not reuse the earlier static diagnostic video as animation evidence.
+Clamped yaw to the measured3/4 reference maximum, with a more conservative opposite turn for asymmetric source eye placement. Broad-head compensation avoids egg-like thinning. Ear geometry is now broad cards with mild anchor movement, preserving at least96% of width and full277x271 source PNGs; cubic sampling retains detail. Source artwork was not regenerated/recoloured.
 
-## Review artifacts
+Softened head boundary and kept arm shoulders behind head throughout lifting. Textured elbow deformation is continuous and the resting/raised artwork transition no longer switches drawing layers. Head and face share surface projection through turn,nod,roll and squash.
 
-clamped_reference_comparison.png pairs the maximum turn with the top-middle turnaround reference; ears_at_matched_scale.png compares original master ears to the rig; refined_assembly_light/dark.png show the refined poses; motion_keyframes.png samples the exact-clock sequence. They are local harness QA, not phone completion evidence.
+A20-second motion model adds breathing,rendered-eye blinks,ear jiggle,+/-8degree head tilt,one two-beat elbow wave and one hop with anticipation/landing squash and shrinking ground shadow. One shared UI-thread Skia picture draws both display sizes. Background pause and reduced-motion still are coded; their platform behavior was not separately tested in this capture.
 
-The user requested a reviewed 20-second phone recording and final approval checkpoint. That is still required. No onboarding timeline integration is authorized by this folder.
+## Checks and limitation
 
-Final rendered eye margins are 27px and 23px at the clamped extremes (3.82% and 3.26% of authored head width). Both eyes are complete; head width/height is 1.124 and 1.136. These are local contour measurements, not whole-character likeness or phone verification. Windows also returned no present Android/Vivo/ADB USB interface when checked, and adb reconnect offline did not restore a device.
+Src TypeScript,8 geometry/motion tests and15 Babel-transformed worklet dependency closures passed. Final Android APK built and installed successfully. The phone-only undefined-helper error was fixed by ordering eager worklet dependencies before callers.
+
+Actual live performance is approximately31fps, improved from10fps and then25fps across iterations; encoded video averages33.29fps. **The60fps target is not met.** The full recording and selected frames were reviewed for motions and overlap, but this is a spike checkpoint rather than a release performance pass. See recording/final-phone/README.md for native metrics and review provenance.
+
+All requested motions appear, but ear jiggle/breathing are subtle at the small size; source lighting and fur/material differences are not a measured full likeness pass. User approval is required before the next phase.

@@ -1,45 +1,29 @@
 ﻿# Current handoff
 
-Updated: 2026-11-03 21:40 +05:30 (Asia/Calcutta).
+Updated:2026-11-03 approximately22:25 +05:30 (Asia/Calcutta).
 
-## Task, owner and approvals
+## Task/owner/approval
 
-This chat's Codex agent owns Buddy animation spike edits. User explicitly approved static appearance after 50b944e and authorized bounded-turn/ear/edge/arm-overlap refinements plus breathing, rendered-eye blinks, ear jiggle, +/-8-degree tilt, one elbow wave and one hop/landing squash. Final animation approval remains pending the required phone video. Do not integrate into onboarding or touch other screens.
+This chat owns Buddy animation spike. Parts and static appearance explicitly approved. User authorized limited animation/refinements and a reviewed20-second phone capture. Animation approval is now pending. Do not integrate into onboarding timeline or other screens.
 
-## Branch and unrelated changes
+## Branch/files
 
-Verified branch: onboarding-screen1-rebuild. Preserve user AGENTS.md changes, CLAUDE.md, .claude/ and prior local troubleshooting artifacts. Static checkpoint 50b944e is preserved. Animation implementation is saved locally and being checkpointed; it is NOT phone-verified.
+Branch onboarding-screen1-rebuild. Checkpoint667e416 saved the initial bounded motion implementation. Since then changed model.ts/drawCutout.ts (native worklet order,20x24 head mesh,cached face surface depths,6x6 elbow grid),added tools/harness/checkCutoutWorklets.cjs,regenerated animation_review renders/boards/metrics,and added final phone evidence. memory files updated. Preserve unrelated AGENTS.md,CLAUDE.md,.claude/ and local previous troubleshooting outputs.
 
-## Implemented since static approval
+## Completed and verified
 
-- model.ts: reference-side yaw limited to measured 3/4 angle; opposite yaw reduced for asymmetric eye position; broad silhouette compensation; mesh/stage/ear/blink tokens.
-- drawCutout.ts: cubic ear/face sampling, broad ear cards with mild anchor yaw/jiggle, soft head edge, fixed arm occlusion behind head, continuous elbow skin deformation, rendered closed-eye blending, breath/hop/landing transforms and floor shadow. Immutable head vertices/UVs/alpha palette are cached.
-- motion.ts and motion.test.ts: continuous 20s lab loop and geometry/motion invariants.
-- AnimatedCutout.tsx: UI-thread shared Skia picture at small/large size, background pause and reduced-motion still, hidden debug warnings in recording mode. This native worklet/runtime is still unverified on device.
-- CutoutBuddyLab.tsx exposes shot=motion and an animation button. Capture helper accepts -Shot motion. Harness supports motion/checks/movie modes. tools/buddy/review_animation.py generates matched-scale comparisons and contour measurements.
-- No source art was regenerated, recoloured or replaced. Ear sources remain 277x271 RGBA.
+Phone reconnected/authorized. First native build hit eager-worklet undefined helper; reordered dependencies and checked15 actual Babel-transformed closures. Native animation then ran. Initial capture was9.8fps; first optimization24–25fps; final geometry/depth-cache version31.28–31.63fps live,33.29fps encoded capture.60fps target remains unmet; do not claim complete performance acceptance.
 
-## Verified checks and artifacts
+Final APK successfully built in3m59s and installed via adb. SHA2564C934F243C8A17755E25AB8B52742C8C82CB32626A9B9C5A9C8992EF9C98D99F. TS(src only),8 focused tests and15 worklet closure checks passed. Final contour raster check:both eyes complete,margins23.19px/22px; broad head preserved. Refreshed clamped reference/ear comparison boards.
 
-- Final src TypeScript check and 8 focused tests passed. Checks cover clamped input, camera-facing eye contours, turn/tilt bounds, one-hop count, rendered blink state and loop continuity.
-- Final headless harness and Python contour check passed. Final eye margins: 27px/23px, or 3.82%/3.26% of authored head width; both complete eye contours present. Head width/height 1.124/1.136 at extremes. Reference-side far/near eye width ratio 0.508 versus reference 0.500. No whole-character likeness pass is claimed.
-- Final comparison boards and keyframes are in design/buddy/animation_review/. Both extreme/reference and ear/detail boards were locally reviewed, along with blink/tilt/wave/hop keyframes.
-- Local preflight: 600 exact-clock frames at 30fps, local-preflight.mp4 and two local contact sheets reviewed. This preflight predates the last opposite-yaw and landing-tail refinements; it remains internal QA only and is not phone evidence.
-- Final Android debug review build succeeded in 2m18s. APK: android/app/build/outputs/apk/debug/app-debug.apk. SHA256: 6C84EC9E807349C2EC721325E41F32BA8F75FCEBFAABFE5C477C7141C9992BC7. It has not been installed during this animation phase.
-- git diff --check passed. Capture helper syntax passed earlier; final new Shot parameter still needs final parser check before checkpoint.
+Captured21.039s raw phone video. Final delivery uses raw seconds1–21,20.004s,720x1600,667 encoded frames. This window includes both hop and landing. Final path:design/buddy/animation_review/recording/final-phone/buddy-motion-phone-20s.mp4. Extracted200 local10fps frames and2 full contact sheets. Reviewed both final sheets,frames6/144/186/194/199,plus previous attempt sheets. master-and-phone.png generated from final frame144.
 
-## Current blocker
-
-Approved adb access works. Repeated adb devices -l calls return an EMPTY DEVICE LIST. Windows present-device search returned no Android/Vivo/ADB interface; adb reconnect offline did not restore a device. This is no longer the previous permission problem. The asynchronous reconnect/unlock request has no reply yet.
-
-No new animation phone recording exists. No native rendering, performance, smoothness, reduced-motion behavior or phone image-quality pass is claimed. Do not reuse the previous static slideshow as evidence.
+Observed breathing,blinks,head turn/nod/tilt,ear follow-through,elbow wave,hop/landing. Face follows head and eyes stay inside outline;ears stay broad. Lab controls and warning overlays absent;system bars remain. Small-size breathing/ear motion subtle. Reduced-motion/background pause coded but not separately exercised. Existing source texture illumination retained;full likeness metrics not claimed.
 
 ## Running processes
 
-All observed build/render/test/encode processes have completed: tests 14933, builds 69091/34211/88358, renders 12718/43959/28868/51429/41119/97626, ffmpeg 79385, Python 36152. Gradle/adb daemons and unrelated node processes may remain; do not kill them. No recording is active.
+All build/test/render/capture/ffmpeg processes completed,including44315,10066,61836,59499,91602,45748. No active recording. Gradle/adb daemons and unrelated processes may remain.
 
-## Exact next action
+## Next action
 
-When the phone reconnects, confirm with approved adb devices -l. Install the final APK using adb install -r. Open static lab cold then warm to confirm route, then open babyboo://dev/buddy-lab?cutout=1\&record=1\&shot=motion. Before recording, inspect a screenshot and app logcat for worklet/runtime errors; fix any and rebuild. The new AnimatedCutout component has not yet run on the phone.
-
-Capture 20 seconds with display awake (use physical display ID if needed), pull video, extract contact sheets/10fps samples and inspect all requested motions. Check BUDDY_MOTION_METRICS logs and record limits honestly; do not infer 60fps from the source or desktop preflight. Deliver phone video, still/master and clamped extreme/reference, commit the verified checkpoint and stop for explicit animation approval.
+Commit task-related final code,renders,report/video/contact sheets/still and memory only. Exclude raw frames,raw phone capture,intermediate attempts and troubleshooting screenshots;preserve them locally. Then deliver final video/still/clamped-reference and explicitly report31fps vs60fps shortfall. Stop for user animation review/approval per AGENTS.md. No further phase authorized yet.

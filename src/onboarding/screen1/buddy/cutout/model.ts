@@ -12,7 +12,8 @@ export const CUTOUT = {
   rightYawSafety: 0.82,
   // Preserve the broad plush silhouette as the ellipsoid turns.
   turnWidthCompensation: 0.12,
-  mesh: { rows: 48, columns: 96, feature: 8, part: 12 },
+  // Dense source textures retain fur detail; geometry needs far fewer samples.
+  mesh: { rows: 20, columns: 24, feature: 4, part: 6 },
   headEdgeBlur: 1.15,
   stage: { size:1254, small:200, paddingTop:38, gap:20 },
   headTexture: {width:2048,height:1024},
@@ -74,10 +75,6 @@ export function surfaceDepth(x:number,y:number) {
   const row=headRow(y);
   return CUTOUT.ellipsoid.depth*Math.sqrt(Math.max(.0001,1-(y/CUTOUT.ellipsoid.ry)**2))*Math.sqrt(Math.max(.0001,1-((x-row.cx)/row.rx)**2));
 }
-export function projectPoint(x:number,y:number,z:number,pose:CutoutPose) {
-  'worklet';
-  return projectPrepared(x,y,z,prepareProjection(pose));
-}
 export function prepareProjection(pose:CutoutPose) {
   'worklet';
   const yaw=yawForTurn(pose.turn),nod=pose.nod*CUTOUT.maxNod;
@@ -89,6 +86,10 @@ export function projectPrepared(x:number,y:number,z:number,p:ReturnType<typeof p
   const xx=x*p.cy+z*p.sy,zz=-x*p.sy+z*p.cy,yy=y*p.cn+zz*p.sn,z2=-y*p.sn+zz*p.cn;
   const k=(CUTOUT.ellipsoid.camera-Math.abs(z))/(CUTOUT.ellipsoid.camera-z2),sx=xx*k*p.sx,sy=yy*k*p.squash;
   return {x:sx*p.cr-sy*p.sr,y:sx*p.sr+sy*p.cr};
+}
+export function projectPoint(x:number,y:number,z:number,pose:CutoutPose) {
+  'worklet';
+  return projectPrepared(x,y,z,prepareProjection(pose));
 }
 export function projectSurface(x:number,y:number,pose:CutoutPose) {
   'worklet';

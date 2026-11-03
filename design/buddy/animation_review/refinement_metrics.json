@@ -3,18 +3,18 @@
     {
       "side": "left",
       "eye_count": 2,
-      "minimum_eye_margin_px": 27.0,
-      "margin_per_authored_head_width": 0.03824362606232295,
-      "far_near_eye_width": 0.5083060523101888,
-      "head_width_height": 1.1241721854304636
+      "minimum_eye_margin_px": 23.194826126098633,
+      "margin_per_authored_head_width": 0.03285386136841166,
+      "far_near_eye_width": 0.5084587931260528,
+      "head_width_height": 1.1109271523178808
     },
     {
       "side": "right",
       "eye_count": 2,
-      "minimum_eye_margin_px": 23.0,
-      "margin_per_authored_head_width": 0.032577903682719546,
-      "far_near_eye_width": 0.5507115451828545,
-      "head_width_height": 1.1357615894039734
+      "minimum_eye_margin_px": 22.0,
+      "margin_per_authored_head_width": 0.031161473087818695,
+      "far_near_eye_width": 0.5481386430962514,
+      "head_width_height": 1.130794701986755
     }
   ],
   "ear_textures": [

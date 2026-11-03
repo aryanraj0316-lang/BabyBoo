@@ -16,3 +16,7 @@ Approved command escalation restored adb/SDK access. Built and installed the rev
 ## 2026-11-03 — Static look approved; animation authorized
 
 User explicitly approved static neutral/master poses as the correct direction and authorized the limited animation spike. Required refinements: clamp maximum turn to top-middle turnaround reference while preserving full far-eye margin, broad head and thick ears; restore crisp pink inner ears; soften head edge and fix arm overlap. Animate rendered-eye blinks, breathing, ear jiggle, +/-8 degree head tilt, one elbow-bending wave, one hop/landing squash, and facial surface movement through turn/nod/roll. Deliver and review 20-second phone recording, show clamped extreme beside reference, then stop for animation approval. Timeline and other screens stay out of scope.
+
+## 2026-11-03 ? Animation phone spike reviewed
+
+Final animation was installed, recorded with adb and reviewed as extracted frames. Native worklet helper ordering and per-frame geometry costs were fixed. Final live performance is approximately31fps, below60fps; the recording is an honest spike checkpoint, not a performance pass. Stop for explicit animation approval; further optimization or timeline integration needs the next user direction.

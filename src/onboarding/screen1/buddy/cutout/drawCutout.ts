@@ -1,5 +1,5 @@
 ﻿import type { SkCanvas, SkImage, Skia as SkiaApi } from '@shopify/react-native-skia';
-import { CUTOUT, MASTER_POSE, projectSurface, projectPoint, headRow, prepareProjection, projectPrepared, raisedWeight, type CutoutPose } from './model';
+import { CUTOUT, MASTER_POSE, surfaceDepth, projectPoint, headRow, prepareProjection, projectPrepared, raisedWeight, type CutoutPose } from './model';
 import { MOTION, smooth } from './motion';
 
 export type TextureSet = Record<string, SkImage | null>;
@@ -81,41 +81,6 @@ function ears(canvas:SkCanvas,r:Resources,pose:CutoutPose) {
     });
   }
 }
-/** The device and harness share the textured-mesh drawing code. */
-export function drawCutout(canvas:SkCanvas,r:Resources,pose:CutoutPose=MASTER_POSE,headOnly=false) {
-  'worklet';
-  const hop=pose.hop??0,breath=pose.breath??0,squash=pose.rootSquash??1;
-  if(!headOnly)shadow(canvas,r,{...CUTOUT.floor,w:CUTOUT.floor.w*(1-.4*hop/MOTION.hopHeight),opacity:CUTOUT.floor.opacity*(1-.35*hop/MOTION.hopHeight)});
-  canvas.save();
-  if(!headOnly) {
-    canvas.translate(CUTOUT.floor.x,CUTOUT.floor.y-hop);canvas.scale(1/Math.sqrt(squash),squash*(1+breath));canvas.translate(-CUTOUT.floor.x,-CUTOUT.floor.y);
-    part(canvas,r,'torso',CUTOUT.body);
-    part(canvas,r,'foot_viewer_left',CUTOUT.footL);part(canvas,r,'foot_viewer_right',CUTOUT.footR);
-    // Shoulder and elbow always sit behind the head. No layer-order pop on lift.
-    arm(canvas,r,true,pose.armL,pose.elbowL??0);arm(canvas,r,false,pose.armR,pose.elbowR??0);
-    shadow(canvas,r,CUTOUT.neckShadow);
-  }
-  ears(canvas,r,pose);surfaceHead(canvas,r,pose);
-  // Blush first; every face vertex samples the same surface as the head.
-  for(let layer=0;layer<2;layer++)for(const f of CUTOUT.features) {
-    const isBlush=f.name.startsWith('blush');if((layer===0)!==isBlush)continue;
-    const eye=f.name.startsWith('eye'),blink=eye?(pose.blink??0):0,closed=smooth(.45,.94,blink);
-    const b=CUTOUT.blinkTexture,centerY=f.y+f.h*b.centerY,openScale=1-blink*b.compression;
-    textured(canvas,r,f.name,CUTOUT.mesh.feature,(u,v)=>{
-      'worklet';
-      const y=eye?centerY+(f.y+v*f.h-centerY)*openScale:f.y+v*f.h;
-      const p=projectSurface(f.x+u*f.w,y,pose);
-      return {x:CUTOUT.headCenter.x+p.x*CUTOUT.headWidth,y:CUTOUT.headCenter.y+p.y*CUTOUT.headWidth,facing:p.facing};
-    },false,1-closed);
-    if(eye&&closed>0)textured(canvas,r,f.name==='eye_left'?'eye_closed_left':'eye_closed_right',CUTOUT.mesh.feature,(u,v)=>{
-      'worklet';
-      const p=projectSurface(f.x+f.w*(b.closedX+u*b.closedWidth),centerY+(v-.5)*f.h*b.closedHeight,pose);
-      return {x:CUTOUT.headCenter.x+p.x*CUTOUT.headWidth,y:CUTOUT.headCenter.y+p.y*CUTOUT.headWidth,facing:p.facing};
-    },false,closed);
-  }
-  canvas.restore();
-}
-
 // Immutable authored head vertices/normals; trig and profile sampling stay out of
 // the per-frame mesh loop. Both runtimes use this same geometry.
 const HEAD = (()=>{
@@ -152,4 +117,50 @@ export function surfaceHead(canvas:SkCanvas,r:Resources,pose:CutoutPose) {
   const edge=r.api.Paint(),blur=r.api.ImageFilter.MakeBlur(CUTOUT.headEdgeBlur,CUTOUT.headEdgeBlur,3,null);
   edge.setImageFilter(blur);canvas.saveLayer(edge);canvas.drawVertices(vertices,13,p);canvas.restore();
   edge.dispose();blur.dispose();vertices.dispose();shader.dispose();p.dispose();
+}
+
+const FACE = CUTOUT.features.map(f=>{
+  const count=CUTOUT.mesh.feature,data:number[][]=[];
+  for(let j=0;j<=count;j++)for(let i=0;i<=count;i++){
+    const x=f.x+i/count*f.w,y=f.y+j/count*f.h;data.push([x,y,surfaceDepth(x,y)]);
+  }
+  return data;
+});
+/** The device and harness share the textured-mesh drawing code. */
+export function drawCutout(canvas:SkCanvas,r:Resources,pose:CutoutPose=MASTER_POSE,headOnly=false) {
+  'worklet';
+  const hop=pose.hop??0,breath=pose.breath??0,squash=pose.rootSquash??1;
+  if(!headOnly)shadow(canvas,r,{...CUTOUT.floor,w:CUTOUT.floor.w*(1-.4*hop/MOTION.hopHeight),opacity:CUTOUT.floor.opacity*(1-.35*hop/MOTION.hopHeight)});
+  canvas.save();
+  if(!headOnly) {
+    canvas.translate(CUTOUT.floor.x,CUTOUT.floor.y-hop);canvas.scale(1/Math.sqrt(squash),squash*(1+breath));canvas.translate(-CUTOUT.floor.x,-CUTOUT.floor.y);
+    part(canvas,r,'torso',CUTOUT.body);
+    part(canvas,r,'foot_viewer_left',CUTOUT.footL);part(canvas,r,'foot_viewer_right',CUTOUT.footR);
+    // Shoulder and elbow always sit behind the head. No layer-order pop on lift.
+    arm(canvas,r,true,pose.armL,pose.elbowL??0);arm(canvas,r,false,pose.armR,pose.elbowR??0);
+    shadow(canvas,r,CUTOUT.neckShadow);
+  }
+  ears(canvas,r,pose);surfaceHead(canvas,r,pose);
+  // Blush first; every face vertex samples the same surface as the head.
+  const frame=prepareProjection(pose);
+  for(let layer=0;layer<2;layer++)for(let fi=0;fi<CUTOUT.features.length;fi++) {
+    const f=CUTOUT.features[fi],grid=FACE[fi];
+    const isBlush=f.name.startsWith('blush');if((layer===0)!==isBlush)continue;
+    const eye=f.name.startsWith('eye'),blink=eye?(pose.blink??0):0,closed=smooth(.45,.94,blink);
+    const b=CUTOUT.blinkTexture,centerY=f.y+f.h*b.centerY,openScale=1-blink*b.compression;
+    textured(canvas,r,f.name,CUTOUT.mesh.feature,(u,v)=>{
+      'worklet';
+      const d=grid[Math.round(v*CUTOUT.mesh.feature)*(CUTOUT.mesh.feature+1)+Math.round(u*CUTOUT.mesh.feature)];
+      const y=eye?centerY+(d[1]-centerY)*openScale:d[1];
+      const p=projectPrepared(d[0],y,d[2],frame);
+      return {x:CUTOUT.headCenter.x+p.x*CUTOUT.headWidth,y:CUTOUT.headCenter.y+p.y*CUTOUT.headWidth};
+    },false,1-closed);
+    if(eye&&closed>0)textured(canvas,r,f.name==='eye_left'?'eye_closed_left':'eye_closed_right',CUTOUT.mesh.feature,(u,v)=>{
+      'worklet';
+      const x=f.x+f.w*(b.closedX+u*b.closedWidth),y=centerY+(v-.5)*f.h*b.closedHeight;
+      const p=projectPrepared(x,y,surfaceDepth(x,y),frame);
+      return {x:CUTOUT.headCenter.x+p.x*CUTOUT.headWidth,y:CUTOUT.headCenter.y+p.y*CUTOUT.headWidth};
+    },false,closed);
+  }
+  canvas.restore();
 }
