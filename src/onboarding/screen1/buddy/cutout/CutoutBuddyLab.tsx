@@ -3,11 +3,12 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensio
 import { Canvas, Picture, Skia, useImage } from '@shopify/react-native-skia';
 import { CUTOUT, DIAGNOSTICS, MASTER_POSE, NEUTRAL, type CutoutPose } from './model';
 import { drawCutout } from './drawCutout';
+import { AnimatedCutout } from './AnimatedCutout';
 
 function Preview({ images, pose, size, headOnly=false }: {images:Record<string,any>;pose:CutoutPose;size:number;headOnly?:boolean}) {
   const picture=useMemo(()=>{
     const recorder=Skia.PictureRecorder();const c=recorder.beginRecording(Skia.XYWHRect(0,0,size,size));
-    c.clear(Skia.Color(CUTOUT.background));c.scale(size/1254,size/1254);
+    c.clear(Skia.Color(CUTOUT.background));c.scale(size/CUTOUT.stage.size,size/CUTOUT.stage.size);
     if(Object.values(images).every(Boolean))drawCutout(c,{api:Skia,images},pose,headOnly);
     return recorder.finishRecordingAsPicture();
   },[images,pose,size,headOnly]);
@@ -25,11 +26,13 @@ export function CutoutBuddyLab({record=false,shot='master'}:{record?:boolean;sho
   const foot_viewer_right=useImage(require('../../../../../design/buddy/parts_review/cutouts/foot_viewer_right.png'));
   const eye_left=useImage(require('../../../../../design/buddy/assembly_review/face/eye_left.png'));
   const eye_right=useImage(require('../../../../../design/buddy/assembly_review/face/eye_right.png'));
+  const eye_closed_left=useImage(require('../../../../../design/buddy/assembly_review/face/eye_closed_left.png'));
+  const eye_closed_right=useImage(require('../../../../../design/buddy/assembly_review/face/eye_closed_right.png'));
   const mouth_happy=useImage(require('../../../../../design/buddy/assembly_review/face/mouth_happy.png'));
   const blush_left=useImage(require('../../../../../design/buddy/assembly_review/face/blush_left.png'));
   const blush_right=useImage(require('../../../../../design/buddy/assembly_review/face/blush_right.png'));
   const head_surface=useImage(require('../../../../../design/buddy/assembly_review/face/head_surface.png'));
-  const images=useMemo(()=>({head_blank,torso,ear_viewer_left,ear_viewer_right,arm_viewer_left,arm_viewer_right,foot_viewer_left,foot_viewer_right,eye_left,eye_right,mouth_happy,blush_left,blush_right,head_surface}),[head_blank,torso,ear_viewer_left,ear_viewer_right,arm_viewer_left,arm_viewer_right,foot_viewer_left,foot_viewer_right,eye_left,eye_right,mouth_happy,blush_left,blush_right,head_surface]);
+  const images=useMemo(()=>({head_blank,torso,ear_viewer_left,ear_viewer_right,arm_viewer_left,arm_viewer_right,foot_viewer_left,foot_viewer_right,eye_left,eye_right,eye_closed_left,eye_closed_right,mouth_happy,blush_left,blush_right,head_surface}),[head_blank,torso,ear_viewer_left,ear_viewer_right,arm_viewer_left,arm_viewer_right,foot_viewer_left,foot_viewer_right,eye_left,eye_right,eye_closed_left,eye_closed_right,mouth_happy,blush_left,blush_right,head_surface]);
   const [selected,setSelected]=useState(-1);
   const [reviewFrame,setReviewFrame]=useState(0);
   useEffect(()=>{
@@ -40,10 +43,15 @@ export function CutoutBuddyLab({record=false,shot='master'}:{record?:boolean;sho
   },[record,shot]);
   const shotIndex=Number(shot);
   const pose=record?(shot==='review'?(reviewFrame===0?MASTER_POSE:reviewFrame===1?NEUTRAL:DIAGNOSTICS[reviewFrame-2].pose):shot==='neutral'?NEUTRAL:Number.isFinite(shotIndex)?DIAGNOSTICS[Math.max(0,Math.min(9,shotIndex))].pose:MASTER_POSE):(selected===-2?NEUTRAL:selected>=0?DIAGNOSTICS[selected].pose:MASTER_POSE);
+  if(shot==='motion'||selected===-3)return <ScrollView style={styles.root} contentContainerStyle={{paddingTop:CUTOUT.stage.paddingTop,paddingBottom:40}}>
+    <AnimatedCutout images={images} width={width} record={record}/>
+    {!record&&<Pressable style={styles.button} onPress={()=>setSelected(-1)}><Text>Static diagnostics</Text></Pressable>}
+  </ScrollView>;
   return <ScrollView style={styles.root} contentContainerStyle={{paddingTop:38,paddingBottom:40}}>
     {record&&<View style={{alignItems:"center"}}><Preview images={images} pose={pose} size={200}/></View>}<Preview images={images} pose={pose} size={width}/>
     {!record&&<>
       <Text style={styles.title}>Buddy Lab / rendered cut-out assembly</Text>
+      <Pressable style={styles.button} onPress={()=>setSelected(-3)}><Text>Play 20-second animation spike</Text></Pressable>
       <View style={styles.row}><Pressable style={styles.button} onPress={()=>setSelected(-1)}><Text>Master pose</Text></Pressable><Pressable style={styles.button} onPress={()=>setSelected(-2)}><Text>Both arms resting</Text></Pressable></View>
       <Text style={styles.title}>Head surface test strip</Text>
       <ScrollView horizontal>{DIAGNOSTICS.map((d,i)=><Pressable key={d.label} onPress={()=>setSelected(i)}><Preview images={images} pose={d.pose} size={180} headOnly/><Text style={styles.label}>{d.label}</Text></Pressable>)}</ScrollView>

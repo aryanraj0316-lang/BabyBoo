@@ -1,4 +1,4 @@
-param([string]$AdbPath, [string]$Serial)
+param([string]$AdbPath, [string]$Serial, [ValidateSet('review','motion')][string]$Shot = 'review')
 
 # Run in a normal PowerShell session; produces evidence for human frame review.
 $ErrorActionPreference = 'Stop'
@@ -28,7 +28,8 @@ try {
         $script:reviewSerial = $connected[0]
     }
     $reviewStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $reviewOut = Join-Path $reviewRoot "design/buddy/assembly_review/recording/$reviewStamp"
+    $phaseFolder = if ($Shot -eq 'motion') { 'animation_review' } else { 'assembly_review' }
+    $reviewOut = Join-Path $reviewRoot "design/buddy/$phaseFolder/recording/$reviewStamp"
     New-Item -ItemType Directory -Path (Join-Path $reviewOut 'frames') -Force | Out-Null
     Push-Location (Join-Path $reviewRoot 'android')
     try {
@@ -37,6 +38,7 @@ try {
     } finally { Pop-Location }
     $reviewApk = Join-Path $reviewRoot 'android/app/build/outputs/apk/debug/app-debug.apk'
     Invoke-Adb install -r $reviewApk
+    Invoke-Adb shell input keyevent KEYCODE_WAKEUP
     Invoke-Adb shell am force-stop com.babyboo.app
     Invoke-Adb shell 'am start -W -a android.intent.action.VIEW -d "babyboo://dev/buddy-lab?cutout=1" -p com.babyboo.app'
     Start-Sleep -Seconds 6
@@ -52,7 +54,8 @@ try {
         throw "The cutout lab title was not detected. Review $reviewOut/launch-failed.png before recording."
     }
     # Escape ampersands for the remote shell, including Windows PowerShell 5.
-    Invoke-Adb shell 'am start -W -a android.intent.action.VIEW -d babyboo://dev/buddy-lab?cutout=1\&record=1\&shot=review -p com.babyboo.app'
+    $recordCommand = 'am start -W -a android.intent.action.VIEW -d babyboo://dev/buddy-lab?cutout=1\&record=1\&shot=' + $Shot + ' -p com.babyboo.app'
+    Invoke-Adb shell $recordCommand
     Start-Sleep -Seconds 4
     Invoke-Adb shell input keyevent KEYCODE_WAKEUP
     Invoke-Adb shell screencap -p "$reviewRemote.png"
@@ -68,7 +71,7 @@ try {
         recordedAt = (Get-Date).ToString('o')
         branch = $branch
         apkSha256 = (Get-FileHash -LiteralPath $reviewApk -Algorithm SHA256).Hash
-        phase = 'Static assembly and discrete face diagnostics'
+        phase = if ($Shot -eq 'motion') { 'Animated Buddy Lab spike' } else { 'Static assembly and discrete face diagnostics' }
         reviewStatus = 'Captured; human frame review still required. Not visual approval.'
     } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $reviewOut 'capture.json') -Encoding UTF8
     Write-Host "Saved recording, frames and contact sheets to $reviewOut"

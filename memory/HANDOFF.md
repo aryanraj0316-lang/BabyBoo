@@ -1,41 +1,45 @@
-# Current handoff
+﻿# Current handoff
 
-Updated: 2026-11-03 20:46 +05:30 (Asia/Calcutta).
+Updated: 2026-11-03 21:40 +05:30 (Asia/Calcutta).
 
-## Task and owner
+## Task, owner and approvals
 
-This chat's Codex agent owns Buddy static assembly and phone verification. User explicitly authorized recording and required approvals. Parts are approved; static assembly look and animation remain unapproved.
+This chat's Codex agent owns Buddy animation spike edits. User explicitly approved static appearance after 50b944e and authorized bounded-turn/ear/edge/arm-overlap refinements plus breathing, rendered-eye blinks, ear jiggle, +/-8-degree tilt, one elbow wave and one hop/landing squash. Final animation approval remains pending the required phone video. Do not integrate into onboarding or touch other screens.
 
-## Branch and files
+## Branch and unrelated changes
 
-Verified branch onboarding-screen1-rebuild. Existing static assembly work and this session's capture tooling are ready for checkpoint commit; commit status pending below. Files: app/dev/buddy-lab.tsx; src/onboarding/screen1/buddy/cutout/; tools/harness/run.cjs and renderCutout.ts; tools/buddy face preparation/measurement/projection/review Python files, review-build.init.gradle, record-review.ps1; design/buddy/parts_review/README.md and assembly_review/; memory files.
+Verified branch: onboarding-screen1-rebuild. Preserve user AGENTS.md changes, CLAUDE.md, .claude/ and prior local troubleshooting artifacts. Static checkpoint 50b944e is preserved. Animation implementation is saved locally and being checkpointed; it is NOT phone-verified.
 
-Unrelated user changes in AGENTS.md, CLAUDE.md and .claude/ must stay unstaged. No other screen or onboarding timeline code changed.
+## Implemented since static approval
 
-## Completed
+- model.ts: reference-side yaw limited to measured 3/4 angle; opposite yaw reduced for asymmetric eye position; broad silhouette compensation; mesh/stage/ear/blink tokens.
+- drawCutout.ts: cubic ear/face sampling, broad ear cards with mild anchor yaw/jiggle, soft head edge, fixed arm occlusion behind head, continuous elbow skin deformation, rendered closed-eye blending, breath/hop/landing transforms and floor shadow. Immutable head vertices/UVs/alpha palette are cached.
+- motion.ts and motion.test.ts: continuous 20s lab loop and geometry/motion invariants.
+- AnimatedCutout.tsx: UI-thread shared Skia picture at small/large size, background pause and reduced-motion still, hidden debug warnings in recording mode. This native worklet/runtime is still unverified on device.
+- CutoutBuddyLab.tsx exposes shot=motion and an animation button. Capture helper accepts -Shot motion. Harness supports motion/checks/movie modes. tools/buddy/review_animation.py generates matched-scale comparisons and contour measurements.
+- No source art was regenerated, recoloured or replaced. Ear sources remain 277x271 RGBA.
 
-- Previously passed src TypeScript check, four face projection tests and shared Skia harness rendering. See assembly_review/validation.json.
-- Restored approved escalation; adb reports one authorized Vivo V2432. Previous SDK permission blocker is resolved.
-- Fixed Gradle init script null access in included builds; review APK built successfully (485 tasks, 3m56s) and installed via adb install -r.
-- Cold deep link initially displayed onboarding; warm retry opened rendered cutout lab (UI title and screenshot verified).
-- Opened record mode with escaped ampersands and dismissed debug warning before capture.
-- First screenrecord failed INVALID_LAYER_STACK because display was OFF. Woke display and selected physical display ID, then successfully recorded and pulled video.
-- Evidence folder: design/buddy/assembly_review/recording/20261103-203519/. Video duration 19.674056s (20s requested), 720x1600. Extracted 197 local 10fps samples and two 2fps contact sheets.
-- Visually reviewed both full contact sheets, individual frames 65/156/168, and master-and-phone still. No lab controls or warning overlay in recording. System bars remain visible.
-- This is discrete pose diagnostics at 1.6s intervals, not smooth animation or a 60fps pass. Known differences remain: head edge/overlap, raised arm placement, feet, extreme-turn eye sliver and ear silhouette.
+## Verified checks and artifacts
 
-## Changed this resumed run
+- Final src TypeScript check and 8 focused tests passed. Checks cover clamped input, camera-facing eye contours, turn/tilt bounds, one-hop count, rendered blink state and loop continuity.
+- Final headless harness and Python contour check passed. Final eye margins: 27px/23px, or 3.82%/3.26% of authored head width; both complete eye contours present. Head width/height 1.124/1.136 at extremes. Reference-side far/near eye width ratio 0.508 versus reference 0.500. No whole-character likeness pass is claimed.
+- Final comparison boards and keyframes are in design/buddy/animation_review/. Both extreme/reference and ear/detail boards were locally reviewed, along with blink/tilt/wave/hop keyframes.
+- Local preflight: 600 exact-clock frames at 30fps, local-preflight.mp4 and two local contact sheets reviewed. This preflight predates the last opposite-yaw and landing-tail refinements; it remains internal QA only and is not phone evidence.
+- Final Android debug review build succeeded in 2m18s. APK: android/app/build/outputs/apk/debug/app-debug.apk. SHA256: 6C84EC9E807349C2EC721325E41F32BA8F75FCEBFAABFE5C477C7141C9992BC7. It has not been installed during this animation phase.
+- git diff --check passed. Capture helper syntax passed earlier; final new Shot parameter still needs final parser check before checkpoint.
 
-Fixed tools/buddy/review-build.init.gradle and updated capture helper for warm link and shell escaping. Added phone video, contact sheets, phone/master still and neutral crop; updated review README, validation and shared memory. No new animation/drawing changes.
+## Current blocker
 
-## Checks
+Approved adb access works. Repeated adb devices -l calls return an EMPTY DEVICE LIST. Windows present-device search returned no Android/Vivo/ADB interface; adb reconnect offline did not restore a device. This is no longer the previous permission problem. The asynchronous reconnect/unlock request has no reply yet.
 
-Successful Android debug build and installation; actual adb capture/pull; ffmpeg extraction; ffprobe metadata; frame/contact review. Staged whitespace check found trailing blank lines in six inherited files; those were removed before final staging. Capture-helper parser passed after final warm-link update. Helper itself still needs manual warning dismissal in this environment; final capture used documented manual commands.
+No new animation phone recording exists. No native rendering, performance, smoothness, reduced-motion behavior or phone image-quality pass is claimed. Do not reuse the previous static slideshow as evidence.
 
-## Processes
+## Running processes
 
-Build/capture helper exec sessions 44730 and 54013 exited. Manual recorder session 21685 exited successfully. Gradle daemon/adb may remain running; unrelated node processes were not stopped. No active recording remains.
+All observed build/render/test/encode processes have completed: tests 14933, builds 69091/34211/88358, renders 12718/43959/28868/51429/41119/97626, ffmpeg 79385, Python 36152. Gradle/adb daemons and unrelated node processes may remain; do not kill them. No recording is active.
 
-## Pending approval and next action
+## Exact next action
 
-Commit task-related checkpoint files only, then present the recording and comparison to the user and stop for explicit static assembly approval under AGENTS.md. Animation spike, smooth elbow bend/blink/hop, and onboarding integration remain pending. Local raw frames and troubleshooting screenshots/XML need not be committed; video/contact sheets/stills/report are sufficient review artifacts.
+When the phone reconnects, confirm with approved adb devices -l. Install the final APK using adb install -r. Open static lab cold then warm to confirm route, then open babyboo://dev/buddy-lab?cutout=1\&record=1\&shot=motion. Before recording, inspect a screenshot and app logcat for worklet/runtime errors; fix any and rebuild. The new AnimatedCutout component has not yet run on the phone.
+
+Capture 20 seconds with display awake (use physical display ID if needed), pull video, extract contact sheets/10fps samples and inspect all requested motions. Check BUDDY_MOTION_METRICS logs and record limits honestly; do not infer 60fps from the source or desktop preflight. Deliver phone video, still/master and clamped extreme/reference, commit the verified checkpoint and stop for explicit animation approval.

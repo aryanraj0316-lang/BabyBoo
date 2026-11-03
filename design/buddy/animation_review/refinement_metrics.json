@@ -1,0 +1,43 @@
+{
+  "extremes": [
+    {
+      "side": "left",
+      "eye_count": 2,
+      "minimum_eye_margin_px": 27.0,
+      "margin_per_authored_head_width": 0.03824362606232295,
+      "far_near_eye_width": 0.5083060523101888,
+      "head_width_height": 1.1241721854304636
+    },
+    {
+      "side": "right",
+      "eye_count": 2,
+      "minimum_eye_margin_px": 23.0,
+      "margin_per_authored_head_width": 0.032577903682719546,
+      "far_near_eye_width": 0.5507115451828545,
+      "head_width_height": 1.1357615894039734
+    }
+  ],
+  "ear_textures": [
+    {
+      "side": "left",
+      "source": "design\\buddy\\parts_review\\cutouts\\ear_viewer_left.png",
+      "pixels": [
+        277,
+        271
+      ],
+      "source_preserved": true,
+      "sampling": "Catmull-Rom cubic; full source texture; rigid broad card; >=96% width on turn"
+    },
+    {
+      "side": "right",
+      "source": "design\\buddy\\parts_review\\cutouts\\ear_viewer_right.png",
+      "pixels": [
+        277,
+        271
+      ],
+      "source_preserved": true,
+      "sampling": "Catmull-Rom cubic; full source texture; rigid broad card; >=96% width on turn"
+    }
+  ],
+  "scope": "Rendered head contours; not a whole-character likeness pass"
+}

@@ -1,0 +1,255 @@
+[
+  {
+    "name": "motion_00",
+    "seconds": 0,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 0,
+      "earR": 0
+    }
+  },
+  {
+    "name": "motion_01",
+    "seconds": 1.57,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.01863018636394085,
+      "blink": 0.9994851654760167,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 0,
+      "earR": 0
+    }
+  },
+  {
+    "name": "motion_02",
+    "seconds": 3.6,
+    "pose": {
+      "turn": -0.5,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.021227541344770777,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 0.003249871244073282,
+      "earR": -0.002697393132580824
+    }
+  },
+  {
+    "name": "motion_03",
+    "seconds": 6.4,
+    "pose": {
+      "turn": 0.25,
+      "nod": -0.72,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.021227541344770777,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": -0.000012775707018625858,
+      "earR": 0.000010603836825459462
+    }
+  },
+  {
+    "name": "motion_04",
+    "seconds": 7.2,
+    "pose": {
+      "turn": 0.25,
+      "nod": 0.72,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.0029813450983644995,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 0.00047322122761706746,
+      "earR": -0.000392773618922166
+    }
+  },
+  {
+    "name": "motion_05",
+    "seconds": 9.1,
+    "pose": {
+      "turn": 0.25,
+      "nod": 0,
+      "roll": -0.13962634015954636,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.018011663887235546,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 2.3717505786458436e-15,
+      "earR": -1.96855298027605e-15
+    }
+  },
+  {
+    "name": "motion_06",
+    "seconds": 10.1,
+    "pose": {
+      "turn": 0.16199999999999964,
+      "nod": 0,
+      "roll": 0.13962634015954636,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.00034558522758507034,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": -0.00015323821284971798,
+      "earR": 0.0001271877166652659
+    }
+  },
+  {
+    "name": "motion_07",
+    "seconds": 12.4,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 1,
+      "armR": 0,
+      "breath": 0.00034558522758507647,
+      "blink": 0,
+      "elbowL": 0.3820454380488969,
+      "rootSquash": 1,
+      "earL": -0.005807985014846235,
+      "earR": 0.004820627562322375
+    }
+  },
+  {
+    "name": "motion_08",
+    "seconds": 12.8,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 1,
+      "armR": 0,
+      "breath": 0.002981345098364431,
+      "blink": 0,
+      "elbowL": -0.1183276738733948,
+      "rootSquash": 1,
+      "earL": -0.0013320934576126842,
+      "earR": 0.001105637569818528
+    }
+  },
+  {
+    "name": "motion_09",
+    "seconds": 13.2,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 1,
+      "armR": 0,
+      "breath": 0.013061194460443001,
+      "blink": 0,
+      "elbowL": -0.227069143331345,
+      "rootSquash": 1,
+      "earL": -0.00015323821285208937,
+      "earR": 0.00012718771666723417
+    }
+  },
+  {
+    "name": "motion_10",
+    "seconds": 13.6,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 1,
+      "armR": 0,
+      "breath": 0.021227541344770784,
+      "blink": 0,
+      "elbowL": 0.41572500558999126,
+      "rootSquash": 1,
+      "earL": 0,
+      "earR": 0
+    }
+  },
+  {
+    "name": "motion_11",
+    "seconds": 16.7,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.0156835722072157,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 1.045,
+      "hop": 114,
+      "earL": 0,
+      "earR": 0
+    }
+  },
+  {
+    "name": "motion_12",
+    "seconds": 17.21,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.0027946474003339894,
+      "blink": 0,
+      "elbowL": 0,
+      "rootSquash": 0.8800000000000001,
+      "earL": 0.011918467559826687,
+      "earR": -0.00989232807465615
+    }
+  },
+  {
+    "name": "motion_13",
+    "seconds": 19.07,
+    "pose": {
+      "turn": 0,
+      "nod": 0,
+      "roll": 0,
+      "squash": 1,
+      "armL": 0,
+      "armR": 0,
+      "breath": 0.01863018636394084,
+      "blink": 0.9994851654760167,
+      "elbowL": 0,
+      "rootSquash": 1,
+      "earL": 0,
+      "earR": 0
+    }
+  }
+]

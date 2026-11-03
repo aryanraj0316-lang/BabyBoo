@@ -13,3 +13,6 @@ Use files in this project to carry verified task state between terminal agents. 
 ## 2026-11-03 ? Phone verification access restored
 
 Approved command escalation restored adb/SDK access. Built and installed the review APK, recorded the physical phone display, and reviewed extracted frames. The prior permission block is resolved. Capturing diagnostics does not approve appearance or authorize the animation phase.
+## 2026-11-03 — Static look approved; animation authorized
+
+User explicitly approved static neutral/master poses as the correct direction and authorized the limited animation spike. Required refinements: clamp maximum turn to top-middle turnaround reference while preserving full far-eye margin, broad head and thick ears; restore crisp pink inner ears; soften head edge and fix arm overlap. Animate rendered-eye blinks, breathing, ear jiggle, +/-8 degree head tilt, one elbow-bending wave, one hop/landing squash, and facial surface movement through turn/nod/roll. Deliver and review 20-second phone recording, show clamped extreme beside reference, then stop for animation approval. Timeline and other screens stay out of scope.
