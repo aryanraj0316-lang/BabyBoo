@@ -1,0 +1,498 @@
+{
+  "selected": [
+    {
+      "state": "watching",
+      "path": "assets/onboarding/screen1/buddy/buddy_watch_34_left@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30568,
+      "alpha_bounds": [
+        89,
+        38,
+        460,
+        469
+      ],
+      "transparent_pixels": 117536,
+      "partial_alpha_pixels": 100582,
+      "source": "turnaround: top-middle",
+      "approved_story_event": "Reels / 0-7s",
+      "sha256": "2f90c8e99de3f4283222b7119fdb610c2b6d585d3bf3a9e5d36de7a7fd5bf75b"
+    },
+    {
+      "state": "concerned",
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_wavy@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30198,
+      "alpha_bounds": [
+        78,
+        20,
+        424,
+        469
+      ],
+      "transparent_pixels": 109890,
+      "partial_alpha_pixels": 110290,
+      "source": "expressions: bottom-right",
+      "approved_story_event": "Battery alert / 7.6s",
+      "sha256": "9b7e334ab5080a3b4ed482da76a437b539025fc18bf8c8573cf3e294024afcb2"
+    },
+    {
+      "state": "worried",
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_paws@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30262,
+      "alpha_bounds": [
+        28,
+        55,
+        416,
+        469
+      ],
+      "transparent_pixels": 112319,
+      "partial_alpha_pixels": 107088,
+      "source": "actions: top-right",
+      "approved_story_event": "Critical drain / below 10%",
+      "sha256": "1662eae4472fe0bf53f3eca01eacaab625f4bd4807215d431702991d68e12095"
+    },
+    {
+      "state": "yawning",
+      "path": "assets/onboarding/screen1/buddy/buddy_yawn@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 31286,
+      "alpha_bounds": [
+        62,
+        27,
+        444,
+        468
+      ],
+      "transparent_pixels": 104726,
+      "partial_alpha_pixels": 115896,
+      "source": "actions: bottom-left",
+      "approved_story_event": "Power off / 12.5-14s",
+      "sha256": "cfbfa842bf04cf6ed6ddcede9e8ed4c55b0806cce360d2c9beb77e0ec84fc3fa"
+    },
+    {
+      "state": "sleepy",
+      "path": "assets/onboarding/screen1/buddy/buddy_sleepy@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 28410,
+      "alpha_bounds": [
+        76,
+        47,
+        448,
+        469
+      ],
+      "transparent_pixels": 117478,
+      "partial_alpha_pixels": 103582,
+      "source": "actions: bottom-middle",
+      "approved_story_event": "Dark rest / 14-15.5s",
+      "sha256": "3725887d4ce9cc8ebe63ccc4b3afea9e093e7a5f2bbf62e4708908ef839d14d6"
+    },
+    {
+      "state": "surprised",
+      "path": "assets/onboarding/screen1/buddy/buddy_surprised@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 29836,
+      "alpha_bounds": [
+        77,
+        26,
+        427,
+        468
+      ],
+      "transparent_pixels": 111380,
+      "partial_alpha_pixels": 109900,
+      "source": "expressions: bottom third",
+      "approved_story_event": "Wake tap / 15.5s",
+      "sha256": "48355e6bf036a36f3a4bb5f73f89a5b58759521a06a216cd9af64f6945f1d12e"
+    },
+    {
+      "state": "pointing",
+      "path": "assets/onboarding/screen1/buddy/buddy_point_left@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 31016,
+      "alpha_bounds": [
+        51,
+        30,
+        461,
+        468
+      ],
+      "transparent_pixels": 109640,
+      "partial_alpha_pixels": 107918,
+      "source": "actions: bottom-right, pre-mirrored",
+      "approved_story_event": "Swipe up / 17.2-18.1s",
+      "sha256": "c26a99ca3b7dd304bb30c728b3d0520e53da26e5c7b9389cfd4e4139ea4489a8"
+    },
+    {
+      "state": "celebrating",
+      "path": "assets/onboarding/screen1/buddy/buddy_arms_up@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 36922,
+      "alpha_bounds": [
+        23,
+        17,
+        467,
+        469
+      ],
+      "transparent_pixels": 90984,
+      "partial_alpha_pixels": 123177,
+      "source": "joy: top-right",
+      "approved_story_event": "Unlocked / 19s",
+      "sha256": "5591eb989842a68e0c593f11684402905e1fa0a442f22498b5fb623774f878aa"
+    },
+    {
+      "state": "waving",
+      "path": "assets/onboarding/screen1/buddy/buddy_wave@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 36864,
+      "alpha_bounds": [
+        22,
+        15,
+        443,
+        468
+      ],
+      "transparent_pixels": 100346,
+      "partial_alpha_pixels": 114442,
+      "source": "joy: top-left",
+      "approved_story_event": "After celebration / before 21.5s",
+      "sha256": "d4daab9a748152cb5a46d240921f3fbfb00f142c3207190262b0f8c1846e642b"
+    },
+    {
+      "state": "idle",
+      "path": "assets/onboarding/screen1/buddy/buddy_happy_front@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 24316,
+      "alpha_bounds": [
+        78,
+        65,
+        444,
+        467
+      ],
+      "transparent_pixels": 114795,
+      "partial_alpha_pixels": 104221,
+      "source": "celebrate: bottom-right",
+      "approved_story_event": "Rest / 21.5-23.2s",
+      "sha256": "a4752a09900f29e39f494df02b6ddfb335e744ea233f85f140f89efd518727f2"
+    }
+  ],
+  "existing_webp_inventory": [
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_arms_up@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 21444,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_arms_up@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 36922,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_happy_front@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 16792,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_happy_front@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 24316,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_point_left@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 18396,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_point_left@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 31016,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_sleepy@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 16446,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_sleepy@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 28410,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_surprised@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 17506,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_surprised@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 29836,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_watch_34_left@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 17470,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_watch_34_left@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30568,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_wave@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 20878,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_wave@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 36864,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_paws@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 17534,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_paws@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30262,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_wavy@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 17830,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_worried_wavy@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 30198,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_yawn@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 18854,
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/onboarding/screen1/buddy/buddy_yawn@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 31286,
+      "mode": "RGBA"
+    }
+  ],
+  "normalization": {
+    "headWidthPt": 106,
+    "frames": {
+      "buddy_watch_34_left": {
+        "source": "turn_34_left",
+        "mirrored": false,
+        "boundsPt": [
+          30.67,
+          13.67,
+          152.33,
+          155.33
+        ]
+      },
+      "buddy_worried_paws": {
+        "source": "act_worried_paws",
+        "mirrored": false,
+        "boundsPt": [
+          10.33,
+          19.33,
+          137.67,
+          155.33
+        ]
+      },
+      "buddy_worried_wavy": {
+        "source": "expr_worried",
+        "mirrored": false,
+        "boundsPt": [
+          27.0,
+          7.67,
+          141.0,
+          155.33
+        ]
+      },
+      "buddy_yawn": {
+        "source": "act_yawn",
+        "mirrored": false,
+        "boundsPt": [
+          21.67,
+          10.0,
+          147.0,
+          155.0
+        ]
+      },
+      "buddy_sleepy": {
+        "source": "act_sleepy",
+        "mirrored": false,
+        "boundsPt": [
+          26.33,
+          16.67,
+          148.33,
+          155.33
+        ]
+      },
+      "buddy_surprised": {
+        "source": "expr_surprised",
+        "mirrored": false,
+        "boundsPt": [
+          26.67,
+          9.67,
+          141.33,
+          155.0
+        ]
+      },
+      "buddy_point_left": {
+        "source": "act_point_right",
+        "mirrored": true,
+        "boundsPt": [
+          18.0,
+          10.67,
+          152.67,
+          155.0
+        ]
+      },
+      "buddy_arms_up": {
+        "source": "joy_arms_up",
+        "mirrored": false,
+        "boundsPt": [
+          8.33,
+          6.67,
+          155.33,
+          155.33
+        ]
+      },
+      "buddy_wave": {
+        "source": "joy_wave",
+        "mirrored": false,
+        "boundsPt": [
+          8.33,
+          5.0,
+          147.0,
+          155.0
+        ]
+      },
+      "buddy_happy_front": {
+        "source": "cel_happy_front",
+        "mirrored": false,
+        "boundsPt": [
+          26.33,
+          22.0,
+          147.67,
+          155.33
+        ]
+      }
+    },
+    "canvasPt": [
+      160,
+      159
+    ],
+    "baselinePt": 155.0
+  },
+  "runtime_loop_seconds": 11,
+  "approved_brief_loop_seconds": 24
+}
