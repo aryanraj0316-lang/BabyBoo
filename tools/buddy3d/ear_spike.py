@@ -102,7 +102,7 @@ def fur(name, mat, count, length, pink_region):
     s.kink='WAVE';s.kink_amplitude=.0025;s.kink_frequency=1.5
     s.clump_factor=.035;s.material=len(ear.data.materials)
     ps.vertex_group_density=vg.name;ps.seed=29 if pink_region else 17
-fur('Outer short plush',purple_hair,14000,.026,False)
+fur('Outer short plush',purple_hair,14000,.060,False)
 fur('Pink short velvet',pink_hair,4000,.014,True)
 
 def aim(obj,point):obj.rotation_euler=(Vector(point)-obj.location).to_track_quat('-Z','Y').to_euler()
@@ -118,6 +118,6 @@ aim(cam,(0,0,0));cam.data.type='ORTHO';cam.data.ortho_scale=2.72;sc.camera=cam
 bg=material('Warm ivory background','FCFAF3')
 bpy.ops.mesh.primitive_plane_add(size=200,location=(0,2,0),rotation=(pi/2,0,0))
 bpy.context.object.data.materials.append(bg)
-sc.render.filepath=str(OUT/'ear_preview.png')
+sc.render.filepath=str(OUT/'ear_preview_length_v2.png')
 bpy.ops.render.render(write_still=True)
 print('EAR_ONLY_PREVIEW_COMPLETE',flush=True)
