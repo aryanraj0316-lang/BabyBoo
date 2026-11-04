@@ -118,6 +118,7 @@ export interface SceneState {
   pillOpacity: number;
   dotVisible: number;
   dotTravel: number;
+  gestureProgress: number;
   dotScale: number;
   dotCore: number;
   dotRing: number;
@@ -223,7 +224,7 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
   const sw = swipeOffset(feedT);
   const feedStretch = 1 + SW.stretch * clamp(sw.speed / SWIPE_PEAK_V, 0, 1);
 
-  const drain = bezier(STANDARD, progress(feedT, BAT.drainFrom, BAT.drainTo));
+  const drain = progress(feedT, BAT.drainFrom, BAT.drainTo);
   const batteryLevel = lerp(BAT.start, BAT.end, drain);
 
   const toastIn = feedT < TOAST.inAt ? 0 : springAt(feedT - TOAST.inAt, spring.snappy.stiffness, spring.snappy.dampingRatio).x;
@@ -238,9 +239,10 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
   const exitP = bezier(ACCELERATE, progress(u, U.release[0], U.release[1]));
   const dotTravel = U.travelOfScreen * swipeP;
 
-  // The lock layer is held by the dot: same displacement while swiping, then slides off the top.
-  const lockOffset = u < U.release[0] ? dotTravel : lerp(U.travelOfScreen, 1, exitP);
-  const lockOpacity = u < U.release[0] ? lerp(1, U.lockFadeTo, swipeP) : lerp(U.lockFadeTo, 0, exitP);
+  // A screen-off letter gesture finishes before the dark layer fades away.
+  const gestureProgress = progress(u, U.swipe[0], U.swipe[1]);
+  const lockOffset = 0;
+  const lockOpacity = 1 - exitP;
   const lockVisible = t >= DIM_END && u < U.release[1] ? 1 : 0;
 
   const appear = bezier(DECELERATE, progress(u, U.appear[0], U.appear[1]));
@@ -328,6 +330,7 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
     pillOpacity,
     dotVisible,
     dotTravel,
+    gestureProgress,
     dotScale,
     dotCore,
     dotRing,

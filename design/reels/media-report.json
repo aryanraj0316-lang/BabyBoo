@@ -1,0 +1,136 @@
+[
+    {
+        "originalSha256":  "ED07D52136E1928CB62173B599C46DBC1B82652485BF295FFA3833C8BFA1DEA8",
+        "desktopMatch":  true,
+        "source":  "17215069_2160_3840_30fps.mp4",
+        "probe":  {
+                      "programs":  [
+
+                                   ],
+                      "stream_groups":  [
+                                            {
+                                                "streams":  [
+                                                                "@{codec_name=h264; width=540; height=960; avg_frame_rate=30/1}"
+                                                            ]
+                                            }
+                                        ],
+                      "streams":  [
+                                      {
+                                          "codec_name":  "h264",
+                                          "width":  540,
+                                          "height":  960,
+                                          "avg_frame_rate":  "30/1"
+                                      }
+                                  ],
+                      "format":  {
+                                     "duration":  "3.000000"
+                                 }
+                  },
+        "bytes":  288270,
+        "file":  "assets\\onboarding\\screen1\\reels\\01-husky.mp4"
+    },
+    {
+        "originalSha256":  "9F551462F3FB8A4B40EFE8C5E3B0CD0302B8F49CC3A5C8354039EBFAE1721B1B",
+        "desktopMatch":  true,
+        "source":  "13197974_2160_3840_60fps.mp4",
+        "probe":  {
+                      "programs":  [
+
+                                   ],
+                      "stream_groups":  [
+
+                                        ],
+                      "streams":  [
+                                      {
+                                          "codec_name":  "h264",
+                                          "width":  540,
+                                          "height":  960,
+                                          "avg_frame_rate":  "30/1"
+                                      }
+                                  ],
+                      "format":  {
+                                     "duration":  "3.000000"
+                                 }
+                  },
+        "bytes":  269839,
+        "file":  "assets\\onboarding\\screen1\\reels\\02-waterfall.mp4"
+    },
+    {
+        "originalSha256":  "A8004D599FF2E8620032EA9DD03745EB1D69AE5B2AD0D45B6CF6DD93112EE0CC",
+        "desktopMatch":  true,
+        "source":  "17058659_2160_3840_24fps.mp4",
+        "probe":  {
+                      "programs":  [
+
+                                   ],
+                      "stream_groups":  [
+
+                                        ],
+                      "streams":  [
+                                      {
+                                          "codec_name":  "h264",
+                                          "width":  540,
+                                          "height":  960,
+                                          "avg_frame_rate":  "30/1"
+                                      }
+                                  ],
+                      "format":  {
+                                     "duration":  "3.000000"
+                                 }
+                  },
+        "bytes":  312366,
+        "file":  "assets\\onboarding\\screen1\\reels\\03-palms.mp4"
+    },
+    {
+        "originalSha256":  "D7DA8BEDF0E878556666DC917510025C38408B301EA32F49F5D31F5186380929",
+        "desktopMatch":  true,
+        "source":  "12618444_1080_1920_60fps.mp4",
+        "probe":  {
+                      "programs":  [
+
+                                   ],
+                      "stream_groups":  [
+
+                                        ],
+                      "streams":  [
+                                      {
+                                          "codec_name":  "h264",
+                                          "width":  540,
+                                          "height":  960,
+                                          "avg_frame_rate":  "30/1"
+                                      }
+                                  ],
+                      "format":  {
+                                     "duration":  "3.000000"
+                                 }
+                  },
+        "bytes":  244773,
+        "file":  "assets\\onboarding\\screen1\\reels\\04-hiker.mp4"
+    },
+    {
+        "originalSha256":  "FFC785BB67B139191E0E4ED3B99892A8D30649E22FF591C838A647A1FE346D19",
+        "desktopMatch":  true,
+        "source":  "8888807-uhd_2160_4096_25fps.mp4",
+        "probe":  {
+                      "programs":  [
+
+                                   ],
+                      "stream_groups":  [
+
+                                        ],
+                      "streams":  [
+                                      {
+                                          "codec_name":  "h264",
+                                          "width":  540,
+                                          "height":  960,
+                                          "avg_frame_rate":  "30/1"
+                                      }
+                                  ],
+                      "format":  {
+                                     "duration":  "3.000000"
+                                 }
+                  },
+        "bytes":  279034,
+        "file":  "assets\\onboarding\\screen1\\reels\\05-gaming.mp4"
+    }
+]

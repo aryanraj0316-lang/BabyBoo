@@ -4,17 +4,20 @@
  * the empty-battery icon and the shutdown dim. As the screen dims it also loses
  * colour and contrast, the way a real screen dims; there is no instant cut.
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   BackdropBlur, ColorMatrix, Group, Paint, Paragraph, Rect, RoundedRect, Skia, rrect, rect as skRect,
 } from '@shopify/react-native-skia';
-import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
+import { runOnJS, useAnimatedReaction, useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { lerp, rgba } from '../anim';
 import type { Rect as R } from '../layout';
 import type { SceneState } from '../timeline';
-import { dim as DIM, emptyBattery as EB, palette, reels, swipes as SW, toast as TOAST } from '../tokens';
+import { dim as DIM, emptyBattery as EB, palette, swipes as SW, toast as TOAST } from '../tokens';
 import { PhoneStatusBar } from './PhoneStatusBar';
 import { ReelClip } from './ReelClip';
+import { REEL_MEDIA, useReelUris } from './VideoReel';
+import { useReducedMotion } from '../useDemoClock';
+import { BatteryTakeover } from './BatteryTakeover';
 
 interface Props {
   screen: R;
@@ -22,8 +25,8 @@ interface Props {
   toastText: string;
 }
 
-/** Reel positions in the strip: one more than the number of completed swipes. */
-const POSITIONS = SW.times.length + 1;
+/** Current reels plus an extra tile behind the final partial/stalled swipe. */
+const POSITIONS = SW.times.length + 2;
 
 /** When the reel at each strip position is on screen (for its progress bar). */
 function playWindow(pos: number): [number, number] {
@@ -116,6 +119,13 @@ function EmptyBattery({ screen, state }: { screen: R; state: SharedValue<SceneSt
 }
 
 export function Feed({ screen, state, toastText }: Props) {
+  const uris = useReelUris();
+  const reducedMotion = useReducedMotion();
+  const [visiblePosition, setVisiblePosition] = useState(0);
+  useAnimatedReaction(
+    () => Math.max(0, Math.floor(state.value.feedOffset + 0.001)),
+    (next, previous) => { if (next !== previous) runOnJS(setVisiblePosition)(next); },
+  );
   const H = screen.height;
   const feedTime = useDerivedValue(() => state.value.feedTime);
   const cx = screen.x + screen.width / 2;
@@ -148,7 +158,11 @@ export function Feed({ screen, state, toastText }: Props) {
             <ReelClip
               key={pos}
               rect={{ x: screen.x, y: screen.y + pos * H, width: screen.width, height: H }}
-              index={pos % reels.length}
+              index={pos % REEL_MEDIA.length}
+              position={pos}
+              videoUri={uris[pos % REEL_MEDIA.length] ?? null}
+              decode={!reducedMotion && (pos === visiblePosition || pos === visiblePosition + 1)}
+              state={state}
               time={feedTime}
               playFrom={from}
               playTo={to}
@@ -158,7 +172,7 @@ export function Feed({ screen, state, toastText }: Props) {
       </Group>
       <PhoneStatusBar screen={screen} level={level} levelColor={levelColor} />
       <BatteryToast screen={screen} state={state} text={toastText} />
-      <EmptyBattery screen={screen} state={state} />
+      <BatteryTakeover screen={screen} state={state} label={toastText} />
       <Rect x={screen.x} y={screen.y} width={screen.width} height={H} color="black" opacity={black} />
     </Group>
   );

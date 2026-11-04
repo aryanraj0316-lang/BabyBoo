@@ -251,17 +251,17 @@ export const duration = { frame: 150, short: 250, medium: 400, long: 600 } as co
 // ---------------------------------------------------------------------------
 
 export const demo = {
-  loop: 11.0,
+  loop: 24.0,
   beats: {
     reels: 0, // Beat 1
-    battery: 3.5, // Beat 2
-    shutdown: 5.5, // Beat 3
-    unlock: 6.8, // Beat 4
-    unlocked: 8.1, // Beat 5
-    rest: 9.8, // Beat 6
+    battery: 7.5, // Beat 2
+    shutdown: 12.5, // Beat 3
+    unlock: 15.5, // Beat 4: draw A on the dark screen
+    unlocked: 19.0, // Beat 5
+    rest: 21.5, // Beat 6
   },
   /** Composed still for reduced motion: unlocked home screen, Buddy waving, warm halo. */
-  stillTime: 9.4,
+  stillTime: 20.8,
 } as const;
 
 /**
@@ -270,20 +270,21 @@ export const demo = {
  * stalls: it travels `stall.reach` of a reel, then settles back.
  */
 export const swipes = {
-  times: [0.6, 1.45, 2.3, 3.15, 3.95, 4.75],
-  energy: [1, 1, 1, 1, 0.45, 0.22],
-  stall: { time: 5.2, reach: 0.42, rise: 0.32, settle: 0.45 },
+  // Five real videos, about 1.5 seconds each, with slower physical swipes.
+  times: [1.5, 3.0, 4.5, 6.0],
+  energy: [0.45, 0.45, 0.45, 0.22],
+  stall: { time: 7.5, reach: 0.18, rise: 0.55, settle: 0.7 },
   /** Vertical stretch at full swipe speed, released as it settles. */
   stretch: 0.02,
 } as const;
 
 export const battery = {
-  start: 0.23,
-  end: 0.05,
-  drainFrom: 3.5,
-  drainTo: 5.5,
-  amberBelow: 0.15,
-  redBelow: 0.08,
+  start: 0.20,
+  end: 0,
+  drainFrom: 9.0,
+  drainTo: 12.4,
+  amberBelow: 0.23,
+  redBelow: 0.10,
   /** Colour tween width around each threshold (battery fraction). */
   blend: 0.015,
   /** Fresh session after unlock. */
@@ -291,8 +292,8 @@ export const battery = {
 } as const;
 
 export const toast = {
-  inAt: 4.0,
-  outAt: 5.5,
+  inAt: 7.6,
+  outAt: 8.4,
   topOfScreen: 0.1, // resting top, below the status bar
   heightOfScreen: 0.075,
   widthOfScreen: 0.62,
@@ -303,8 +304,20 @@ export const toast = {
   text: '#FFFFFF',
 } as const;
 
+export const batteryTakeover = {
+  from: 8.3, length: 0.7,
+  background: ['#11131A', '#211D2D'],
+  widthOfScreen: 0.46, heightOfScreen: 0.35, topOfScreen: 0.30,
+  radiusOfWidth: 0.045, strokeOfWidth: 0.009, insetOfWidth: 0.026,
+  capWidthOfScreen: 0.18, capHeightOfScreen: 0.025,
+  counterSizeOfScreen: 0.25, counterYOfScreen: 0.79,
+  labelSizeOfScreen: 0.080, labelYOfScreen: 0.20,
+  outline: '#9C99AA', ink: '#F0EDF8', housing: '#272631',
+  waveOfWidth: 0.009, waveSpeed: 3.2,
+} as const;
+
 export const emptyBattery = {
-  inAt: 5.5,
+  inAt: 12.4,
   widthOfScreen: 0.26,
   heightOfScreen: 0.12, // of the screen width
   scaleFrom: 0.9,
@@ -313,15 +326,15 @@ export const emptyBattery = {
 } as const;
 
 export const dim = {
-  at: 5.9,
-  length: 0.5,
+  at: 12.5,
+  length: 1.0,
   /** Remaining saturation and contrast when fully dim (the screen loses colour as it fades). */
   saturation: 0.15,
   contrast: 0.8,
 } as const;
 
 export const homePill = {
-  inAt: 6.5,
+  inAt: 14.0,
   widthOfScreen: 0.3,
   height: 4,
   bottomOfScreen: 0.025,
@@ -332,11 +345,24 @@ export const homePill = {
 
 /** Beat 4 timings, relative to demo.beats.unlock (seconds). */
 export const unlock = {
-  appear: [0, 0.15],
-  hold: [0.15, 0.35],
-  swipe: [0.35, 0.8],
-  release: [0.8, 1.05],
-  settle: [1.05, 1.3],
+  appear: [0, 0.35],
+  hold: [0.35, 0.65],
+  swipe: [0.65, 2.75],
+  release: [2.75, 3.5],
+  settle: [3.15, 3.9],
+  // Authored finger strokes: one loose up/down stroke, then a lifted crossbar.
+  // Each starts with a point, followed by cubic control/control/end triples.
+  aStrokes: [
+    [[0.21, 0.72], [0.25, 0.69], [0.285, 0.58], [0.315, 0.54],
+     [0.35, 0.49], [0.385, 0.435], [0.408, 0.395],
+     [0.432, 0.36], [0.465, 0.30], [0.486, 0.314],
+     [0.502, 0.322], [0.507, 0.375], [0.522, 0.412],
+     [0.545, 0.475], [0.578, 0.54], [0.595, 0.574],
+     [0.622, 0.642], [0.654, 0.702], [0.695, 0.73]],
+    [[0.29, 0.58], [0.36, 0.56], [0.39, 0.589], [0.45, 0.574],
+     [0.52, 0.565], [0.57, 0.548], [0.66, 0.552]],
+  ],
+  aLegEnd: 0.36, aSidesEnd: 0.72, aCrossbarStart: 0.82,
   /** How far the dot travels, as a fraction of the screen height. */
   travelOfScreen: 0.45,
   lockFadeTo: 0.6,
@@ -377,7 +403,7 @@ export const home = {
     '#C7B8FF', '#8FD3E8', '#FFC2DA', '#B9E59A',
     '#FFCFA3', '#A3E3D0', '#D5C2FF', '#9EC9F0',
   ],
-  iconsFrom: 1.05, // relative to the unlock beat: as the home screen settles
+  iconsFrom: 3.25, // relative to the unlock beat: as the home screen settles
   stagger: 0.025,
   iconScaleFrom: 0.85,
   iconDuration: 0.25,
@@ -386,12 +412,12 @@ export const home = {
 /** Scene halo states (palette.halo colours) and when they change. */
 export const haloTimeline = {
   dimFactor: 0.08, // what is left of the halo at shutdown
-  warmAt: 7.85,
-  warmLength: 0.6,
+  warmAt: 18.25,
+  warmLength: 0.9,
 } as const;
 
 /** Loop seam: the phone screen and Buddy crossfade back to Beat 1. */
-export const loopSeam = { at: 10.6, length: 0.4 } as const;
+export const loopSeam = { at: 23.2, length: 0.8 } as const;
 
 // ---------------------------------------------------------------------------
 // Buddy: performance (section 7)
@@ -400,16 +426,16 @@ export const loopSeam = { at: 10.6, length: 0.4 } as const;
 /** Frame changes: [time, frame, big]. Big changes get anticipation. */
 export const buddyTimeline = [
   [0, 'watch_34_left', false],
-  [3.5, 'worried_paws', false],
-  [4.6, 'worried_wavy', false],
-  [5.6, 'yawn', false],
-  [6.2, 'sleepy', false],
-  [6.8, 'surprised', true],
-  [7.15, 'point_left', false],
-  [8.1, 'arms_up', true],
-  [8.9, 'wave', false],
-  [9.8, 'happy_front', false],
-  [10.6, 'watch_34_left', false],
+  [7.6, 'worried_wavy', false],
+  [10.5, 'worried_paws', false],
+  [12.7, 'yawn', false],
+  [13.6, 'sleepy', false],
+  [15.5, 'surprised', false],
+  [16.15, 'point_left', false],
+  [19.0, 'arms_up', false],
+  [20.2, 'wave', false],
+  [21.5, 'happy_front', false],
+  [23.2, 'watch_34_left', false],
 ] as const;
 
 export const buddyMotion = {

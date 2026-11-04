@@ -1,6 +1,5 @@
 /**
- * One reel: a bright gradient with a few friendly shapes that move gently, so
- * it reads as video, plus generic overlay UI (progress bar, an action rail of
+ * One local video reel, plus generic overlay UI (progress bar, an action rail of
  * heart / comment / share with skeleton counts, two skeleton caption lines).
  * No real app's logos or UI.
  *
@@ -12,6 +11,8 @@ import { Circle, Group, LinearGradient, Oval, Path, Rect, RoundedRect, Skia, vec
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import type { Rect as R } from '../layout';
 import { palette, reelShapes as RS, reelUi as U, reels } from '../tokens';
+import type { SceneState } from '../timeline';
+import { VideoReel } from './VideoReel';
 
 interface Props {
   rect: R;
@@ -19,6 +20,10 @@ interface Props {
   time: SharedValue<number>;
   playFrom: number;
   playTo: number;
+  position: number;
+  videoUri: string | null;
+  decode: boolean;
+  state: SharedValue<SceneState>;
 }
 
 // Icons and the star, in a 24-unit box.
@@ -102,10 +107,9 @@ function Shape({ rect, kind, item, color, time }: {
   return <Group transform={transform}>{body}</Group>;
 }
 
-export function ReelClip({ rect, index, time, playFrom, playTo }: Props) {
+export function ReelClip({ rect, index, time, playFrom, playTo, position, videoUri, decode, state }: Props) {
   const { x, y, width: w, height: h } = rect;
   const reel = reels[index];
-  const scene = RS.scenes[index];
 
   const icon = U.railIconOfScreen * w;
   const railX = x + w - U.railRightOfScreen * w - icon;
@@ -137,9 +141,7 @@ export function ReelClip({ rect, index, time, playFrom, playTo }: Props) {
       <Rect x={x} y={y} width={w} height={h}>
         <LinearGradient start={vec(x, y)} end={vec(x, y + h)} colors={[reel.bg[0], reel.bg[1]]} />
       </Rect>
-      {scene.items.map((item, i) => (
-        <Shape key={i} rect={rect} kind={scene.kind} item={item} color={reel.shapes[i]} time={time} />
-      ))}
+      <VideoReel rect={rect} index={index} uri={videoUri} position={position} decode={decode} state={state} />
 
       {/* Soft neutral bottom shade so the overlay UI reads on any clip. */}
       <Rect x={x} y={scrimTop} width={w} height={h * U.scrimOfScreen}>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { springAt } from './anim';
 import { FRAME_IDS, sceneAt } from './timeline';
-import { buddyTimeline, demo, spring, swipes, unlock } from './tokens';
+import { battery, batteryTakeover, buddyTimeline, demo, dim, spring, swipes, unlock } from './tokens';
 
 const L = demo.loop;
 const at = (t: number, elapsed = t) => sceneAt(t, elapsed, 1);
@@ -34,41 +34,55 @@ describe('demo timeline', () => {
 
   it('slows the swipes in Beat 2 and stalls the last one', () => {
     const fast = at(swipes.times[0] + 0.1).feedOffset - 0;
-    const slow = at(swipes.times[5] + 0.1).feedOffset - 5;
+    const last = swipes.times.length - 1;
+    const slow = at(swipes.times[last] + 0.1).feedOffset - last;
     expect(slow).toBeLessThan(fast);
     const stallPeak = at(swipes.stall.time + swipes.stall.rise).feedOffset;
-    expect(stallPeak).toBeGreaterThan(6.3);
-    expect(at(demo.beats.shutdown + 0.35).feedOffset).toBeCloseTo(6, 1);
+    expect(stallPeak).toBeGreaterThan(swipes.times.length + swipes.stall.reach * 0.9);
+    expect(at(demo.beats.shutdown + 0.35).feedOffset).toBeCloseTo(swipes.times.length, 1);
   });
 
   it('stretches the feed only while it moves fast', () => {
     expect(at(0.3).feedStretch).toBe(1);
-    expect(at(swipes.times[0] + 0.04).feedStretch).toBeGreaterThan(1.01);
+    expect(at(swipes.times[0] + 0.08).feedStretch).toBeGreaterThan(1.005);
     expect(at(swipes.times[0] + 0.8).feedStretch).toBeLessThan(1.001);
   });
 
-  it('drains the battery from green to red', () => {
-    expect(at(1).batteryLevel).toBeCloseTo(0.23, 3);
-    expect(at(5.5).batteryLevel).toBeCloseTo(0.05, 3);
-    expect(at(1).batteryColor).toEqual([52, 199, 89]); // battery.green
-    expect(at(5.5).batteryColor.map(Math.round)).toEqual([255, 59, 48]); // battery.red
+  it('holds the large battery at 20% before draining to zero and red', () => {
+    expect(at(batteryTakeover.from + batteryTakeover.length).batteryLevel).toBeCloseTo(0.20, 3);
+    expect(at(battery.drainTo).batteryLevel).toBe(0);
+    expect(at(1).batteryColor).toEqual([255, 159, 10]);
+    expect(at(battery.drainTo).batteryColor.map(Math.round)).toEqual([255, 59, 48]);
+    const levels = Array.from({ length: 30 }, (_, i) => at(battery.drainFrom + i * (battery.drainTo - battery.drainFrom) / 29).batteryLevel);
+    expect(levels.every((value, i) => i === 0 || value <= levels[i - 1])).toBe(true);
   });
 
-  it('keeps the dot, trail and lock layer moving together', () => {
+  it('keeps the phone dark until the full A gesture completes, then unlocks', () => {
     for (let u = unlock.swipe[0]; u <= unlock.release[0]; u += 0.02) {
       const s = at(demo.beats.unlock + u);
-      expect(s.lockOffset).toBeCloseTo(s.dotTravel, 6);
+      expect(s.lockOffset).toBe(0);
+      expect(s.lockOpacity).toBe(1);
     }
     const released = at(demo.beats.unlock + unlock.release[1] - 0.001);
-    expect(released.dotCore).toBeGreaterThan(0.3); // fades, not deleted
+    expect(released.gestureProgress).toBe(1);
+    expect(released.dotCore).toBeGreaterThan(0); // fades, not deleted
     expect(released.trailOpacity).toBeLessThan(0.01);
+    expect(at(demo.beats.unlocked).lockVisible).toBe(0);
   });
 
   it('dims to black before the lock layer takes over, and shows no dot before Beat 4', () => {
-    expect(at(6.45).dim).toBeCloseTo(1, 3);
-    expect(at(6.45).lockVisible).toBe(1);
-    expect(at(6.7).dotVisible).toBe(0);
-    expect(at(6.85).dotVisible).toBe(1);
+    expect(at(dim.at + dim.length + 0.05).dim).toBeCloseTo(1, 3);
+    expect(at(dim.at + dim.length + 0.05).lockVisible).toBe(1);
+    expect(at(demo.beats.unlock - 0.1).dotVisible).toBe(0);
+    expect(at(demo.beats.unlock + 0.1).dotVisible).toBe(1);
+  });
+
+  it('gives all five reels readable holds in a slower 24-second loop', () => {
+    expect(demo.loop).toBe(24);
+    expect(swipes.times).toHaveLength(4);
+    expect(swipes.times[0]).toBeGreaterThanOrEqual(1.5);
+    for (let i = 1; i < swipes.times.length; i++) expect(swipes.times[i] - swipes.times[i - 1]).toBeGreaterThanOrEqual(1.5);
+    expect(batteryTakeover.from - swipes.times[3]).toBeGreaterThan(2);
   });
 
   it('shows the frame mapping from section 7', () => {
