@@ -20,8 +20,10 @@ Android final vertical/freehand version: `gradlew.bat :app:assembleDebug -Preact
 
 Earlier versions were recorded on that device: allfive videos playing,24-second story, battery countdown, letterA and stationary Buddy were visible in reviewed contact sheets. Those captures are preserved locally under device_review, slower_review and final_review. They do **not** show the final vertical/freehand refinement.
 
-## Current device verification status
+## Device verification completed
 
-Final capture attempt failed `INVALID_LAYER_STACK`. Diagnostics: MainActivity is resumed, wakefulnessAwake, `mProximityPositive=true`; physical display remains off. Two wake attempts/screenshots returned black. No JavaScript fatal error appeared in the checked log window. User was asked to place the phone face-up and uncover the earpiece sensor. No call was ended or device settings altered.
+The first capture attempt failed `INVALID_LAYER_STACK` while the phone's proximity sensor kept its display off. On resume, proximity was false and the display was on. MainActivity was brought to the foreground and the latest installed version was successfully recorded. No call was ended or device settings altered.
 
-Latest appearance remains **unverified** until the sensor clears and a fresh recording is extracted/reviewed. Planned final evidence folder: design/reels/review/. Do not present earlier captures as proof of this final refinement. Stop after delivering the final verified preview for user approval; do not extend to another phase.
+Final evidence is in `design/reels/review/`:30.066s recording at720x1600,301 extracted local10fps frames, two2fps contact sheets, full-size battery/A/reel screenshots and a cropped battery/A pair. Both sheets and full-size frames0031,0113 and0176 were visually reviewed. The vertical countdown changes20% to0%, amber to red; the authoredA has an uneven continuous main stroke and a lifted wavy crossbar. The screen stays dark untilA finishes. Allfive videos scroll and visibly play. Buddy changes approved images without added body motion; no obvious clipped ears/paws, image stretching or background rectangle was visible. Phone layout/text/CTA/language toggle remain intact; debug controls are absent. System status/navigation bars remain.
+
+The shareable video is a30fps re-encode of the physical phone capture, not a synthetic render or a native frame-rate benchmark. Raw capture and extracted frames are retained locally; only reviewed delivery evidence is committed. This completes implementation and device review, not user appearance approval. Stop for that approval before more work.
