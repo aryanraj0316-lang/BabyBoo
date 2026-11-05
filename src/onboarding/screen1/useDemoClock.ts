@@ -10,7 +10,7 @@
  */
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, AppState } from 'react-native';
-import { useDerivedValue, useFrameCallback, useSharedValue } from 'react-native-reanimated';
+import { runOnJS, useAnimatedReaction, useDerivedValue, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { sceneAt } from './timeline';
 import { demo } from './tokens';
 
@@ -33,6 +33,14 @@ export function useDemoClock(ready: boolean, reducedMotion: boolean) {
   const paused = useSharedValue(false);
   const still = useSharedValue(reducedMotion);
   const [appActive, setAppActive] = useState(AppState.currentState === 'active');
+  const [firstLoopComplete, setFirstLoopComplete] = useState(false);
+
+  useAnimatedReaction(
+    () => elapsed.value >= demo.loop,
+    (complete, previous) => {
+      if (complete && !previous) runOnJS(setFirstLoopComplete)(true);
+    },
+  );
 
   useEffect(() => {
     still.set(reducedMotion);
@@ -52,8 +60,10 @@ export function useDemoClock(ready: boolean, reducedMotion: boolean) {
   }, false);
 
   useEffect(() => {
-    frame.setActive(ready && appActive && !reducedMotion);
-  }, [frame, ready, appActive, reducedMotion]);
+    // Keep foreground viewing time under reduced motion too; the scene below
+    // stays parked, while the first-loop CTA can become available normally.
+    frame.setActive(ready && appActive);
+  }, [frame, ready, appActive]);
 
   const state = useDerivedValue(() => {
     if (still.value) return sceneAt(demo.stillTime, 0, 0);
@@ -61,5 +71,5 @@ export function useDemoClock(ready: boolean, reducedMotion: boolean) {
     return sceneAt(t, elapsed.value, 1);
   });
 
-  return { state, elapsed, paused };
+  return { state, elapsed, paused, firstLoopComplete };
 }

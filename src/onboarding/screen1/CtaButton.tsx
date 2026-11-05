@@ -9,17 +9,24 @@ import { cta as C, palette, spring, type } from './tokens';
 interface Props {
   label: string;
   onPress: () => void;
+  visible?: boolean;
 }
 
 const SNAPPY = springConfig(spring.snappy);
 
-export function CtaButton({ label, onPress }: Props) {
+export function CtaButton({ label, onPress, visible = true }: Props) {
   const scale = useSharedValue(1);
   const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   return (
-    <Animated.View style={[styles.wrap, animated]}>
+    <Animated.View
+      pointerEvents={visible ? 'auto' : 'none'}
+      accessibilityElementsHidden={!visible}
+      importantForAccessibility={visible ? 'auto' : 'no-hide-descendants'}
+      style={[styles.wrap, animated, !visible && styles.hidden]}
+    >
       <Pressable
+        disabled={!visible}
         onPress={onPress}
         onPressIn={() => {
           scale.set(withSpring(C.pressScale, SNAPPY));
@@ -42,6 +49,7 @@ export function CtaButton({ label, onPress }: Props) {
 
 const styles = StyleSheet.create({
   wrap: { alignSelf: 'stretch' },
+  hidden: { opacity: 0 }, // Keep the measured slot so nothing shifts on reveal.
   button: {
     minHeight: C.height,
     paddingVertical: C.paddingV,

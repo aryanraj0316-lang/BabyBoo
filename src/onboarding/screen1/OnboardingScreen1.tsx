@@ -123,7 +123,7 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
           >
             {t.subline}
           </Text>
-          <CtaButton label={t.cta} onPress={onGetStarted} />
+          <CtaButton label={t.cta} onPress={onGetStarted} visible={clock.firstLoopComplete} />
         </View>
 
         <View style={styles.airBelow} />
