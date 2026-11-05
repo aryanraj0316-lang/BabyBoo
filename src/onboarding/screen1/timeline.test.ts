@@ -90,8 +90,13 @@ describe('demo timeline', () => {
     expect(at(demo.beats.unlock + 0.1).dotVisible).toBe(1);
   });
 
-  it('gives all five reels readable holds in a slower 24-second loop', () => {
-    expect(demo.loop).toBe(24);
+  it('keeps all five reel holds and adds two seconds of sleep before the parent turn', () => {
+    expect(demo.loop).toBe(26);
+    expect(demo.beats.unlock).toBe(17.5);
+    expect(demo.beats.unlocked - demo.beats.unlock).toBe(3.5);
+    expect(FRAME_IDS[at(15.6).frameTo]).toBe('sleepy');
+    expect(FRAME_IDS[at(demo.beats.unlock - 0.01).frameTo]).toBe('sleepy');
+    expect(at(16.5).dotVisible).toBe(0);
     expect(swipes.times).toHaveLength(4);
     expect(swipes.times[0]).toBeGreaterThanOrEqual(1.5);
     for (let i = 1; i < swipes.times.length; i++) expect(swipes.times[i] - swipes.times[i - 1]).toBeGreaterThanOrEqual(1.5);

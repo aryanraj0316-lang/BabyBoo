@@ -259,18 +259,21 @@ export const duration = { frame: 150, short: 250, medium: 400, long: 600 } as co
 // The demo (Phase 3): one master clock, named beats. Times in seconds.
 // ---------------------------------------------------------------------------
 
+// Extra quiet time requested before the parent hand-off. Later beats move
+// together so the A gesture and ending keep their existing durations.
+const extraSleep = 2.0;
 export const demo = {
-  loop: 24.0,
+  loop: 24.0 + extraSleep,
   beats: {
     reels: 0, // Beat 1
     battery: 7.5, // Beat 2
     shutdown: 12.5, // Beat 3
-    unlock: 15.5, // Beat 4: draw A on the dark screen
-    unlocked: 19.0, // Beat 5
-    rest: 21.5, // Beat 6
+    unlock: 15.5 + extraSleep, // Beat 4: draw A on the dark screen
+    unlocked: 19.0 + extraSleep, // Beat 5
+    rest: 21.5 + extraSleep, // Beat 6
   },
   /** Composed still for reduced motion: unlocked home screen, Buddy waving, warm halo. */
-  stillTime: 20.8,
+  stillTime: 20.8 + extraSleep,
 } as const;
 
 /**
@@ -446,12 +449,12 @@ export const home = {
 /** Scene halo states (palette.halo colours) and when they change. */
 export const haloTimeline = {
   dimFactor: 0.08, // what is left of the halo at shutdown
-  warmAt: 18.25,
+  warmAt: demo.beats.unlock + unlock.release[0],
   warmLength: 0.9,
 } as const;
 
 /** Loop seam: the phone screen and Buddy crossfade back to Beat 1. */
-export const loopSeam = { at: 23.2, length: 0.8 } as const;
+export const loopSeam = { at: demo.loop - 0.8, length: 0.8 } as const;
 
 // ---------------------------------------------------------------------------
 // Buddy: performance (section 7)
@@ -464,12 +467,12 @@ export const buddyTimeline = [
   [10.5, 'worried_paws', false],
   [12.7, 'yawn', false],
   [13.6, 'sleepy', false],
-  [15.5, 'surprised', false],
-  [16.15, 'point_left', false],
-  [19.0, 'arms_up', false],
-  [20.2, 'wave', false],
-  [21.5, 'happy_front', false],
-  [23.2, 'watch_34_left', false],
+  [demo.beats.unlock, 'surprised', false],
+  [demo.beats.unlock + unlock.swipe[0], 'point_left', false],
+  [demo.beats.unlocked, 'arms_up', false],
+  [demo.beats.unlocked + 1.2, 'wave', false],
+  [demo.beats.rest, 'happy_front', false],
+  [loopSeam.at, 'watch_34_left', false],
 ] as const;
 
 export const buddyMotion = {

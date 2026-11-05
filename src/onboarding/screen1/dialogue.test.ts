@@ -25,7 +25,17 @@ describe('Buddy dialogue on the existing story', () => {
     expect(parents.to - parents.from).toBeGreaterThanOrEqual(1.7);
     expect(draw.to - draw.from).toBeGreaterThan(2);
     expect(parents.from).toBeLessThan(demo.beats.unlock);
+    const nap = dialogueTurns.find(t => t.id === 'sleepy')!;
+    expect(nap.to - nap.from).toBeCloseTo(3.2);
+    expect(DIALOGUE_IDS[dialogueAt(16, 1).id]).toBe('sleepy');
     expect(parents.to).toBe(draw.from);
+    for (let t = parents.from; t < parents.to; t += 0.1) {
+      const phone = sceneAt(t, t, 1);
+      expect(phone.lockVisible).toBe(1);
+      expect(phone.lockOpacity).toBe(1);
+      expect(phone.feedOpacity).toBe(0);
+      expect(phone.dim).toBe(1);
+    }
     expect(draw.from).toBeGreaterThanOrEqual(demo.beats.unlock + unlock.swipe[0]);
     expect(draw.to).toBeLessThan(demo.beats.unlocked);
   });
