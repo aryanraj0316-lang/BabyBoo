@@ -215,6 +215,14 @@ export const textBlock = {
   maxWidth: 360, // keeps line length comfortable on wide screens
 } as const;
 
+/** Checkpoint 1: one quiet dialogue bubble; no dialogue sequence yet. */
+export const speechBubble = {
+  maxWidth: 140, phoneGap: 8, headGap: 9, edgeInset: 12,
+  paddingH: 12, paddingV: 10, radius: 16, tail: 8,
+  fontSize: 13, lineHeight: 19,
+  surface: '#FFFEF7', ink: '#303A34', shadow: '#3C4938',
+} as const;
+
 export const cta = {
   height: 56, // minimum; grows with large accessibility fonts
   paddingV: 8,

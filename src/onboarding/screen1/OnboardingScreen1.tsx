@@ -23,6 +23,7 @@ import { CtaButton } from './CtaButton';
 import { DebugScrubber } from './DebugScrubber';
 import { useDemoClock, useReducedMotion } from './useDemoClock';
 import { Scene } from './scene/Scene';
+import { BuddySpeechBubble } from './scene/BuddySpeechBubble';
 import { STRINGS, type Language } from './strings';
 import { page, palette, textBlock as TB, type } from './tokens';
 
@@ -127,6 +128,10 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
 
         <View style={styles.airBelow} />
       </View>
+      {layout && root && <BuddySpeechBubble
+        layout={layout} screenWidth={root.width} screenHeight={root.height}
+        state={clock.state} text={t.buddyTimesUp}
+      />}
     </View>
   );
 }

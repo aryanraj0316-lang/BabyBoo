@@ -13,6 +13,7 @@ export const STRINGS: Record<Language, {
   toggleA11y: string;
   /** Shown inside the demo phone (decorative). */
   batteryLow: string;
+  buddyTimesUp: string;
 }> = {
   en: {
     headline: 'Screen time ends with no one being the bad guy.',
@@ -21,8 +22,10 @@ export const STRINGS: Record<Language, {
     toggleLabel: 'EN',
     toggleA11y: 'English',
     batteryLow: 'Battery low',
+    buddyTimesUp: "Time's up!",
   },
   hi: {
+    buddyTimesUp: 'समय पूरा!',
     headline: 'स्क्रीन टाइम बिना किसी के विलेन बने खत्म होता है।',
     subline: 'BabyBoo आपके बच्चे को प्यार से फोन को अलविदा कहने में मदद करता है।',
     cta: 'शुरू करें',
