@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,10 @@ import {
   ScrollView,
   Keyboard,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const mascotBodySource = require('../../assets/mascot_body.png');
-const mascotHandSource = require('../../assets/mascot_hand.png');
+import { SCREEN2_BUDDY_FRAMES } from '../onboarding/screen2/buddyFrames';
+import { palette, speechBubble, type as typography } from '../onboarding/screen1/tokens';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -35,6 +36,17 @@ interface OnboardingSecondScreenNativeProps {
 
 type Language = 'en' | 'hi';
 
+const CARD_COPY = {
+  en: {
+    title: "Buddy's Friend Card", tag: 'NEW FRIEND', name: 'Name', age: 'Age', colour: 'Favourite colour',
+    inputLabel: "Child's name", emptyCard: 'Friend card, ready to personalise', buddy: 'Buddy waving hello',
+  },
+  hi: {
+    title: 'दोस्ती का कार्ड', tag: 'नया दोस्त', name: 'नाम', age: 'उम्र', colour: 'पसंदीदा रंग',
+    inputLabel: 'बच्चे का नाम', emptyCard: 'दोस्ती का कार्ड, जानकारी भरने के लिए तैयार', buddy: 'नमस्ते करता बडी',
+  },
+} as const;
+
 const AGE_OPTIONS = [
   { id: 'under_1', label: 'Under 1', desc: 'Under 12 months' },
   { id: 'age_1', label: '1 year', desc: '12–23 months' },
@@ -52,20 +64,38 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const [lang, setLang] = useState<Language>(initialLanguage);
   const [childName, setChildName] = useState<string>('');
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
+  const cardCopy = CARD_COPY[lang];
+  const insets = useSafeAreaInsets();
 
   // Buddy Speech Bubble State
   const [isTyping, setIsTyping] = useState<boolean>(true);
   const [speechText, setSpeechText] = useState<string>('Hi I am Buddy. Tell me about your little one.');
 
   const inputRef = useRef<any>(null);
+  const scrollRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
+  const inputTop = useRef(0);
+  const keyboardShown = useRef(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevNameRef = useRef<string>('');
+
+  const revealNameInput = useCallback(() => {
+    if (inputRef.current?.isFocused()) {
+      scrollRef.current?.scrollTo({ y: Math.max(0, inputTop.current - 16), animated: false });
+    }
+  }, []);
+
+  useEffect(() => {
+    const shown = Keyboard.addListener('keyboardDidShow', () => {
+      keyboardShown.current = true;
+      revealNameInput();
+    });
+    const hidden = Keyboard.addListener('keyboardDidHide', () => { keyboardShown.current = false; });
+    return () => { shown.remove(); hidden.remove(); };
+  }, [revealNameInput]);
 
   // -------------------------------------------------------------
   // ANIMATION VALUES
   // -------------------------------------------------------------
-  const handWaveAnim = useRef(new Animated.Value(0)).current;
-  const floatAnim = useRef(new Animated.Value(0)).current;
 
   // Typing Dots Animations
   const dot1Anim = useRef(new Animated.Value(0)).current;
@@ -86,73 +116,6 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const continueFade = useRef(new Animated.Value(0)).current;
   const continueTranslate = useRef(new Animated.Value(20)).current;
   const [isContinueVisible, setIsContinueVisible] = useState<boolean>(false);
-
-  // -------------------------------------------------------------
-  // 1. MASCOT WAVING & FLOATING IDLE ANIMATIONS
-  // -------------------------------------------------------------
-  useEffect(() => {
-    // Hand Waving sinusoidal loop
-    const waveLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(handWaveAnim, {
-          toValue: 1,
-          duration: 380,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(handWaveAnim, {
-          toValue: -1,
-          duration: 420,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(handWaveAnim, {
-          toValue: 0.8,
-          duration: 360,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(handWaveAnim, {
-          toValue: -0.8,
-          duration: 380,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(handWaveAnim, {
-          toValue: 0,
-          duration: 400,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(900), // Natural playful pause
-      ])
-    );
-    waveLoop.start();
-
-    // Subtle gentle float
-    const floatLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -6,
-          duration: 1500,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 1500,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    floatLoop.start();
-
-    return () => {
-      waveLoop.stop();
-      floatLoop.stop();
-    };
-  }, [handWaveAnim, floatAnim]);
 
   // -------------------------------------------------------------
   // 2. TYPING DOTS ANIMATION IN BUDDY'S BUBBLE
@@ -330,15 +293,11 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
     });
   };
 
-  const waveInterpolate = handWaveAnim.interpolate({
-    inputRange: [-1, 1],
-    outputRange: ['-18deg', '22deg'],
-  });
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior="padding"
+      keyboardVerticalOffset={insets.top}
     >
       {/* ========================================================================= */}
       {/* 1. TOP BAR: BACK & LANGUAGE TOGGLE */}
@@ -373,7 +332,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           </View>
 
           {/* Dev Skip Button */}
-          {onSkip ? (
+          {__DEV__ && onSkip ? (
             <TouchableOpacity onPress={onSkip} activeOpacity={0.7} style={styles.devSkipButton}>
               <Text style={styles.devSkipText}>Skip</Text>
             </TouchableOpacity>
@@ -382,6 +341,8 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
       </View>
 
       <ScrollView
+        ref={scrollRef}
+        onLayout={() => { if (keyboardShown.current) revealNameInput(); }}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -389,6 +350,11 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
         {/* ========================================================================= */}
         {/* 2. BUDDY MASCOT & DYNAMIC SPEECH BUBBLE */}
         {/* ========================================================================= */}
+        <View style={styles.friendCard}>
+          <View style={styles.friendCardHeader}>
+            <Text style={styles.friendCardTitle} maxFontSizeMultiplier={typography.maxFontScale}>{cardCopy.title}</Text>
+            <Text style={styles.friendCardTag} maxFontSizeMultiplier={typography.maxFontScale}>{cardCopy.tag}</Text>
+          </View>
         <View style={styles.mascotSection}>
           {/* Animated Speech Bubble */}
           <View style={styles.speechBubbleWrapper}>
@@ -421,34 +387,28 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
             <View style={styles.speechBubbleTail} />
           </View>
 
-          {/* Waving Mascot Figure */}
-          <Animated.View
-            style={[
-              styles.mascotFigure,
-              { transform: [{ translateY: floatAnim }] },
-            ]}
-          >
-            {/* Waving Hand Behind / Beside Head */}
-            <Animated.View
-              style={[
-                styles.mascotHandWrapper,
-                { transform: [{ rotate: waveInterpolate }] },
-              ]}
-            >
-              <Image
-                source={mascotHandSource}
-                style={styles.mascotHandImg}
-                resizeMode="contain"
-              />
-            </Animated.View>
-
-            {/* Mascot Body */}
-            <Image
-              source={mascotBodySource}
-              style={styles.mascotBodyImg}
-              resizeMode="contain"
-            />
-          </Animated.View>
+          {/* Approved full-body still. No body-part transforms or pose wiring in B. */}
+          <Image
+            source={SCREEN2_BUDDY_FRAMES.greeting}
+            style={styles.mascotFigure}
+            resizeMode="contain"
+            accessibilityLabel={cardCopy.buddy}
+          />
+        </View>
+          <View style={styles.friendCardDetails} accessible accessibilityLabel={cardCopy.emptyCard}>
+            <View style={styles.friendCardName}>
+              <Text style={styles.friendCardLabel}>{cardCopy.name}</Text>
+              <View style={styles.blankNameLine} />
+            </View>
+            <View style={styles.friendCardAge}>
+              <Text style={styles.friendCardLabel}>{cardCopy.age}</Text>
+              <View style={styles.blankAgeLine} />
+            </View>
+            <View style={styles.friendCardColour}>
+              <Text style={styles.friendCardLabel}>{cardCopy.colour}</Text>
+              <View style={styles.blankColourBadge} />
+            </View>
+          </View>
         </View>
 
         {/* ========================================================================= */}
@@ -457,6 +417,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
         {/* ========================================================================= */}
         {isTextBoxVisible && (
           <Animated.View
+            onLayout={(event) => { inputTop.current = event.nativeEvent.layout.y; }}
             style={[
               styles.inputCardWrapper,
               {
@@ -465,10 +426,13 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
               },
             ]}
           >
+            <Text style={styles.inputLabel}>{cardCopy.inputLabel}</Text>
             <View style={styles.inputCard}>
               <TextInput
                 ref={inputRef}
                 autoFocus={true}
+                onFocus={() => { if (keyboardShown.current) revealNameInput(); }}
+                accessibilityLabel={cardCopy.inputLabel}
                 style={styles.textInput}
                 placeholder={
                   lang === 'hi'
@@ -595,6 +559,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           style={[
             styles.bottomActionArea,
             {
+              paddingBottom: insets.bottom + 16,
               opacity: continueFade,
               transform: [{ translateY: continueTranslate }],
             },
@@ -693,51 +658,77 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingTop: 12,
     paddingBottom: 24,
     alignItems: 'center',
   },
+  friendCard: {
+    width: '100%', maxWidth: 430, padding: 18, borderRadius: 24,
+    backgroundColor: '#FFFEFB', borderWidth: 1, borderColor: '#E9E3D9',
+    shadowColor: '#4C493D', shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06, shadowRadius: 14, elevation: 2,
+  },
+  friendCardHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+    marginBottom: 16,
+  },
+  friendCardTitle: {
+    flexShrink: 1, fontSize: 22, lineHeight: 28, color: palette.ink.primary,
+    fontFamily: Platform.select(typography.headline.family), fontWeight: '500',
+  },
+  friendCardTag: {
+    fontSize: 9, lineHeight: 14, fontWeight: '700', letterSpacing: 0.7,
+    color: '#76648C', backgroundColor: '#F1EDF8', borderRadius: 8,
+    paddingHorizontal: 8, paddingVertical: 5,
+  },
+  friendCardDetails: {
+    flexDirection: 'row', gap: 16, borderTopWidth: 1, borderTopColor: '#EDE7DE',
+    paddingTop: 14, marginTop: 10, alignItems: 'flex-start',
+  },
+  friendCardName: { flex: 1.2 },
+  friendCardAge: { flex: 0.6 },
+  friendCardColour: { flex: 1.1 },
+  friendCardLabel: { fontSize: 11, lineHeight: 16, fontWeight: '500', color: '#6C7269', marginBottom: 9 },
+  blankNameLine: { width: '85%', height: 4, borderRadius: 2, backgroundColor: '#EAE5DE', marginTop: 8 },
+  blankAgeLine: { width: 24, height: 4, borderRadius: 2, backgroundColor: '#EAE5DE', marginTop: 8 },
+  blankColourBadge: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#FFFEF7', borderWidth: 1, borderColor: '#D9D5CE' },
   mascotSection: {
     alignItems: 'center',
-    marginVertical: 12,
+    marginVertical: 0,
   },
   speechBubbleWrapper: {
     alignItems: 'center',
     marginBottom: 6,
   },
   speechBubble: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 11,
-    borderWidth: 1.5,
-    borderColor: '#DDD6FE',
-    shadowColor: '#7C6DF8',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.16,
+    backgroundColor: speechBubble.surface,
+    borderRadius: speechBubble.radius,
+    paddingHorizontal: speechBubble.paddingH,
+    paddingVertical: speechBubble.paddingV,
+    shadowColor: speechBubble.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
     shadowRadius: 8,
-    elevation: 4,
-    maxWidth: SCREEN_WIDTH * 0.85,
+    elevation: 3,
+    maxWidth: Math.min(272, SCREEN_WIDTH - 88),
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
   },
   speechBubbleTail: {
-    width: 10,
-    height: 10,
-    backgroundColor: '#FFFFFF',
-    borderRightWidth: 1.5,
-    borderBottomWidth: 1.5,
-    borderColor: '#DDD6FE',
+    width: speechBubble.tail,
+    height: speechBubble.tail,
+    backgroundColor: speechBubble.surface,
     transform: [{ rotate: '45deg' }],
-    marginTop: -5,
+    marginTop: -speechBubble.tail / 2,
   },
   speechText: {
-    fontSize: 14.5,
-    fontWeight: '800',
-    color: '#1E293B',
+    fontSize: speechBubble.fontSize,
+    fontWeight: '500',
+    fontFamily: Platform.select(typography.subline.family),
+    color: speechBubble.ink,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: speechBubble.lineHeight,
   },
   typingContainer: {
     flexDirection: 'row',
@@ -753,34 +744,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#7C6DF8',
   },
   mascotFigure: {
-    width: 120,
-    height: 90,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mascotHandWrapper: {
-    position: 'absolute',
-    left: 8,
-    top: 14,
-    width: 44,
-    height: 44,
-    zIndex: 10,
-  },
-  mascotHandImg: {
-    width: '100%',
-    height: '100%',
-  },
-  mascotBodyImg: {
-    width: '100%',
-    height: '100%',
-    zIndex: 20,
+    width: 180,
+    height: 180 * 159 / 160,
   },
   inputCardWrapper: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 22,
     marginBottom: 14,
   },
+  inputLabel: { fontSize: 13, lineHeight: 18, color: palette.ink.primary, fontWeight: '600', marginBottom: 8 },
   inputCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -788,11 +760,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderWidth: 1.5,
-    borderColor: '#7C6DF8',
-    shadowColor: '#7C6DF8',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
+    borderWidth: 1,
+    borderColor: '#C8BDD9',
+    shadowColor: '#62506B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 3,
   },
@@ -808,7 +780,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '500',
     color: '#1A2436',
     paddingVertical: 4,
   },
@@ -857,7 +829,7 @@ const styles = StyleSheet.create({
   inputHint: {
     fontSize: 10.5,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#6E786E',
     marginTop: 4,
     marginLeft: 6,
   },
