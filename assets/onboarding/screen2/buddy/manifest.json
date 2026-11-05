@@ -1,0 +1,419 @@
+{
+  "canvasPt": [
+    160,
+    159
+  ],
+  "headWidthPt": 106,
+  "baselinePt": 155,
+  "status": "checkpoint-A candidates; not approved or integrated",
+  "frames": {
+    "greeting": {
+      "source": "assets/onboarding/screen1/buddy/buddy_wave@3x.webp",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_greeting@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 20878,
+          "alphaBounds": [
+            14,
+            8,
+            297,
+            314
+          ],
+          "visibleAlphaBounds": [
+            16,
+            10,
+            295,
+            312
+          ],
+          "zeroAlphaPixels": 43924,
+          "partialAlphaPixels": 51275,
+          "blankPropBoundsPt": null
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_greeting@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 36864,
+          "alphaBounds": [
+            22,
+            15,
+            443,
+            468
+          ],
+          "visibleAlphaBounds": [
+            24,
+            15,
+            442,
+            466
+          ],
+          "zeroAlphaPixels": 100346,
+          "partialAlphaPixels": 114442,
+          "blankPropBoundsPt": null
+        }
+      ],
+      "sourceSha256": "d4daab9a748152cb5a46d240921f3fbfb00f142c3207190262b0f8c1846e642b",
+      "measurements": {
+        "baseline": 465,
+        "head_w": 318,
+        "seat_cx": 240
+      },
+      "scaleTo3x": 1
+    },
+    "name_attentive": {
+      "source": "design/screen2/checkpoint_a/generated/buddy_name_attentive-original.png",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_name_attentive@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 20714,
+          "alphaBounds": [
+            2,
+            7,
+            304,
+            318
+          ],
+          "visibleAlphaBounds": [
+            46,
+            37,
+            272,
+            311
+          ],
+          "zeroAlphaPixels": 52096,
+          "partialAlphaPixels": 49103,
+          "blankPropBoundsPt": null
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_name_attentive@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 38398,
+          "alphaBounds": [
+            0,
+            6,
+            474,
+            477
+          ],
+          "visibleAlphaBounds": [
+            68,
+            56,
+            406,
+            466
+          ],
+          "zeroAlphaPixels": 117523,
+          "partialAlphaPixels": 111036,
+          "blankPropBoundsPt": null
+        }
+      ],
+      "sourceSha256": "73123861ed9a4c08f681e64030a99340d8ef28728eedce26375e69f8d655aee9",
+      "measurements": {
+        "top": 164,
+        "baseline": 1180,
+        "seat_cx": 624.5,
+        "head_cx": 623,
+        "head_cy": 573,
+        "head_r": 330.0317077636719,
+        "head_w": 792.0760986328124
+      },
+      "scaleTo3x": 0.40147657598669345
+    },
+    "age_ready": {
+      "source": "design/screen2/checkpoint_a/generated/buddy_age_ready-original.png",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_age_ready@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 20894,
+          "alphaBounds": [
+            0,
+            2,
+            313,
+            316
+          ],
+          "visibleAlphaBounds": [
+            48,
+            25,
+            274,
+            311
+          ],
+          "zeroAlphaPixels": 50655,
+          "partialAlphaPixels": 50497,
+          "blankPropBoundsPt": [
+            57.0,
+            105.0,
+            45.5,
+            26.0
+          ]
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_age_ready@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 38208,
+          "alphaBounds": [
+            0,
+            0,
+            472,
+            477
+          ],
+          "visibleAlphaBounds": [
+            72,
+            38,
+            411,
+            465
+          ],
+          "zeroAlphaPixels": 114366,
+          "partialAlphaPixels": 114070,
+          "blankPropBoundsPt": [
+            57.0,
+            105.0,
+            45.67,
+            25.67
+          ]
+        }
+      ],
+      "sourceSha256": "48f3a58c628bd1685849df31269d0129b87e52834213199ac0d7873aa5252232",
+      "measurements": {
+        "top": 125,
+        "baseline": 1190,
+        "seat_cx": 622.0,
+        "head_cx": 635,
+        "head_cy": 555,
+        "head_r": 331.3247375488281,
+        "head_w": 795.1793701171874
+      },
+      "scaleTo3x": 0.399909771242098
+    },
+    "age_proud": {
+      "source": "design/screen2/checkpoint_a/generated/buddy_age_proud-original.png",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_age_proud@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 19600,
+          "alphaBounds": [
+            10,
+            4,
+            318,
+            317
+          ],
+          "visibleAlphaBounds": [
+            48,
+            29,
+            271,
+            311
+          ],
+          "zeroAlphaPixels": 50715,
+          "partialAlphaPixels": 50447,
+          "blankPropBoundsPt": [
+            57.0,
+            99.5,
+            46.0,
+            26.5
+          ]
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_age_proud@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 35662,
+          "alphaBounds": [
+            0,
+            6,
+            478,
+            477
+          ],
+          "visibleAlphaBounds": [
+            72,
+            44,
+            407,
+            466
+          ],
+          "zeroAlphaPixels": 114331,
+          "partialAlphaPixels": 114241,
+          "blankPropBoundsPt": [
+            56.67,
+            99.67,
+            46.67,
+            26.33
+          ]
+        }
+      ],
+      "sourceSha256": "bbf008b8e2f0b666308afcd0f1a765a9e482a97e33b8287840a1ece75b13316b",
+      "measurements": {
+        "top": 100,
+        "baseline": 1183,
+        "seat_cx": 621.5,
+        "head_cx": 622,
+        "head_cy": 514,
+        "head_r": 341.56591796875,
+        "head_w": 819.758203125
+      },
+      "scaleTo3x": 0.38791926544650884
+    },
+    "colour_badge": {
+      "source": "design/screen2/checkpoint_a/generated/buddy_colour_badge-original.png",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_colour_badge@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 20402,
+          "alphaBounds": [
+            1,
+            0,
+            319,
+            318
+          ],
+          "visibleAlphaBounds": [
+            40,
+            19,
+            265,
+            312
+          ],
+          "zeroAlphaPixels": 48545,
+          "partialAlphaPixels": 52512,
+          "blankPropBoundsPt": [
+            72.0,
+            106.0,
+            18.0,
+            18.5
+          ]
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_colour_badge@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 36726,
+          "alphaBounds": [
+            0,
+            0,
+            480,
+            477
+          ],
+          "visibleAlphaBounds": [
+            61,
+            29,
+            397,
+            466
+          ],
+          "zeroAlphaPixels": 109900,
+          "partialAlphaPixels": 118409,
+          "blankPropBoundsPt": [
+            72.0,
+            105.33,
+            18.0,
+            18.67
+          ]
+        }
+      ],
+      "sourceSha256": "7072ab762110194bf3e4692fef03a685dbdffabbde163ba9235bece7b5579d70",
+      "measurements": {
+        "top": 140,
+        "baseline": 1181,
+        "seat_cx": 627.5,
+        "head_cx": 611,
+        "head_cy": 547,
+        "head_r": 316.9359130859375,
+        "head_w": 760.64619140625
+      },
+      "scaleTo3x": 0.41806559158877177
+    },
+    "friend_complete": {
+      "source": "design/screen2/checkpoint_a/generated/buddy_friend_complete-original.png",
+      "exports": [
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_friend_complete@2x.webp",
+          "size": [
+            320,
+            318
+          ],
+          "bytes": 19290,
+          "alphaBounds": [
+            0,
+            7,
+            317,
+            318
+          ],
+          "visibleAlphaBounds": [
+            50,
+            24,
+            270,
+            311
+          ],
+          "zeroAlphaPixels": 50278,
+          "partialAlphaPixels": 50867,
+          "blankPropBoundsPt": [
+            52.0,
+            93.5,
+            56.5,
+            31.0
+          ]
+        },
+        {
+          "path": "assets/onboarding/screen2/buddy/buddy_friend_complete@3x.webp",
+          "size": [
+            480,
+            477
+          ],
+          "bytes": 35186,
+          "alphaBounds": [
+            0,
+            6,
+            480,
+            477
+          ],
+          "visibleAlphaBounds": [
+            75,
+            35,
+            404,
+            466
+          ],
+          "zeroAlphaPixels": 113590,
+          "partialAlphaPixels": 114832,
+          "blankPropBoundsPt": [
+            51.33,
+            93.33,
+            57.0,
+            31.33
+          ]
+        }
+      ],
+      "sourceSha256": "84d52fbf5e683ef8930ad394c0a75720bedeccfcbac00d12a1e01b9ffce18ad3",
+      "measurements": {
+        "top": 86,
+        "baseline": 1190,
+        "seat_cx": 623.0,
+        "head_cx": 623,
+        "head_cy": 507,
+        "head_r": 341.3184814453125,
+        "head_w": 819.1643554687499
+      },
+      "scaleTo3x": 0.3882004848929627
+    }
+  }
+}
