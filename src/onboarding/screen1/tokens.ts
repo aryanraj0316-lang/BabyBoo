@@ -215,12 +215,13 @@ export const textBlock = {
   maxWidth: 360, // keeps line length comfortable on wide screens
 } as const;
 
-/** Checkpoint 1: one quiet dialogue bubble; no dialogue sequence yet. */
+/** Quiet dialogue surface. Opacity only; never moves Buddy or the bubble. */
 export const speechBubble = {
   maxWidth: 140, phoneGap: 8, headGap: 9, edgeInset: 12,
   paddingH: 12, paddingV: 10, radius: 16, tail: 8,
   fontSize: 13, lineHeight: 19,
   surface: '#FFFEF7', ink: '#303A34', shadow: '#3C4938',
+  fadeSeconds: 0.075, // 150ms fade-through between adjacent text turns
 } as const;
 
 export const cta = {
@@ -292,7 +293,7 @@ export const reelGesture = {
   xOfScreen: 0.60, startYOfScreen: 0.74, travelOfScreen: 0.43,
   widthOfScreen: 0.43, aspect: 2 / 3,
   fingertipX: 0.215, fingertipY: 0.16,
-  opacity: 0.66, wristTilt: 0.15, wristFlex: 0.06,
+  opacity: 0.78, wristTilt: 0.15, wristFlex: 0.06,
 } as const;
 
 /** Foliage uses the story's shared clock and is still under reduced motion. */

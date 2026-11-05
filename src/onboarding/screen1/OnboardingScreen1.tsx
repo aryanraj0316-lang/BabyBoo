@@ -130,7 +130,7 @@ export function OnboardingScreen1({ onGetStarted }: OnboardingScreen1Props) {
       </View>
       {layout && root && <BuddySpeechBubble
         layout={layout} screenWidth={root.width} screenHeight={root.height}
-        state={clock.state} text={t.buddyTimesUp}
+        state={clock.state} dialogue={t.buddyDialogue}
       />}
     </View>
   );

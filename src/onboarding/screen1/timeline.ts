@@ -11,6 +11,7 @@
  */
 import { bezier, clamp, hexToRgb, lerp, mixRgb, progress, smoothstep, springAt, springDecay } from './anim';
 import { BUDDY_BOUNDS, type BuddyFrameId } from './buddyMetrics.generated';
+import { dialogueAt } from './dialogue';
 import {
   battery as BAT, buddyLight as BL, buddyMotion as BM, buddyTimeline, demo, dim as DIM, dot as DOT, ease,
   emptyBattery as EB, haloTimeline as HT, home as HOME, homePill as PILL, loopSeam as SEAM, palette, spring,
@@ -100,6 +101,8 @@ function breathPhase(t: number, elapsed: number): number {
 // ---------------------------------------------------------------------------
 
 export interface SceneState {
+  dialogueId: number;
+  dialogueOpacity: number;
   // Feed (reels, status bar, toast, empty battery, dim)
   feedOpacity: number;
   feedTime: number; // the feed's own time: frozen at 0 while it fades back in at the seam
@@ -325,8 +328,11 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
   const sleepy = windowWeight(t, BM.breath.sleepy.from, BM.breath.sleepy.to, BM.breath.blend);
   const sway = BM.sway.degrees * Math.sin((2 * Math.PI * elapsed) / BM.sway.period);
   const jump = bounce(t);
+  const dialogue = dialogueAt(t, motion);
 
   return {
+    dialogueId: dialogue.id,
+    dialogueOpacity: dialogue.opacity,
     feedOpacity,
     feedTime: feedT,
     feedOffset: sw.offset,
