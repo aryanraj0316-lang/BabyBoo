@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "mode": "reference-guided transparent asset",
+  "reference": "parent-hand-reference.png",
+  "original": "parent-hand-original.png",
+  "prompt": "Extract/recreate ONLY the realistic adult parent hand in the attached reference screenshot as an isolated transparent image asset. Match the screenshot closely: warm light-medium natural skin tone, realistically slender adult right index finger pointing diagonally upper-left, other fingers naturally curled, subtle skin creases, natural short nails, no jewelry. A beige oatmeal ribbed knitted sweater cuff and a short forearm enter from lower-right, with a gentle alpha fade at the sleeve end. Preserve the hand pose and viewing angle from the reference: back of hand seen from above, fingertip highest and left of the palm, finger aimed toward top-left. Premium clean mobile gesture tutorial asset, realistic photograph-like hand, soft diffuse light, restrained contrast, no dramatic shadows or glow. Portrait2:3 composition, fingertip around25%width/12%height, palm center55%width/52%height, cuff70%width/80%height. Single complete hand/cuff, good transparent padding. Absolutely no phone, waterfall, bear, background, UI, text, arrow, logos, watermark or extra objects. Actual fully transparent alpha outside the hand and sleeve, no black/white box. For adult parent unlocking demonstration, visibly distinct from a chubby pink cartoon toddler hand.",
+  "usage": "Adult hand traces existing freehand A; toddler asset remains for reels. No mascot changes."
+}

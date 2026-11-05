@@ -48,13 +48,26 @@ describe('demo timeline', () => {
     expect(at(swipes.times[0] + 0.8).feedStretch).toBeLessThan(1.001);
   });
 
-  it('holds the large battery at 20% before draining to zero and red', () => {
-    expect(at(batteryTakeover.from + batteryTakeover.length).batteryLevel).toBeCloseTo(0.20, 3);
+  it('holds the large battery at 5% before draining to zero', () => {
+    expect(at(batteryTakeover.from + batteryTakeover.length).batteryLevel).toBeCloseTo(0.05, 3);
     expect(at(battery.drainTo).batteryLevel).toBe(0);
-    expect(at(1).batteryColor).toEqual([255, 159, 10]);
+    expect(at(1).batteryColor).toEqual([255, 59, 48]);
     expect(at(battery.drainTo).batteryColor.map(Math.round)).toEqual([255, 59, 48]);
     const levels = Array.from({ length: 30 }, (_, i) => at(battery.drainFrom + i * (battery.drainTo - battery.drainFrom) / 29).batteryLevel);
     expect(levels.every((value, i) => i === 0 || value <= levels[i - 1])).toBe(true);
+  });
+
+  it('shows the swipe hand only at reel events and removes it for reduced motion', () => {
+    expect(at(0).reelGestureOpacity).toBe(0);
+    for (const time of swipes.times) {
+      expect(at(time).reelGestureOpacity).toBeGreaterThan(0.99);
+      expect(at(time + 0.15).reelGestureTravel).toBeGreaterThan(at(time).reelGestureTravel);
+      expect(sceneAt(time, time, 0).reelGestureOpacity).toBe(0);
+    }
+    expect(at(demo.beats.battery).reelGestureOpacity).toBe(0);
+    expect(at(demo.beats.unlock + 1).reelGestureOpacity).toBe(0);
+    expect(sceneAt(2, 2, 0).environmentMotion).toBe(0);
+    expect(at(2).environmentTime).toBe(2);
   });
 
   it('keeps the phone dark until the full A gesture completes, then unlocks', () => {

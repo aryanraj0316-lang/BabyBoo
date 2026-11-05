@@ -3,19 +3,20 @@
  * crossbar. The phone stays dark until the completed gesture unlocks it.
  */
 import React, { useMemo } from 'react';
-import { Circle, Group, Path, RadialGradient, Rect, RoundedRect, Skia, vec } from '@shopify/react-native-skia';
+import { Circle, Group, Image, Path, RadialGradient, Rect, RoundedRect, Skia, vec, type SkImage } from '@shopify/react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { progress, rgba, smoothstep } from '../anim';
 import type { Rect as R } from '../layout';
 import type { SceneState } from '../timeline';
-import { dot as DOT, homePill as PILL, palette, unlock as U } from '../tokens';
+import { dot as DOT, homePill as PILL, palette, parentGesture as G, unlock as U } from '../tokens';
 
 interface Props {
   screen: R;
   state: SharedValue<SceneState>;
+  hand: SkImage | null;
 }
 
-export function UnlockGesture({ screen, state }: Props) {
+export function UnlockGesture({ screen, state, hand }: Props) {
   const { x, y, width: w, height: H } = screen;
 
   // Home indicator pill.
@@ -67,6 +68,13 @@ export function UnlockGesture({ screen, state }: Props) {
   const glowOpacity = useDerivedValue(() => state.value.dotRing * state.value.dotVisible * DOT.glowOpacity);
 
   const trailOpacity = useDerivedValue(() => state.value.trailOpacity * state.value.dotVisible);
+  const handWidth = w * G.widthOfScreen;
+  const handHeight = handWidth / G.aspect;
+  const handOpacity = useDerivedValue(() => G.opacity * state.value.dotCore);
+  const handFlex = useDerivedValue(() => {
+    const p = state.value.gestureProgress;
+    return [{ rotate: G.wristTilt * Math.sin(p * Math.PI * 2) }, { skewX: G.wristFlex * Math.sin(p * Math.PI) }];
+  });
 
   return (
     <Group>
@@ -86,6 +94,9 @@ export function UnlockGesture({ screen, state }: Props) {
         </Group>
         <Circle cx={0} cy={0} r={D / 2} color={palette.dot.ring} opacity={ringOpacity} />
         <Circle cx={0} cy={0} r={core / 2} color={palette.dot.core} opacity={coreOpacity} />
+        <Group transform={handFlex} opacity={handOpacity}>
+          <Image image={hand} x={-handWidth * G.fingertipX} y={-handHeight * G.fingertipY} width={handWidth} height={handHeight} fit="contain" />
+        </Group>
       </Group>
     </Group>
   );

@@ -9,7 +9,7 @@
  */
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BlurMask, Canvas, Circle, LinearGradient, Oval, RadialGradient, Rect, useImage, vec, type SkImage } from '@shopify/react-native-skia';
+import { BlurMask, Canvas, Circle, Image, LinearGradient, Oval, RadialGradient, Rect, useImage, vec, type SkImage } from '@shopify/react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { rgba } from '../anim';
 import { BUDDY_IMAGES } from '../buddyImages.generated';
@@ -22,6 +22,8 @@ import { Feed } from './Feed';
 import { HomeScreen } from './HomeScreen';
 import { PhoneMockup } from './PhoneMockup';
 import { UnlockGesture } from './UnlockGesture';
+import { ReelSwipeGesture } from './ReelSwipeGesture';
+import { MeadowBreeze } from './MeadowBreeze';
 
 interface Props {
   width: number;
@@ -42,7 +44,11 @@ function useBuddyImages(): SkImage[] | null {
 
 export function Scene({ width, height, layout, state, toastText, onReady }: Props) {
   const images = useBuddyImages();
-  const ready = images !== null;
+  const background = useImage(require('../../../../assets/onboarding/screen1/meadow-background.webp'));
+  const hand = useImage(require('../../../../assets/onboarding/screen1/swipe-hand.webp'));
+  const twig = useImage(require('../../../../assets/onboarding/screen1/meadow-twig.webp'));
+  const parentHand = useImage(require('../../../../assets/onboarding/screen1/parent-hand.webp'));
+  const ready = images !== null && background !== null && hand !== null && twig !== null && parentHand !== null;
   useEffect(() => {
     if (ready) onReady();
   }, [ready, onReady]);
@@ -65,6 +71,8 @@ export function Scene({ width, height, layout, state, toastText, onReady }: Prop
         <Rect x={0} y={0} width={width} height={height}>
           <LinearGradient start={vec(0, 0)} end={vec(0, height)} colors={[palette.bg.top, palette.bg.bottom]} />
         </Rect>
+        <Image image={background} x={0} y={0} width={width} height={height} fit="cover" />
+        <MeadowBreeze width={width} height={height} image={twig} state={state} />
 
         {layout && (
           <>
@@ -87,7 +95,8 @@ export function Scene({ width, height, layout, state, toastText, onReady }: Prop
             <PhoneMockup layout={layout}>
               <HomeScreen screen={layout.screen} state={state} />
               <Feed screen={layout.screen} state={state} toastText={toastText} />
-              <UnlockGesture screen={layout.screen} state={state} />
+              <ReelSwipeGesture screen={layout.screen} state={state} image={hand} />
+              <UnlockGesture screen={layout.screen} state={state} hand={parentHand} />
             </PhoneMockup>
 
             {images && <Buddy layout={layout} state={state} images={images} />}

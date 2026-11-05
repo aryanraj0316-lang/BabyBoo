@@ -14,7 +14,7 @@ import { BUDDY_BOUNDS, type BuddyFrameId } from './buddyMetrics.generated';
 import {
   battery as BAT, buddyLight as BL, buddyMotion as BM, buddyTimeline, demo, dim as DIM, dot as DOT, ease,
   emptyBattery as EB, haloTimeline as HT, home as HOME, homePill as PILL, loopSeam as SEAM, palette, spring,
-  swipes as SW, toast as TOAST, unlock as U,
+  reelGesture as RG, swipes as SW, toast as TOAST, unlock as U,
 } from './tokens';
 
 // ---------------------------------------------------------------------------
@@ -105,6 +105,10 @@ export interface SceneState {
   feedTime: number; // the feed's own time: frozen at 0 while it fades back in at the seam
   feedOffset: number; // in reel heights
   feedStretch: number; // vertical scale while swiping fast
+  reelGestureOpacity: number;
+  reelGestureTravel: number;
+  environmentTime: number;
+  environmentMotion: number;
   batteryLevel: number;
   batteryColor: [number, number, number];
   toastIn: number; // spring 0..1 (can overshoot)
@@ -223,6 +227,15 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
 
   const sw = swipeOffset(feedT);
   const feedStretch = 1 + SW.stretch * clamp(sw.speed / SWIPE_PEAK_V, 0, 1);
+  let reelGestureOpacity = 0;
+  let reelGestureTravel = 0;
+  for (let i = 0; i < SW.times.length; i++) {
+    const local = feedT - SW.times[i];
+    if (local >= -RG.lead && local <= RG.end) {
+      reelGestureOpacity = motion * smoothstep(progress(local, -RG.lead, RG.fadeInEnd)) * (1 - smoothstep(progress(local, RG.fadeOutFrom, RG.end)));
+      reelGestureTravel = clamp(sw.offset - i, 0, 1);
+    }
+  }
 
   const drain = progress(feedT, BAT.drainFrom, BAT.drainTo);
   const batteryLevel = lerp(BAT.start, BAT.end, drain);
@@ -318,6 +331,10 @@ export function sceneAt(t: number, elapsed: number, motion: number): SceneState 
     feedTime: feedT,
     feedOffset: sw.offset,
     feedStretch,
+    reelGestureOpacity,
+    reelGestureTravel,
+    environmentTime: t,
+    environmentMotion: motion,
     batteryLevel,
     batteryColor: batteryColor(batteryLevel),
     toastIn,

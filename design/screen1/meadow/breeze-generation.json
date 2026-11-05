@@ -1,0 +1,15 @@
+{
+  "tool": "built-in image_gen",
+  "sources": [
+    "toddler-hand-original.png",
+    "meadow-breeze-original.png",
+    "twig-original.png"
+  ],
+  "reference": "toddler-hand-reference.png",
+  "prompts": [
+    "Edit target: the first attached screenshot. Extract/recreate ONLY the pink toddler hand with its purple knitted sweater cuff, matching that EXACT hand's friendly soft rounded 3D illustrated appearance, chubby fingers, index finger pointing diagonally upper-left, pastel warm pink skin, soft lilac highlights, purple ribbed cuff and short purple sleeve fading gently out at the lower-right. The hand should look just like the screenshot's gesture overlay, no redesign to a white cursor. Isolate as a single asset on a fully transparent background. Preserve the screenshot hand's pose, finger proportions, colors, bent wrist and soft plush-like 3D rendering; improve clarity at small mobile UI size. Show the whole hand/cuff/short sleeve in a portrait2:3 canvas, approximately centered; fingertip near x30% y8%, wrist near60% y70%. No phone, background, waterfall, Buddy, UI, text, symbols, arrows, logos or extra objects. Transparent alpha outside the hand, no black rectangle or white halo. This is a standalone neutral human toddler gesture hand asset, not mascot artwork.",
+    "Edit target: the attached meadow background, preserve the exact raised meadow crest at about51% height, palette, pale ivory/mint empty sky, soft storybook3D shading and clear light-green center behind text. Remove ONLY the existing top-left leafy twig and the small right-edge leafy twig, replacing their areas seamlessly with the existing sky. They will be added as separate animated assets later. Add a little more lush soft green shrubbery only along the extreme bottom-left and bottom-right edges and far bottom10%, retaining the little daisies, never intruding into the central80% width at55-87%height or above the meadow crest. Central text/button area stays very quiet, light yellow-green. No new twigs baked into the upper sky, no phone, hand, bear, UI, text or watermark. Do not shift the hill or change the landscape composition.",
+    "Asset: a single graceful leafy twig cutout on genuinely transparent background. Match the attached meadow's bright fresh lime/leaf green palette and polished soft rounded storybook3D illustration style. A slender golden-green curved stem enters at the upper-left corner, arcs down and right, with8 small rounded tapered green leaves attached at alternating nodes. The leaves have subtle light center veins, soft dimensional shading, varied natural orientations, coherent clusters. Whole branch on a square canvas with transparent padding, stem anchor near x8% y5%, branch extends diagonally toward x85% y85%. Green leaves broad and friendly but elegant, not photoreal, no hard dark outline. One twig only, no ground, flowers, text, glow, shadows outside the asset, no white or black background, no mascot. All outside pixels transparent. Intended as a small wind-swaying decorative corner branch in a mobile app; fine alpha edges."
+  ],
+  "scope": "Background and human tutorial hand only; no Buddy artwork changed."
+}

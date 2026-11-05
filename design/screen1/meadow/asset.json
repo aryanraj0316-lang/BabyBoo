@@ -1,0 +1,11 @@
+{
+  "source": "design/screen1/meadow/meadow-breeze-original.png",
+  "asset": "assets/onboarding/screen1/meadow-background.webp",
+  "dimensions": [
+    841,
+    1870
+  ],
+  "bytes": 48068,
+  "source_sha256": "386455ae02302c62e81054a10008504f7726a5fda32cff2791d127e08e57a746",
+  "operation": "WebP export only; no retouching or artwork changes"
+}

@@ -11,12 +11,12 @@
 // ---------------------------------------------------------------------------
 
 export const palette = {
-  bg: { top: '#F6F3FF', bottom: '#FFFFFF' },
-  ink: { primary: '#1B1A24', secondary: '#6B6880' },
+  bg: { top: '#E7F5E6', bottom: '#FFFFF1' },
+  ink: { primary: '#213F30', secondary: '#506757' },
   brand: { lavender: '#A99BF0', lavenderDeep: '#7B6BE0' },
   cta: {
-    fill: '#6E5CD6', // white label contrast 5.04:1
-    fillPressed: '#5F4DC8', // 6.21:1
+    fill: '#6A50B6',
+    fillPressed: '#564095',
     label: '#FFFFFF',
   },
   dot: { core: '#EEF1FE', ring: '#5B74EE', glow: '#6A86FB' },
@@ -45,12 +45,12 @@ export const palette = {
     warm: '#FFC6B4', // peach-lavender on unlock
   },
   /** One shadow language: tinted lavender, never grey. */
-  shadowTint: 'rgba(90, 70, 180, 1)',
+  shadowTint: 'rgba(54, 73, 48, 1)',
   languageToggle: {
-    track: 'rgba(123, 107, 224, 0.08)',
+    track: 'rgba(255, 255, 255, 0.65)',
     thumb: '#FFFFFF',
-    label: '#6B6880',
-    labelActive: '#1B1A24',
+    label: '#607365',
+    labelActive: '#213F30',
   },
 } as const;
 
@@ -76,7 +76,7 @@ export const shadow = {
 
 export const buddy = {
   /** Max displayed height of the watching frame's visible fur, in points. */
-  maxHeightPt: 159,
+  maxHeightPt: 145,
   /** Buddy's height as a fraction of the phone's outer height. */
   heightOfPhone: 0.4,
   /** How far Buddy's visible fur overlaps the phone's right edge, as a fraction of his visible width. */
@@ -117,7 +117,7 @@ export const halo = {
   radiusOfPhoneHeight: 0.62,
   /** Centre, relative to the phone's centre, as fractions of the phone's height. */
   offsetYOfPhoneHeight: 0.02,
-  opacity: 0.35, // brief range 0.35-0.5; must not be noticed at first glance
+  opacity: 0.12,
 } as const;
 
 export const contactShadow = {
@@ -185,14 +185,14 @@ export const page = {
   marginH: 24,
   topBarHeight: 44,
   /** Fixed gap from the floor (phone bottom, Buddy's baseline) to the headline. */
-  floorToHeadline: 36,
+  floorToHeadline: 28,
   /** Spare height is shared out above the scene and below the CTA. */
-  spareAbove: 0.6,
-  spareBelow: 0.4,
+  spareAbove: 0.40,
+  spareBelow: 0.60,
   /** Minimum air between the language toggle and the top of the phone. */
   minAirAbove: 8,
   /** Air below the CTA, added to the bottom safe-area inset. */
-  ctaBottomGap: 16,
+  ctaBottomGap: 22,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -200,9 +200,9 @@ export const page = {
 // ---------------------------------------------------------------------------
 
 export const type = {
-  headline: { size: 26, weight: '600' as const, lineHeight: { latin: 1.18, devanagari: 1.5 }, letterSpacing: -0.4 },
-  subline: { size: 16, weight: '400' as const, lineHeight: { latin: 1.45, devanagari: 1.7 } },
-  cta: { size: 17, weight: '600' as const },
+  headline: { size: 27, weight: '600' as const, family: { android: 'serif', ios: 'Georgia', default: 'Georgia' }, lineHeight: { latin: 1.18, devanagari: 1.5 }, letterSpacing: -0.55 },
+  subline: { size: 15, weight: '400' as const, family: { android: 'sans-serif', ios: 'System', default: 'system-ui' }, lineHeight: { latin: 1.5, devanagari: 1.7 } },
+  cta: { size: 17, weight: '600' as const, family: { android: 'sans-serif', ios: 'System', default: 'system-ui' } },
   /** Language toggle labels reuse the subline style at a smaller size. */
   toggle: { size: 13 },
   /** Large accessibility font sizes are honoured up to this multiplier. */
@@ -210,15 +210,15 @@ export const type = {
 } as const;
 
 export const textBlock = {
-  headlineToSubline: 8,
-  sublineToCta: 24,
+  headlineToSubline: 10,
+  sublineToCta: 20,
   maxWidth: 360, // keeps line length comfortable on wide screens
 } as const;
 
 export const cta = {
-  height: 54, // minimum; grows with large accessibility fonts
+  height: 56, // minimum; grows with large accessibility fonts
   paddingV: 8,
-  radius: 27, // fully rounded, matching the app's primary buttons
+  radius: 20,
   pressScale: 0.97,
 } as const;
 
@@ -278,8 +278,33 @@ export const swipes = {
   stretch: 0.02,
 } as const;
 
+/** Tutorial hand appears only around the actual reel scroll events. */
+export const reelGesture = {
+  lead: 0.38, fadeInEnd: -0.16, fadeOutFrom: 0.44, end: 0.70,
+  xOfScreen: 0.60, startYOfScreen: 0.74, travelOfScreen: 0.43,
+  widthOfScreen: 0.43, aspect: 2 / 3,
+  fingertipX: 0.215, fingertipY: 0.16,
+  opacity: 0.66, wristTilt: 0.15, wristFlex: 0.06,
+} as const;
+
+/** Foliage uses the story's shared clock and is still under reduced motion. */
+export const meadowBreeze = {
+  cyclesPerLoop: 5, secondaryCycles: 3, radians: 0.055,
+  branches: [
+    { x: -0.055, y: -0.022, width: 0.29, rotation: -0.16, mirror: false, phase: 0 },
+    { x: 1.025, y: 0.31, width: 0.20, rotation: -0.38, mirror: true, phase: 1.4 },
+    { x: -0.045, y: 0.84, width: 0.26, rotation: -0.95, mirror: false, phase: 2.2 },
+    { x: 1.035, y: 0.87, width: 0.23, rotation: -0.88, mirror: true, phase: 3.1 },
+  ],
+} as const;
+
+export const parentGesture = {
+  widthOfScreen: 0.50, aspect: 2 / 3, fingertipX: 0.14, fingertipY: 0.11,
+  opacity: 0.82, wristTilt: 0.12, wristFlex: 0.035,
+} as const;
+
 export const battery = {
-  start: 0.20,
+  start: 0.05,
   end: 0,
   drainFrom: 9.0,
   drainTo: 12.4,

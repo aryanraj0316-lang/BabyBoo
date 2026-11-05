@@ -1,0 +1,13 @@
+{
+  "tool": "built-in image_gen",
+  "raised_ground": {
+    "source": "meadow-raised-original.png",
+    "prompt": "Edit the attached generated meadow background only. Preserve its soft mint/ivory sky, upper-left small leafy branch, tiny right-edge sprig, gentle rounded 3D storybook style, light, portrait aspect ratio and empty center. Raise the rolling grassy ground substantially: its center crest must now start at 48% of image height, with its very shallow edge curve reaching about 50% at both sides. The phone and bear in the app will sit at 54-58% height and must visibly stand ON this green grass, not float above it. Keep the entire lower half a beautifully soft, LIGHT pale yellow-green meadow, especially a very calm pale lime-cream central area behind dark UI text at 62-78% height. Keep decoration out of this text zone: no flowers, rocks or grass marks in the central 75% width from 55% to 85% height. Keep small white daisies, green leaves and tiny grass details only at the far bottom corners and bottom 10%, like the attached artwork. The grass needs to read clearly green but remain light enough for dark green text. No UI, phone, bear, mascot, hand, lettering, text or watermark. Only adjust the ground placement and adapt the meadow surface coherently; do not add new objects. High quality soft shading and clean gradients, opaque full-bleed background."
+  },
+  "swipe_hand": {
+    "source": "swipe-hand-original.png",
+    "transparent_background": true,
+    "prompt": "Asset type: a single professional mobile onboarding swipe-hand cursor, isolated on a genuinely transparent background. A tasteful small sculpted matte-white 3D hand, index finger extended vertically upward, remaining fingers gently curled into the palm, thumb visible naturally to the side, a short rounded wrist at bottom. Viewed from slightly above and in front like a polished system gesture tutorial, softly rounded adult proportions, restrained cool gray/lavender edge shading for visibility over light and dark video, gentle soft self-shadowing. Neutral, elegant and clear at 45-point display width. The fingertip is the highest point and centered horizontally; silhouette centered with generous transparent padding, 2:3 portrait composition. Straight upward pointing pose, no extra motion arrows, no rings, no trails, no words, no logos, no scene, no phone, no skin texture, no jewelry, no mascot styling, no outline box, no opaque background. Exactly one hand with anatomically sensible fingers, premium UI gesture illustration, simple clean form. Fully transparent alpha outside the hand."
+  },
+  "scope": "Generated background and phone tutorial hand only; Buddy artwork is unchanged."
+}

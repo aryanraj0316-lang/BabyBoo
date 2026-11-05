@@ -1,6 +1,6 @@
 /** Full-width primary button: scales to 0.97 and darkens on press, light haptic. */
 import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { springConfig } from './motion';
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   },
   pressed: { backgroundColor: palette.cta.fillPressed },
   label: {
+    fontFamily: Platform.select(type.cta.family),
     color: palette.cta.label,
     fontSize: type.cta.size,
     fontWeight: type.cta.weight,

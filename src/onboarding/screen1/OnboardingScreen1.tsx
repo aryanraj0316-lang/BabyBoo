@@ -15,7 +15,7 @@
  * the extra room becomes air, never a bigger phone.
  */
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { Platform, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { computeScene, fitBuddyHeight, sceneHeightFor } from './layout';
 import { LanguageToggle } from './LanguageToggle';
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   airBelow: { flexGrow: page.spareBelow },
   textBlock: { alignItems: 'center' },
   headline: {
+    fontFamily: Platform.select(type.headline.family),
     fontSize: type.headline.size,
     fontWeight: type.headline.weight,
     letterSpacing: type.headline.letterSpacing,
@@ -155,6 +156,7 @@ const styles = StyleSheet.create({
   },
   noTracking: { letterSpacing: 0 },
   subline: {
+    fontFamily: Platform.select(type.subline.family),
     fontSize: type.subline.size,
     fontWeight: type.subline.weight,
     color: palette.ink.secondary,
