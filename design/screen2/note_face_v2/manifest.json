@@ -1,0 +1,39 @@
+{
+  "source": "design/buddy/generated/buddy_screen2_note_taking_face_v2-original.png",
+  "canvasPt": [
+    160,
+    159
+  ],
+  "headWidthPt": 106,
+  "baselinePt": 155,
+  "exports": [
+    {
+      "file": "assets/onboarding/screen2/buddy/buddy_note_taking_v2@2x.webp",
+      "bytes": 21316,
+      "size": [
+        320,
+        318
+      ],
+      "visibleAlphaBounds": [
+        47,
+        1,
+        281,
+        310
+      ]
+    },
+    {
+      "file": "assets/onboarding/screen2/buddy/buddy_note_taking_v2@3x.webp",
+      "bytes": 38856,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        71,
+        2,
+        422,
+        466
+      ]
+    }
+  ]
+}

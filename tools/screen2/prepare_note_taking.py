@@ -2,15 +2,20 @@
 from pathlib import Path
 import sys
 import json
+import argparse
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools/buddy'))
 from normalize import measure, place, HEAD_WIDTH_PER_DIAMETER
-OUT = ROOT / 'design/screen2/note_taking'
+parser = argparse.ArgumentParser()
+parser.add_argument('--face-v2', action='store_true')
+args = parser.parse_args()
+stem = 'note_taking_v2' if args.face_v2 else 'note_taking'
+OUT = ROOT / ('design/screen2/note_face_v2' if args.face_v2 else 'design/screen2/note_taking')
 ASSETS = ROOT / 'assets/onboarding/screen2/buddy'
-source = ROOT / 'design/buddy/generated/buddy_screen2_note_taking-original.png'
+source = ROOT / ('design/buddy/generated/buddy_screen2_note_taking_face_v2-original.png' if args.face_v2 else 'design/buddy/generated/buddy_screen2_note_taking-original.png')
 rgba = np.array(Image.open(source).convert('RGBA'))
 m = measure('note_taking', rgba)
 m['head_w'] = 2 * m['head_r'] * HEAD_WIDTH_PER_DIAMETER
@@ -19,7 +24,7 @@ for density in (2, 3):
     scale = 106 * density / m['head_w']
     assert scale <= 1
     im = place(rgba, m, False, scale, (160 * density, 159 * density), 155 * density)
-    path = ASSETS / f'buddy_note_taking@{density}x.webp'
+    path = ASSETS / f'buddy_{stem}@{density}x.webp'
     im.save(path, 'WEBP', quality=90, method=6)
     alpha = np.array(Image.open(path).getchannel('A'))
     bounds = Image.fromarray((alpha > 8).astype('uint8') * 255).getbbox()
@@ -32,8 +37,9 @@ for density in (2, 3):
 board = Image.new('RGB', (960, 600), '#FFFEFC')
 d = ImageDraw.Draw(board)
 font = lambda n: ImageFont.truetype('C:/Windows/Fonts/arial.ttf', n)
-d.text((20, 14), 'AGE STEP / PREVIOUS CARD AND NEW NOTE-TAKING POSE', fill='#315E47', font=font(24))
-for i, (name, label) in enumerate([('age_ready', 'Previous: presenting card'), ('note_taking', 'New: supporting card and holding pen')]):
+d.text((20, 14), 'NOTE-TAKING BUDDY / FACE COMPARISON' if args.face_v2 else 'AGE STEP / PREVIOUS CARD AND NEW NOTE-TAKING POSE', fill='#315E47', font=font(24))
+columns = [('note_taking', 'Previous: flattened-eye gaze'), (stem, 'New: round eyes and master smile')] if args.face_v2 else [('age_ready', 'Previous: presenting card'), (stem, 'New: supporting card and holding pen')]
+for i, (name, label) in enumerate(columns):
     im = Image.open(ASSETS / f'buddy_{name}@3x.webp').convert('RGBA')
     im = im.convert('RGBa').resize((400, 398), Image.Resampling.LANCZOS).convert('RGBA')
     panel = Image.new('RGBA', im.size, '#FFFEFC'); panel.alpha_composite(im)
