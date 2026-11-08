@@ -1,4 +1,4 @@
-/** Approved Checkpoint A artwork. Checkpoint B displays only the greeting. */
+/** Approved Checkpoint A artwork, selected by Screen 2 input events. */
 export const SCREEN2_BUDDY_FRAMES = {
   // Metro selects the existing @2x/@3x files from their density-free stem,
   // matching the established Screen 1 asset-import convention.
