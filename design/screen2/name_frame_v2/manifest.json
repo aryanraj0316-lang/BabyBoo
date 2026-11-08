@@ -1,0 +1,41 @@
+{
+  "original": "design/buddy/generated/buddy_screen2_name_attentive_v2-original.png",
+  "sha256": "e6bab1c10b4ab5f2ca913c3985364bfa14dfc9de4f6008a21c9034cb22c642ed",
+  "status": "single preview candidate, not approved or integrated",
+  "canvasPt": [
+    160,
+    159
+  ],
+  "baselinePt": 155,
+  "headWidthPt": 106,
+  "exports": [
+    {
+      "path": "design/screen2/name_frame_v2/buddy_name_attentive_v2@2x.webp",
+      "size": [
+        320,
+        318
+      ],
+      "bytes": 22150,
+      "visibleAlphaBounds": [
+        50,
+        20,
+        279,
+        311
+      ]
+    },
+    {
+      "path": "design/screen2/name_frame_v2/buddy_name_attentive_v2@3x.webp",
+      "size": [
+        480,
+        477
+      ],
+      "bytes": 41352,
+      "visibleAlphaBounds": [
+        74,
+        30,
+        417,
+        466
+      ]
+    }
+  ]
+}
