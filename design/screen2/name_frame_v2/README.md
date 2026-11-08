@@ -1,5 +1,7 @@
 # Name-entry frame — one replacement candidate
 
+Update: the user subsequently authorized an on-phone review build before approving likeness. It is now installed with versioned candidate assets. See PHONE_REVIEW.md; the initial candidate-only record below describes the earlier checkpoint.
+
 2026-11-08, Asia/Calcutta. User rejected the existing name-entry Buddy as inconsistent and asked to regenerate that frame only. One built-in image_gen call, using the original buddy_master.png as the edit/identity reference and the approved greeting as a supporting reference. No additional generations or app integration.
 
 Observed issue in the rejected frame: tall forehead, smaller-looking eyes, small smile and high clasped paws made the switch from the greeting feel like a different character. The prompt asks to preserve the master's face/head proportions, cheerful D smile, lavender/pink plush and lighting, lowering the paws with only a slight downward gaze. Full prompt/references are saved in generation.json.

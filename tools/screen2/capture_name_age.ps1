@@ -1,4 +1,4 @@
-﻿param([string]$Serial = '10MF7BG5920005F', [switch]$UseInstalled)
+﻿param([string]$Serial = '10MF7BG5920005F', [switch]$UseInstalled, [switch]$NameFrameOnly)
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $out = Join-Path $repo 'design/screen2/simple_name_age'
@@ -46,11 +46,13 @@ if ($field.text -ne 'What is the name of your child?' -and $field.text -ne '') {
 }
 
 # Local test input only; never presses Continue or persists a child profile.
-$record = Start-Process -FilePath $adb -ArgumentList @('-s', $Serial, 'shell', 'screenrecord', '--time-limit', '50', '--bit-rate', '4000000', '/sdcard/babyboo-simple-flow.mp4') -WindowStyle Hidden -PassThru
+$recordSeconds = if ($NameFrameOnly) { '14' } else { '50' }
+$record = Start-Process -FilePath $adb -ArgumentList @('-s', $Serial, 'shell', 'screenrecord', '--time-limit', $recordSeconds, '--bit-rate', '4000000', '/sdcard/babyboo-simple-flow.mp4') -WindowStyle Hidden -PassThru
 try {
   Capture '01-greeting-keyboard'
   Phone @('shell', 'input', 'text', 'Mira')
   Capture '02-name-attentive'
+  if ($NameFrameOnly) { return }
   $ui = Read-Ui
   Tap-Node ($ui.SelectNodes('//node') | Where-Object { $_.'content-desc' -eq 'Next' } | Select-Object -First 1)
   Capture '03-age-question'
