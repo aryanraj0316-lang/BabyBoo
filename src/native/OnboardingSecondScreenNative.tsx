@@ -1,10 +1,9 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Image, TextInput,
+  View, Text, StyleSheet, TouchableOpacity, TextInput, Image,
   KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SCREEN2_BUDDY_FRAMES } from '../onboarding/screen2/buddyFrames';
 import { palette, type as typography } from '../onboarding/screen1/tokens';
 
 export interface OnboardingSecondChildData {
@@ -62,9 +61,6 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const cleanName = childName.trim();
   const compactAge = contentHeight > 0 && contentHeight < 630;
   const buddySize = Math.min(width * 0.54, nameConfirmed ? 176 : keyboardVisible ? 156 : 240);
-  const frame = nameConfirmed
-    ? SCREEN2_BUDDY_FRAMES.noteTaking
-    : cleanName ? SCREEN2_BUDDY_FRAMES.nameAttentive : SCREEN2_BUDDY_FRAMES.greeting;
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
@@ -119,8 +115,12 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
             {nameConfirmed && <Text style={styles.ageQuestion} maxFontSizeMultiplier={typography.maxFontScale}>{t.age(cleanName)}</Text>}
           </View>
           <View style={styles.buddySlot}>
-            <Image source={frame} resizeMode="contain" accessibilityLabel={t.buddy}
-              style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160 }} />
+            <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160 }}>
+              <View pointerEvents="none" style={styles.buddyShadow} />
+              <Image source={require('../../assets/onboarding/screen1/buddy/buddy_wave.webp')}
+                resizeMode="contain" accessibilityLabel={t.buddy}
+                style={{ width: '100%', height: '100%' }} />
+            </View>
           </View>
         </View>
         {!nameConfirmed ? <View style={styles.nameSection}>
@@ -183,6 +183,8 @@ const styles = StyleSheet.create({
   content: { flex: 1, minHeight: 0, paddingHorizontal: 24, alignItems: 'center' },
   hero: { flex: 1, minHeight: 0, alignItems: 'center', width: '100%', gap: 12, paddingVertical: 12 },
   buddySlot: { flex: 1, minHeight: 0, width: '100%', alignItems: 'center', justifyContent: 'center' },
+  buddyShadow: { position: 'absolute', bottom: '1.5%', left: '23%', width: '54%', height: 3,
+    borderRadius: 100, backgroundColor: 'rgba(20,18,24,0.08)', boxShadow: '0 0 4px 2px rgba(20,18,24,0.12)' },
   dialogue: { alignItems: 'center', gap: 8, width: '100%', maxWidth: 400 },
   message: { fontFamily: Platform.select(typography.subline.family), fontSize: 18, lineHeight: 26, textAlign: 'center', color: '#424B44', fontWeight: '500' },
   ageQuestion: { fontSize: 16, lineHeight: 23, textAlign: 'center', color: '#5D6B61' },

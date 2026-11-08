@@ -1,5 +1,7 @@
 # Screen 2 — four-frame likeness review
 
+**REJECTED by user:** colour, texture and facial identity still differ from the master. Do not integrate these frames or continue whole-character regeneration. Screen 2 is being restored to the unchanged approved Screen 1 bitmap.
+
 2026-11-08, Asia/Calcutta. User explicitly chose: **forward eye highlights match the master; highlights are lowered when Buddy looks down.** These candidates implement that resolved rule as whole-body images, not separate app eye patches.
 
 | File in `frames/` | Purpose |
