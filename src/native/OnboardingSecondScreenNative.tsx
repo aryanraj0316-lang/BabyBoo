@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Image, TextInput,
-  KeyboardAvoidingView, Platform, ScrollView, Keyboard, useWindowDimensions,
+  KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SCREEN2_BUDDY_FRAMES } from '../onboarding/screen2/buddyFrames';
@@ -55,14 +55,15 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const [nameConfirmed, setNameConfirmed] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
-  const scrollRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
+  const [contentHeight, setContentHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const t = COPY[lang];
   const cleanName = childName.trim();
+  const compactAge = contentHeight > 0 && contentHeight < 630;
   const buddySize = Math.min(width * 0.54, nameConfirmed ? 176 : keyboardVisible ? 156 : 240);
   const frame = nameConfirmed
-    ? selectedAge ? SCREEN2_BUDDY_FRAMES.ageProud : SCREEN2_BUDDY_FRAMES.ageReady
+    ? SCREEN2_BUDDY_FRAMES.noteTaking
     : cleanName ? SCREEN2_BUDDY_FRAMES.nameAttentive : SCREEN2_BUDDY_FRAMES.greeting;
 
   useEffect(() => {
@@ -77,7 +78,6 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
     if (!cleanName) { inputRef.current?.focus(); return; }
     setNameConfirmed(true);
     Keyboard.dismiss();
-    scrollRef.current?.scrollTo({ y: 0, animated: false });
   };
   const editName = () => {
     setNameConfirmed(false);
@@ -108,18 +108,20 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           {__DEV__ && onSkip && <TouchableOpacity onPress={onSkip} accessibilityLabel="Skip"><Text>Skip</Text></TouchableOpacity>}
         </View>
       </View>
-      <ScrollView ref={scrollRef} contentContainerStyle={[
+      <View onLayout={event => setContentHeight(event.nativeEvent.layout.height)} style={[
         styles.content, { paddingBottom: keyboardVisible ? 16 : insets.bottom + 32 },
-      ]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, nameConfirmed && styles.ageHero]}>
+      ]}>
+        <View style={styles.hero}>
           <View style={styles.dialogue}>
             <Text style={styles.message} maxFontSizeMultiplier={typography.maxFontScale}>
               {cleanName ? t.hi(cleanName) : t.intro}
             </Text>
             {nameConfirmed && <Text style={styles.ageQuestion} maxFontSizeMultiplier={typography.maxFontScale}>{t.age(cleanName)}</Text>}
           </View>
-          <Image source={frame} resizeMode="contain" accessibilityLabel={t.buddy}
-            style={{ width: buddySize, height: buddySize * 159 / 160 }} />
+          <View style={styles.buddySlot}>
+            <Image source={frame} resizeMode="contain" accessibilityLabel={t.buddy}
+              style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160 }} />
+          </View>
         </View>
         {!nameConfirmed ? <View style={styles.nameSection}>
           <View style={styles.inputOutline}>
@@ -147,21 +149,23 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
               onPress={() => setSelectedAge(option.id)} accessibilityRole="radio"
               accessibilityState={{ checked: selectedAge === option.id }}
               accessibilityLabel={`${lang === 'hi' ? option.hi : option.label}, ${lang === 'hi' ? option.hiDesc : option.desc}`}
-              style={[styles.ageOption, selectedAge === option.id && styles.ageOptionSelected]}>
+              style={[styles.ageOption, compactAge && styles.ageOptionCompact, selectedAge === option.id && styles.ageOptionSelected]}>
               <View style={styles.ageCopy}>
-                <Text style={styles.ageLabel}>{lang === 'hi' ? option.hi : option.label}</Text>
-                <Text style={styles.ageDescription}>{lang === 'hi' ? option.hiDesc : option.desc}</Text>
+                <Text style={styles.ageLabel} maxFontSizeMultiplier={typography.maxFontScale}>{lang === 'hi' ? option.hi : option.label}</Text>
+                {!compactAge && <Text style={styles.ageDescription} numberOfLines={2} maxFontSizeMultiplier={typography.maxFontScale}>{lang === 'hi' ? option.hiDesc : option.desc}</Text>}
               </View>
               <View style={[styles.radio, selectedAge === option.id && styles.radioSelected]}>
                 {selectedAge === option.id && <View style={styles.radioDot} />}
               </View>
             </TouchableOpacity>)}
           </View>
-          {selectedAge && <TouchableOpacity onPress={continueProfile} accessibilityRole="button" style={styles.continue}>
+          <TouchableOpacity onPress={continueProfile} disabled={!selectedAge} accessibilityElementsHidden={!selectedAge}
+            importantForAccessibility={selectedAge ? 'auto' : 'no-hide-descendants'} accessibilityRole="button"
+            style={[styles.continue, !selectedAge && styles.continueHidden]}>
             <Text style={styles.continueText}>{t.continue}</Text>
-          </TouchableOpacity>}
+          </TouchableOpacity>
         </View>}
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -176,9 +180,9 @@ const styles = StyleSheet.create({
   languageActive: { backgroundColor: '#F0F3ED' },
   languageText: { fontSize: 12, color: '#6B756E', fontWeight: '500' },
   languageTextActive: { color: palette.ink.primary },
-  content: { flexGrow: 1, paddingHorizontal: 24, alignItems: 'center' },
-  hero: { flexGrow: 1, alignItems: 'center', justifyContent: 'space-evenly', width: '100%', gap: 16, paddingVertical: 16 },
-  ageHero: { flexGrow: 0, gap: 12, paddingTop: 16, paddingBottom: 4 },
+  content: { flex: 1, minHeight: 0, paddingHorizontal: 24, alignItems: 'center' },
+  hero: { flex: 1, minHeight: 0, alignItems: 'center', width: '100%', gap: 12, paddingVertical: 12 },
+  buddySlot: { flex: 1, minHeight: 0, width: '100%', alignItems: 'center', justifyContent: 'center' },
   dialogue: { alignItems: 'center', gap: 8, width: '100%', maxWidth: 400 },
   message: { fontFamily: Platform.select(typography.subline.family), fontSize: 18, lineHeight: 26, textAlign: 'center', color: '#424B44', fontWeight: '500' },
   ageQuestion: { fontSize: 16, lineHeight: 23, textAlign: 'center', color: '#5D6B61' },
@@ -192,8 +196,9 @@ const styles = StyleSheet.create({
   ageSection: { width: '100%', maxWidth: 430, paddingBottom: 8 },
   edit: { alignSelf: 'center', minHeight: 44, justifyContent: 'center', marginBottom: 6 },
   editText: { color: '#5B7160', fontSize: 13, textDecorationLine: 'underline' },
-  ageOptions: { gap: 8 },
-  ageOption: { flexDirection: 'row', alignItems: 'center', minHeight: 62, paddingVertical: 10, paddingHorizontal: 16, borderWidth: 1, borderColor: '#E0E7DD', borderRadius: 18, backgroundColor: '#FFFFFF' },
+  ageOptions: { gap: 8, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  ageOption: { width: '48%', flexDirection: 'row', alignItems: 'center', minHeight: 68, paddingVertical: 8, paddingHorizontal: 12, borderWidth: 1, borderColor: '#E0E7DD', borderRadius: 18, backgroundColor: '#FFFFFF' },
+  ageOptionCompact: { minHeight: 50 },
   ageOptionSelected: { backgroundColor: '#F0F5EC', borderColor: '#53785B' },
   ageCopy: { flex: 1 },
   ageLabel: { fontSize: 16, lineHeight: 22, color: '#2B4936', fontWeight: '600' },
@@ -203,4 +208,5 @@ const styles = StyleSheet.create({
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#53785B' },
   continue: { minHeight: 52, justifyContent: 'center', alignItems: 'center', backgroundColor: '#315E47', borderRadius: 20, marginTop: 18 },
   continueText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+  continueHidden: { opacity: 0 },
 });
