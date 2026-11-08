@@ -1,0 +1,26 @@
+{
+  "status": "likeness candidate only; not approved/integrated",
+  "reference": "design/buddy/buddy_master.png",
+  "source": "design\\buddy\\generated\\buddy_screen2_master_restore-original.png",
+  "candidateMeasurements": {
+    "top": 148,
+    "baseline": 1201,
+    "seat_cx": 631.0,
+    "head_cx": 643,
+    "head_cy": 583,
+    "head_r": 317.4534606933594,
+    "head_w": 761.8883056640625
+  },
+  "masterMeasurements": {
+    "top": 182,
+    "baseline": 1184,
+    "seat_cx": 671.5,
+    "head_cx": 620,
+    "head_cy": 583,
+    "head_r": 314.45965576171875,
+    "head_w": 754.7031738281249
+  },
+  "headWidthPxInComparison": 318,
+  "baselinePxInComparison": 465,
+  "generationAttempts": 1
+}
