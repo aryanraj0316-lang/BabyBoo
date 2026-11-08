@@ -1,0 +1,182 @@
+{
+  "status": "Review candidates only; NOT approved or installed",
+  "eyeRule": "Forward matches master; down highlights lowered inside eye outlines",
+  "canvasPt": [
+    160,
+    159
+  ],
+  "baselinePt": 155,
+  "headWidthPt": 106,
+  "registration": {
+    "top": 146,
+    "baseline": 1205,
+    "seat_cx": 634.0,
+    "head_cx": 636,
+    "head_cy": 582,
+    "head_r": 316.384521484375,
+    "head_w": 759.3228515625
+  },
+  "masterFurMeasurement": {
+    "hue": 258.0722961425781,
+    "sat": 0.9240504503250122,
+    "light": 0.8215686082839966,
+    "L": 73.47412109375,
+    "C": 46.832115173339844,
+    "h": -55.64528274536133,
+    "pixels": 507314
+  },
+  "frames": [
+    {
+      "file": "frames/01_greeting.png",
+      "purpose": "Screen opens / before input focus",
+      "source": "assets\\onboarding\\screen1\\buddy\\buddy_wave@3x.webp",
+      "sourceSha256": "d4daab9a748152cb5a46d240921f3fbfb00f142c3207190262b0f8c1846e642b",
+      "visibleAlphaBounds": [
+        24,
+        15,
+        442,
+        466
+      ],
+      "bytes3x": 36864,
+      "furMeasurement": {
+        "hue": 255.1999969482422,
+        "sat": 0.9107142686843872,
+        "light": 0.813725471496582,
+        "L": 72.20458984375,
+        "C": 47.80839920043945,
+        "h": -56.95491027832031,
+        "pixels": 77053
+      },
+      "eyeBoxes3x": [
+        [
+          164,
+          148,
+          54,
+          56,
+          2076
+        ],
+        [
+          299,
+          180,
+          50,
+          56,
+          1947
+        ]
+      ]
+    },
+    {
+      "file": "frames/02_focus_down.png",
+      "purpose": "Stays down during typing pauses",
+      "source": "design\\buddy\\generated\\buddy_screen2_v3_focus_down-original.png",
+      "sourceSha256": "ad995304afcc62f21eda522dfbff6c599ac8c712527d2afc60eb078d65e8349b",
+      "visibleAlphaBounds": [
+        71,
+        20,
+        419,
+        465
+      ],
+      "bytes3x": 45354,
+      "furMeasurement": {
+        "hue": 258.68853759765625,
+        "sat": 0.8235294222831726,
+        "light": 0.8411765098571777,
+        "L": 77.227783203125,
+        "C": 37.1002197265625,
+        "h": -55.87012481689453,
+        "pixels": 54983
+      },
+      "eyeBoxes3x": [
+        [
+          155,
+          167,
+          56,
+          58,
+          2255
+        ],
+        [
+          287,
+          188,
+          53,
+          58,
+          2141
+        ]
+      ]
+    },
+    {
+      "file": "frames/03_write_down.png",
+      "purpose": "Small pen and paw change; eyes stay down",
+      "source": "design\\buddy\\generated\\buddy_screen2_v3_write_down-original.png",
+      "sourceSha256": "c6f8b97b255407206f6763b71a163f874d3826c3cdcdd26fc82c83e00241f9ca",
+      "visibleAlphaBounds": [
+        69,
+        19,
+        420,
+        466
+      ],
+      "bytes3x": 42654,
+      "furMeasurement": {
+        "hue": 259.2452697753906,
+        "sat": 0.7910445928573608,
+        "light": 0.8568627834320068,
+        "L": 79.91943359375,
+        "C": 32.052223205566406,
+        "h": -55.98369216918945,
+        "pixels": 34950
+      },
+      "eyeBoxes3x": [
+        [
+          155,
+          167,
+          56,
+          58,
+          2232
+        ],
+        [
+          287,
+          188,
+          53,
+          58,
+          2124
+        ]
+      ]
+    },
+    {
+      "file": "frames/04_forward.png",
+      "purpose": "Forward gaze; reused for age selection",
+      "source": "design\\buddy\\generated\\buddy_screen2_v3_forward-original.png",
+      "sourceSha256": "3eb7297761cbfe17513898986f27011f1897c9eaadb2cdd879ee37b8e4e4f0dd",
+      "visibleAlphaBounds": [
+        71,
+        20,
+        418,
+        466
+      ],
+      "bytes3x": 46082,
+      "furMeasurement": {
+        "hue": 258.22784423828125,
+        "sat": 0.8554215431213379,
+        "light": 0.8235294222831726,
+        "L": 74.591064453125,
+        "C": 42.75261688232422,
+        "h": -55.787757873535156,
+        "pixels": 65265
+      },
+      "eyeBoxes3x": [
+        [
+          155,
+          167,
+          55,
+          58,
+          2222
+        ],
+        [
+          287,
+          188,
+          53,
+          57,
+          2081
+        ]
+      ]
+    }
+  ]
+}
