@@ -2,6 +2,12 @@
 
 ## Latest review status
 
+**Latest instruction supersedes the earlier lowered-highlight rule:** keep the white eye reflections in their MASTER positions relative to each black eye. Only the whole head should nod down very slightly in3D. The user also rejected the gentle-down candidate because its white eye areas were still lowered.
+
+New review candidate: `design/buddy/generated/buddy_screen2_subtle_nod_master_eyes-original.png`. One built-in image_gen edit used the approved localized-note pose as the target and the original master solely as an eye/identity reference. Prompt in `master-eyes-generation.json`. Visually reviewed: upper master-style main highlights retained, nearly frontal cute face and subtle head inclination. No exact pixel/angle preservation is claimed. No app integration/build/layout/animation changes. STOP for image approval.
+
+The app currently installed still has the earlier lowered-eye patch behavior. That behavior must NOT carry into the next integration: use the approved whole-head pose to communicate attention, keeping eye-highlight placement fixed within the head. The upward layout and connected pen/paw motion fixes remain pending after image review.
+
 The user REJECTED `buddy_screen2_head_down-original.png`: the dip was too deep and the eyes/face looked distorted. It must not be integrated. They request only a tiny downward glance/nod while preserving the approved cute face, round eyes, colour, softness and plush dimensional rendering.
 
 One new gentle candidate is saved at `design/buddy/generated/buddy_screen2_gentle_down-original.png`, using the original approved localized-note pose as the sole reference, not the rejected deep bow. The prompt targeted a barely perceptible3–4degree nod (an implementation interpretation of “just a bit,” not a measured output angle), with round eyes and original smile prioritised over head pitch. Exact prompt in `gentle-generation.json`. The output was visually reviewed and is clearly less bowed than the rejected frame; user likeness approval remains pending. No retry loop, app changes, layout changes, integration, build or phone installation. The upward layout and connected pen/paw fixes remain queued after image approval.
