@@ -1,0 +1,40 @@
+{
+  "status": "One pose candidate; NOT approved/installed/animated",
+  "reference": "assets/onboarding/screen1/buddy/buddy_wave@3x.webp",
+  "source": "design\\buddy\\generated\\buddy_screen2_localized_note-original.png",
+  "canvasPt": [
+    160,
+    159
+  ],
+  "baselinePt": 155,
+  "headWidthPt": 106,
+  "registration": {
+    "top": 34,
+    "baseline": 1223,
+    "seat_cx": 625.5,
+    "head_cx": 668,
+    "head_cy": 517,
+    "head_r": 346.313232421875,
+    "head_w": 831.1517578125
+  },
+  "furMeasurements": {
+    "approved": {
+      "hue": 255.1999969482422,
+      "sat": 0.9107142686843872,
+      "light": 0.813725471496582,
+      "L": 72.20458984375,
+      "C": 47.80839920043945,
+      "h": -56.95491027832031,
+      "pixels": 77053
+    },
+    "candidate": {
+      "hue": 255.6923065185547,
+      "sat": 0.8529411554336548,
+      "light": 0.8294117450714111,
+      "L": 75.115966796875,
+      "C": 40.821956634521484,
+      "h": -57.403018951416016,
+      "pixels": 53855
+    }
+  }
+}

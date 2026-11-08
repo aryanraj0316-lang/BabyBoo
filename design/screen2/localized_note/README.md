@@ -1,0 +1,13 @@
+# Localized Screen 2 card-and-pen pose checkpoint
+
+2026-11-08, Asia/Calcutta. The user approves the restored Screen 1 appearance but correctly rejects the loss of the requested card/writing context. New contextual artwork and typing-driven pen animation are explicitly requested again. The original wave alone is a recovery, not the intended completed Screen 2.
+
+One built-in image_gen edit uses **only the actual approved Screen 1 wave asset** as its input. The requested edit area was arms/lap/pen/card; head, facial features, fur, colour and lighting were specified as protected. Unlike the earlier attempts, no other generated pose was supplied as an identity reference. Exact prompt in `generation.json`; generated original preserved at `design/buddy/generated/buddy_screen2_localized_note-original.png`.
+
+`comparison.png` shows the approved source and this card/pen candidate at the shared head-width target106pt and baseline155pt, with enlarged face/eye regions. Transparent candidate PNG and 2x/3x WebPs here are **review exports only**, not app assets.
+
+Observed result: the candidate holds the small blank card with the left paw and a green/gold pen with the right paw, and retains a similar head angle, smile, glossy-eye highlight arrangement and plush appearance. It is closer to the actual approved source than the earlier full-character pose generations. **The generative edit is not pixel-identical outside the intended region**: some shading/texture/proportion differences remain, so unchanged identity or exact colour is not claimed. Median fur L* is75.12 versus72.20 in the approved source; these whole-fur masks differ with pose and do not prove visual equivalence. The source/face comparison was visually reviewed. User approval is required, not assumed.
+
+This first candidate keeps the original forward-facing eyes for likeness assessment. Downward-gaze variants and actual animation are deliberately pending this likeness checkpoint. No app code changes, integration, Android build, device installation or new phone verification were performed. The phone still shows the previously restored approved wave. No Screen 1/other-screen changes.
+
+After approval, the remaining requested interaction is still required: card/pen pose; down gaze while name input/keyboard is active including pauses; forward gaze after Go or keyboard dismissal; small writing-paw/pen movement triggered by actual typing; one continuous black ink line following the nib; separate soft ground shadow; preserve the current non-scroll name-to-age flow, localization and navigation. Do not replace that work with a permanent waving-only solution or claim the writing animation is complete. STOP at this pose milestone before further variants/animation.
