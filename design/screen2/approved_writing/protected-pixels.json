@@ -1,0 +1,14 @@
+{
+  "comparison": "headless approved bitmap vs every writing preview",
+  "changedPixelsOutsideEyeAndWritingRegion": {
+    "down-0.png": 0,
+    "down-1.png": 0,
+    "down-2.png": 0,
+    "down-3.png": 0,
+    "down-4.png": 0,
+    "down-5.png": 0,
+    "down-6.png": 0,
+    "rest.png": 0
+  },
+  "passed": true
+}

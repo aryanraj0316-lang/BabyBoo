@@ -1,0 +1,81 @@
+﻿[
+    {
+        "seconds":  2.5945728999999997,
+        "event":  "type",
+        "character":  "A"
+    },
+    {
+        "seconds":  3.1927612,
+        "event":  "type",
+        "character":  "l"
+    },
+    {
+        "seconds":  3.661132,
+        "event":  "type",
+        "character":  "e"
+    },
+    {
+        "seconds":  4.2064471999999995,
+        "event":  "pause"
+    },
+    {
+        "seconds":  6.2220654,
+        "event":  "type",
+        "character":  "x"
+    },
+    {
+        "seconds":  6.7216214999999995,
+        "event":  "type",
+        "character":  "a"
+    },
+    {
+        "seconds":  7.2213391,
+        "event":  "type",
+        "character":  "n"
+    },
+    {
+        "seconds":  7.7221341999999993,
+        "event":  "type",
+        "character":  "d"
+    },
+    {
+        "seconds":  8.2197146,
+        "event":  "pause"
+    },
+    {
+        "seconds":  10.22438,
+        "event":  "type",
+        "character":  "r"
+    },
+    {
+        "seconds":  10.7358696,
+        "event":  "type",
+        "character":  "i"
+    },
+    {
+        "seconds":  11.2469792,
+        "event":  "type",
+        "character":  "n"
+    },
+    {
+        "seconds":  11.7462048,
+        "event":  "type",
+        "character":  "a"
+    },
+    {
+        "seconds":  12.2463111,
+        "event":  "pause"
+    },
+    {
+        "seconds":  14.905154699999999,
+        "event":  "dismiss-keyboard"
+    },
+    {
+        "seconds":  20.2096278,
+        "event":  "refocus"
+    },
+    {
+        "seconds":  25.1283666,
+        "event":  "submit-name"
+    }
+]

@@ -1,9 +1,10 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, TextInput, Image,
+  View, Text, StyleSheet, TouchableOpacity, TextInput,
   KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ApprovedWritingBuddy } from '../onboarding/screen2/ApprovedWritingBuddy';
 import { palette, type as typography } from '../onboarding/screen1/tokens';
 
 export interface OnboardingSecondChildData {
@@ -53,6 +54,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
   const [nameConfirmed, setNameConfirmed] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [nameFocused, setNameFocused] = useState(false);
   const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
   const [contentHeight, setContentHeight] = useState(0);
   const insets = useSafeAreaInsets();
@@ -117,8 +119,8 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           <View style={styles.buddySlot}>
             <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160 }}>
               <View pointerEvents="none" style={styles.buddyShadow} />
-              <Image source={require('../../assets/onboarding/screen1/buddy/buddy_wave.webp')}
-                resizeMode="contain" accessibilityLabel={t.buddy}
+              <ApprovedWritingBuddy text={childName} finished={nameConfirmed}
+                lookingDown={nameFocused && keyboardVisible && !nameConfirmed} label={t.buddy}
                 style={{ width: '100%', height: '100%' }} />
             </View>
           </View>
@@ -126,6 +128,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
         {!nameConfirmed ? <View style={styles.nameSection}>
           <View style={styles.inputOutline}>
             <TextInput ref={inputRef} autoFocus value={childName} onChangeText={setChildName}
+              onFocus={() => setNameFocused(true)} onBlur={() => setNameFocused(false)}
               onSubmitEditing={submitName} placeholder={t.placeholder} placeholderTextColor="#777C78"
               accessibilityLabel={t.nameLabel} style={styles.input} maxLength={25}
               autoCorrect={false} autoCapitalize="words" returnKeyType="next"
