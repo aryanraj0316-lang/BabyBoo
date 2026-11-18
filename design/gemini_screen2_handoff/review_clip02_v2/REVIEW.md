@@ -1,0 +1,4 @@
+Reviewed12chronological samples and full-resolution0s/2.7s frames. Original retained, no appintegration.
+Card issue confirmed: the reference landscape note card has become a near-square upright sign against the chest. Its face is almost vertical; the pen approaches that camera-facing surface rather than resting on a plausible lap writing plane. Sampled pen contact does not convincingly establish writing pressure/surface alignment.
+Round eyes are improved relative to sleepy-eyed firstcandidate, but face stays directed mainly towardviewer; looking at paper remainsweak. This was requested as prepare-to-write, so absenceofink/writing is NOT a failure: card deliberately blank forappoverlay. Properwritingloop remains separateClip03.
+Notapprovedforintegration. Correct rigidcardgeometry andorientation before furtherclips. No mascotredesign, no applicationchanges/deviceverification/OTA.

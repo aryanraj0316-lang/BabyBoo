@@ -1,0 +1,13 @@
+Correct Clip02 using the original two attached reference images, not the distorted card from the latest video.
+
+The master image controls Buddy's exact light lavender fur, soft premium3Dlighting, round eyes, face and proportions. The card-and-pen reference controls the props and grip. Keep that identity unchanged.
+
+The cream card must be a LANDSCAPE rounded rectangle approximately twice as wide as tall. Keep its rigid shape, dimensions and thickness unchanged throughout. It rests across Buddy's lap, supported at its viewer-right edge by his left paw. Its writing surface faces upward and slightly toward the camera, like a small notepad on a lap. Do not hold it upright like a chest badge, turn it into a square, bend it or morph it.
+
+Buddy's right paw(viewer-left) securely holds the green/gold pen. Move the paw and pen as one connected unit. Put the gold nib ON the upper writing surface, well inside the card boundaries. The nib must not touch the card's front edge or underside, hover, or penetrate the card. The barrel angles upward from the nib toward the gripping paw.
+
+Make one tiny3Dheadnod toward the paper. Preserve cute round open eyes and the master-style white reflections; do not lower eyelids to simulate looking down and do not slide white reflections independently. End holding the attentive downward pose, pen touching the card. No look-up at the end.
+
+This is preparation ONLY. No writing strokes, letters or ink yet; the writing loop is a separate clip. Keep the card completely blank for dynamic app overlays.
+
+Fixed camera, full seated body, unchanged feet positions/baseline/scale. Flatuniform#00FF00background with no floor shadow, gradients or decorative sparkles.24fps ifavailable. Perform the small action at natural speed, then hold the final pose for the remaining duration. Generate only this correctedClip02.
