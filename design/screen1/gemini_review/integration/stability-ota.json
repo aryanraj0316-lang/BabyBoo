@@ -1,0 +1,14 @@
+[
+  {
+    "id": "01a1ee34-dd65-70f6-a312-ead549c8a71d",
+    "group": "64511d5c-25f0-4b11-b85a-0a7f908a755b",
+    "platform": "android",
+    "runtimeVersion": "1.0.0",
+    "branch": "preview",
+    "gitCommitHash": "a0636c05b92da6c034935479d2fb3e0aecffdd52",
+    "createdAt": "2026-11-18T10:30:04.389Z",
+    "serverReadbackVerified": true,
+    "channel": "preview",
+    "deviceInstalledVia": "locally built Android APK; OTA fetch on debug binary not claimed"
+  }
+]
