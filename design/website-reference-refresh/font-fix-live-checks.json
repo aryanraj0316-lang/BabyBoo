@@ -1,0 +1,13 @@
+{
+  "landing": 200,
+  "liveCss": "/assets/index-DdyBfalU.css",
+  "fontStatus": 200,
+  "fontType": "font/ttf",
+  "fontBytesMatch": true,
+  "variableFontSha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+  "release": {
+    "available": false
+  },
+  "adminPage": 200,
+  "anonymousAdminApi": 403
+}

@@ -1,17 +1,17 @@
 {
-  "checkedAt": "2026-11-18T22:08+05:30",
-  "version": 2,
-  "sourceCommit": "9c6d4ee574829c06c8b785832427e2d410111eb4",
-  "versionId": "appgprj_6afdc85389648191abe7079c72695ceb~appgver_99aa31f0c6d88191a8c24449cc2e3212",
-  "deploymentId": "appgdep_6afdd3ccd3b08191a8312782d9415b4f",
+  "checkedAt": "2026-11-18T22:19+05:30",
+  "version": 3,
+  "sourceCommit": "8573141d08780d5a0c0b2e15c01bbe5d786ef294",
+  "versionId": "appgprj_6afdc85389648191abe7079c72695ceb~appgver_190b8f113fbc819188dbce4fb639b7ba",
+  "deploymentId": "appgdep_6afdd65bbc2081919985241cce897511",
   "status": "succeeded",
   "url": "https://babyboo-app-download.mistyemery2.chatgpt.site",
-  "tests": 18,
+  "tests": 19,
   "productionBuild": "passed",
   "apkAvailable": false,
   "requestedVisualMatchPercent": 95,
   "verifiedVisualMatchPercent": null,
-  "visualLimit": "Browser kernel failed; default browser launch blocked by policy. Current saved version screenshot unavailable. Only previous baseline capture reviewed.",
+  "visualLimit": "Current platform-rendered hero reviewed. Interactive browser failed; matched1835px viewport and lower-section captures unavailable. No numeric95%claim.",
   "references": {
     "hero": [
       1835,
@@ -26,5 +26,13 @@
       857
     ]
   },
-  "noNativeChanges": true
+  "noNativeChanges": true,
+  "fontRegressionTest": "passed: genuine fvar wght200?1000",
+  "heroCapture": "hosted-final.png",
+  "heroCaptureViewport": [
+    1200,
+    750
+  ],
+  "heroCaptureReviewed": true,
+  "fontSource": "https://github.com/google/fonts/blob/main/ofl/nunito/Nunito%5Bwght%5D.ttf"
 }
