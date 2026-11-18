@@ -1,0 +1,76 @@
+{
+  "method": "actual sole contour + tight contact + wider penumbra + low-opacity ambient",
+  "originalArtworkChanged": false,
+  "details": [
+    {
+      "id": "watch_34_left",
+      "soles": [
+        304,
+        310
+      ]
+    },
+    {
+      "id": "worried_paws",
+      "soles": [
+        307,
+        309
+      ]
+    },
+    {
+      "id": "worried_wavy",
+      "soles": [
+        304,
+        310
+      ]
+    },
+    {
+      "id": "yawn",
+      "soles": [
+        308,
+        310
+      ]
+    },
+    {
+      "id": "sleepy",
+      "soles": [
+        308,
+        310
+      ]
+    },
+    {
+      "id": "surprised",
+      "soles": [
+        309,
+        311
+      ]
+    },
+    {
+      "id": "point_left",
+      "soles": [
+        309,
+        311
+      ]
+    },
+    {
+      "id": "arms_up",
+      "soles": [
+        310,
+        309
+      ]
+    },
+    {
+      "id": "wave",
+      "soles": [
+        310,
+        310
+      ]
+    },
+    {
+      "id": "happy_front",
+      "soles": [
+        309,
+        310
+      ]
+    }
+  ]
+}

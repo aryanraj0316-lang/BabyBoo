@@ -158,8 +158,8 @@ function swipeOffset(t: number): { offset: number; speed: number } {
   let speed = 0;
   for (let i = 0; i < SW.times.length; i++) {
     const s = springAt(t - SW.times[i], spring.snappy.stiffness * SW.energy[i], spring.snappy.dampingRatio);
-    offset += s.x;
-    speed += s.v;
+    offset += s.x * SW.distance[i];
+    speed += s.v * SW.distance[i];
   }
   // The stall: travel part of the way, then settle back.
   const st = SW.stall;

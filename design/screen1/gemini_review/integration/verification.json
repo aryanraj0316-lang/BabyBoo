@@ -1,0 +1,56 @@
+{
+  "reviewedAt": "2026-11-18 14:05 +0530",
+  "branch": "onboarding-screen1-rebuild",
+  "apkSha256": "418dfc8daace99a5223b6486c2c2afe0248df008e1271b6349540e492a25451a",
+  "loopSeconds": 21.5,
+  "batteryPercent": [
+    3,
+    0
+  ],
+  "reelScrollDistances": [
+    1,
+    0.6
+  ],
+  "buddyVideoUntil": 16.5,
+  "sourceVideoSpeed": 1,
+  "clip5": "Existing still poses; animation not generated",
+  "typeScript": "passed",
+  "relevantTests": {
+    "passed": 26,
+    "failed": 0
+  },
+  "nativeBuild": "passed",
+  "device": "Vivo V2432 / 10MF7BG5920005F / 720x1600",
+  "deviceChecks": [
+    "English complete loop and replay",
+    "Hindi story and battery heading",
+    "CTA visible at first render and later",
+    "CTA navigation to Screen2 and back without profile submission",
+    "no app debug controls",
+    "8-second background pause with warm resume",
+    "130% font scale combined with reduced motion",
+    "original font and transition settings restored"
+  ],
+  "lifecycle": {
+    "backgroundSeconds": 8,
+    "napPreserved": true,
+    "warmLaunch": "Starting: Intent { cmp=com.babyboo.app/.MainActivity }\nWarning: Activity not started, its current task has been brought to the front\nStatus: ok\nLaunchState: HOT\nActivity: com.babyboo.app/.MainActivity\nTotalTime: 289\nWaitTime: 306\nComplete",
+    "sleepFaceMatchBefore": 0.9939136505126953,
+    "sleepFaceMatchAfter": 0.9601454734802246,
+    "testedFontScale": 1.3,
+    "testedTransitionScale": 0,
+    "ctaPresentInBothAccessibilityChecks": true,
+    "restoredFontScale": "1.0",
+    "restoredTransitionScale": "1.0",
+    "noProfileSubmitted": true,
+    "reducedMotionBuddyPixelMaxDifference": 0,
+    "reducedMotionBuddyDifferentPixels": 0
+  },
+  "ota": "Not yet published; authorized preview Android publish is next",
+  "limitations": [
+    "Clip05 stays static",
+    "source-clip pose/colour discontinuities remain at cuts",
+    "Android delivery verified on this device only",
+    "Native preview binary1.0.3 includes existing Skia/Reanimated; no new native dependency added"
+  ]
+}

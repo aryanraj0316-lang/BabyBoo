@@ -1,7 +1,7 @@
 /** A full-screen battery demonstration, derived from the shared story clock. */
 import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
-import { Group, LinearGradient, Path, Rect, RoundedRect, Skia, Text, matchFont, rect, rrect, vec } from '@shopify/react-native-skia';
+import { Group, LinearGradient, Paint, Paragraph, Path, Rect, RoundedRect, Skia, Text, TextAlign, matchFont, rect, rrect, vec } from '@shopify/react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { progress, rgba, smoothstep } from '../anim';
 import type { Rect as R } from '../layout';
@@ -18,8 +18,19 @@ export function BatteryTakeover({ screen, state, label }: { screen: R; state: Sh
   const ix = bx + inset, iy = by + inset;
   const fontFamily = Platform.select({ ios: 'Helvetica Neue', default: 'sans-serif' });
   const font = useMemo(() => matchFont({ fontFamily, fontSize: w * B.counterSizeOfScreen, fontWeight: '700' }), [fontFamily, w]);
-  const labelFont = useMemo(() => matchFont({ fontFamily, fontSize: w * B.labelSizeOfScreen, fontWeight: '500' }), [fontFamily, w]);
-  const opacity = useDerivedValue(() => smoothstep(progress(state.value.feedTime, B.from, B.from + B.length)));
+  // Paragraph shaping uses the system fallback fonts for Hindi conjuncts;
+  // a single matchFont('sans-serif') draws missing-glyph boxes instead.
+  const labelParagraph = useMemo(() => {
+    const p = Skia.ParagraphBuilder.Make({ textAlign: TextAlign.Center, maxLines: 1 })
+      .pushStyle({ color: Skia.Color(B.outline), fontSize: w * B.labelSizeOfScreen, fontStyle: { weight: 500 } })
+      .addText(label).pop().build();
+    p.layout(w);
+    return p;
+  }, [label, w]);
+  const opacity = useDerivedValue(() => {
+    const s = state.value;
+    return smoothstep(progress(s.feedTime, B.from, B.from + B.length)) * s.feedOpacity * (1 - s.dim);
+  });
   const fillColors = useDerivedValue(() => [rgba(state.value.batteryColor, 1), rgba(state.value.batteryColor, 0.65)]);
   const fillPath = useDerivedValue(() => {
     const s = state.value;
@@ -34,7 +45,8 @@ export function BatteryTakeover({ screen, state, label }: { screen: R; state: Sh
   const fillTop = useDerivedValue(() => vec(ix, iy + innerHeight * (1 - state.value.batteryLevel)));
   const counter = useDerivedValue(() => `${Math.ceil(state.value.batteryLevel * 100)}%`);
   const counterX = useDerivedValue(() => x + (w - font.measureText(counter.value).width) / 2);
-  return <Group opacity={opacity}>
+  // Paragraph owns its text paint; a layer applies the shared fade to it too.
+  return <Group layer={<Paint opacity={opacity} />}>
     <Rect x={x} y={y} width={w} height={h}>
       <LinearGradient start={vec(x, y)} end={vec(x, y + h)} colors={[...B.background]} />
     </Rect>
@@ -47,6 +59,6 @@ export function BatteryTakeover({ screen, state, label }: { screen: R; state: Sh
       </Path>
     </Group>
     <Text text={counter} x={counterX} y={y + h * B.counterYOfScreen} font={font} color={B.ink} />
-    <Text text={label} x={x + (w - labelFont.measureText(label).width) / 2} y={y + h * B.labelYOfScreen} font={labelFont} color={B.outline} />
+    <Paragraph paragraph={labelParagraph} x={x} y={y + h * B.labelYOfScreen - w * B.labelSizeOfScreen} width={w} />
   </Group>;
 }

@@ -1,0 +1,15 @@
+{
+  "backgroundSeconds": 8,
+  "napPreserved": true,
+  "warmLaunch": "Starting: Intent { cmp=com.babyboo.app/.MainActivity }\nWarning: Activity not started, its current task has been brought to the front\nStatus: ok\nLaunchState: HOT\nActivity: com.babyboo.app/.MainActivity\nTotalTime: 289\nWaitTime: 306\nComplete",
+  "sleepFaceMatchBefore": 0.9939136505126953,
+  "sleepFaceMatchAfter": 0.9601454734802246,
+  "testedFontScale": 1.3,
+  "testedTransitionScale": 0,
+  "ctaPresentInBothAccessibilityChecks": true,
+  "restoredFontScale": "1.0",
+  "restoredTransitionScale": "1.0",
+  "noProfileSubmitted": true,
+  "reducedMotionBuddyPixelMaxDifference": 0,
+  "reducedMotionBuddyDifferentPixels": 0
+}

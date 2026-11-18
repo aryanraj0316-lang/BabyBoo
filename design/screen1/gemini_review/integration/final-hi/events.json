@@ -1,0 +1,19 @@
+{
+  "mode": "hi",
+  "events": [
+    {
+      "seconds": 10.574644199999966,
+      "ctaPresent": true,
+      "debugControls": false
+    },
+    {
+      "seconds": 36.55493589999969,
+      "ctaPresent": true,
+      "debugControls": false
+    }
+  ],
+  "alwaysVisibleCtaVersion": true,
+  "originalTransitionScale": "1.0",
+  "originalFontScale": "1.0",
+  "noProfileSubmitted": true
+}

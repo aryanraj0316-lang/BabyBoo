@@ -15,8 +15,8 @@ export const palette = {
   ink: { primary: '#213F30', secondary: '#506757' },
   brand: { lavender: '#A99BF0', lavenderDeep: '#7B6BE0' },
   cta: {
-    fill: '#6A50B6',
-    fillPressed: '#564095',
+    fill: '#6347A5',
+    fillPressed: '#52398D',
     label: '#FFFFFF',
   },
   dot: { core: '#EEF1FE', ring: '#5B74EE', glow: '#6A86FB' },
@@ -127,8 +127,10 @@ export const contactShadow = {
   overhangOfBuddy: 0.04,
   blurOfBuddy: 0.05, // Skia blur sigma as a fraction of Buddy's height
   opacity: 0.22,
-  /** Buddy's own part of the floor shadow (it reacts to his bounce), as a fraction of his canvas width. */
-  buddyWidthOfCanvas: 0.62,
+  /** One soft stationary ground shadow, tucked beneath the seated silhouette. */
+  buddyWidthOfCanvas: 0.82,
+  buddyAmbientOpacity: 0.14,
+  buddyBlurOfHeight: 0.055,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -262,18 +264,22 @@ export const duration = { frame: 150, short: 250, medium: 400, long: 600 } as co
 // Extra quiet time requested before the parent hand-off. Later beats move
 // together so the A gesture and ending keep their existing durations.
 const extraSleep = 2.0;
+/** Start the battery reaction after ~1.6 reel scrolls. */
+export const introTrim = 3.6;
+/** Cut unused watching/holding time rather than stretching the supplied clips. */
+const endingTrim = 4.5;
 export const demo = {
-  loop: 24.0 + extraSleep,
+  loop: 24.0 + extraSleep - endingTrim,
   beats: {
     reels: 0, // Beat 1
-    battery: 7.5, // Beat 2
-    shutdown: 12.5, // Beat 3
-    unlock: 15.5 + extraSleep, // Beat 4: draw A on the dark screen
-    unlocked: 19.0 + extraSleep, // Beat 5
-    rest: 21.5 + extraSleep, // Beat 6
+    battery: 7.5 - introTrim, // Beat 2
+    shutdown: 8.4, // Beat 3
+    unlock: 15.5 + extraSleep - endingTrim, // Beat 4: draw A on the dark screen
+    unlocked: 19.0 + extraSleep - endingTrim, // Beat 5
+    rest: 21.5 + extraSleep - endingTrim, // Beat 6
   },
   /** Composed still for reduced motion: unlocked home screen, Buddy waving, warm halo. */
-  stillTime: 20.8 + extraSleep,
+  stillTime: 20.8 + extraSleep - endingTrim,
 } as const;
 
 /**
@@ -282,10 +288,11 @@ export const demo = {
  * stalls: it travels `stall.reach` of a reel, then settles back.
  */
 export const swipes = {
-  // Five real videos, about 1.5 seconds each, with slower physical swipes.
-  times: [1.5, 3.0, 4.5, 6.0],
-  energy: [0.45, 0.45, 0.45, 0.22],
-  stall: { time: 7.5, reach: 0.18, rise: 0.55, settle: 0.7 },
+  // One full scroll, then a partial second: react before showing four reels.
+  times: [1.5, 3.0],
+  distance: [1, 0.6],
+  energy: [0.45, 0.22],
+  stall: { time: 7.5 - introTrim, reach: 0.08, rise: 0.55, settle: 0.7 },
   /** Vertical stretch at full swipe speed, released as it settles. */
   stretch: 0.02,
 } as const;
@@ -316,10 +323,10 @@ export const parentGesture = {
 } as const;
 
 export const battery = {
-  start: 0.05,
+  start: 0.03,
   end: 0,
-  drainFrom: 9.0,
-  drainTo: 12.4,
+  drainFrom: 9.0 - introTrim,
+  drainTo: 8.3,
   amberBelow: 0.23,
   redBelow: 0.10,
   /** Colour tween width around each threshold (battery fraction). */
@@ -329,8 +336,8 @@ export const battery = {
 } as const;
 
 export const toast = {
-  inAt: 7.6,
-  outAt: 8.4,
+  inAt: 7.6 - introTrim,
+  outAt: 8.4 - introTrim,
   topOfScreen: 0.1, // resting top, below the status bar
   heightOfScreen: 0.075,
   widthOfScreen: 0.62,
@@ -342,7 +349,7 @@ export const toast = {
 } as const;
 
 export const batteryTakeover = {
-  from: 8.3, length: 0.7,
+  from: 8.3 - introTrim, length: 0.7,
   background: ['#11131A', '#211D2D'],
   widthOfScreen: 0.46, heightOfScreen: 0.35, topOfScreen: 0.30,
   radiusOfWidth: 0.045, strokeOfWidth: 0.009, insetOfWidth: 0.026,
@@ -354,7 +361,7 @@ export const batteryTakeover = {
 } as const;
 
 export const emptyBattery = {
-  inAt: 12.4,
+  inAt: 8.3,
   widthOfScreen: 0.26,
   heightOfScreen: 0.12, // of the screen width
   scaleFrom: 0.9,
@@ -363,7 +370,7 @@ export const emptyBattery = {
 } as const;
 
 export const dim = {
-  at: 12.5,
+  at: 8.4,
   length: 1.0,
   /** Remaining saturation and contrast when fully dim (the screen loses colour as it fades). */
   saturation: 0.15,
@@ -371,7 +378,7 @@ export const dim = {
 } as const;
 
 export const homePill = {
-  inAt: 14.0,
+  inAt: 9.9,
   widthOfScreen: 0.3,
   height: 4,
   bottomOfScreen: 0.025,
@@ -463,10 +470,10 @@ export const loopSeam = { at: demo.loop - 0.8, length: 0.8 } as const;
 /** Frame changes: [time, frame, big]. Big changes get anticipation. */
 export const buddyTimeline = [
   [0, 'watch_34_left', false],
-  [7.6, 'worried_wavy', false],
-  [10.5, 'worried_paws', false],
-  [12.7, 'yawn', false],
-  [13.6, 'sleepy', false],
+  [7.6 - introTrim, 'worried_wavy', false],
+  [6.4, 'worried_paws', false],
+  [8.6, 'yawn', false],
+  [9.85, 'sleepy', false],
   [demo.beats.unlock, 'surprised', false],
   [demo.beats.unlock + unlock.swipe[0], 'point_left', false],
   [demo.beats.unlocked, 'arms_up', false],

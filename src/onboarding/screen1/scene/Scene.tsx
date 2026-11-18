@@ -7,12 +7,14 @@
  * Phone screen layers, bottom to top: home screen, feed (reels, toast, dim),
  * lock layer + touch dot. The glass sheen sits above them all (PhoneMockup).
  */
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BlurMask, Canvas, Circle, Image, LinearGradient, Oval, RadialGradient, Rect, useImage, vec, type SkImage } from '@shopify/react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import { rgba } from '../anim';
 import { BUDDY_IMAGES } from '../buddyImages.generated';
+import { CLIP_ATLASES } from '../buddyClipAssets.generated';
+import { CLIP_GROUND, STILL_GROUND } from '../buddyGroundAssets.generated';
 import type { SceneLayout } from '../layout';
 import { FRAME_IDS, type SceneState } from '../timeline';
 import { contactShadow as CS, halo as H, palette } from '../tokens';
@@ -44,11 +46,25 @@ function useBuddyImages(): SkImage[] | null {
 
 export function Scene({ width, height, layout, state, toastText, onReady }: Props) {
   const images = useBuddyImages();
+  const [clipFailed, setClipFailed] = useState(false);
+  const onClipError = useCallback(() => setClipFailed(true), []);
+  // Fixed generated asset list: decode before the shared clock starts.
+  // oxlint-disable-next-line react-hooks/rules-of-hooks -- immutable generated list
+  const loadedClips = CLIP_ATLASES.map((asset) => useImage(asset, onClipError));
+  const clips = !clipFailed && loadedClips.every(Boolean) ? loadedClips as SkImage[] : undefined;
+  const [groundFailed, setGroundFailed] = useState(false);
+  const onGroundError = useCallback(() => setGroundFailed(true), []);
+  // oxlint-disable-next-line react-hooks/rules-of-hooks -- immutable generated list
+  const groundStills = STILL_GROUND.map((asset) => useImage(asset, onGroundError));
+  // oxlint-disable-next-line react-hooks/rules-of-hooks -- immutable generated list
+  const groundClips = CLIP_GROUND.map((asset) => useImage(asset, onGroundError));
+  const ground = !groundFailed && groundStills.every(Boolean) && groundClips.every(Boolean)
+    ? { stills: groundStills as SkImage[], clips: groundClips as SkImage[] } : undefined;
   const background = useImage(require('../../../../assets/onboarding/screen1/meadow-background.webp'));
   const hand = useImage(require('../../../../assets/onboarding/screen1/swipe-hand.webp'));
   const twig = useImage(require('../../../../assets/onboarding/screen1/meadow-twig.webp'));
   const parentHand = useImage(require('../../../../assets/onboarding/screen1/parent-hand.webp'));
-  const ready = images !== null && background !== null && hand !== null && twig !== null && parentHand !== null;
+  const ready = images !== null && background !== null && hand !== null && twig !== null && parentHand !== null && (clipFailed || clips !== undefined) && (groundFailed || ground !== undefined);
   useEffect(() => {
     if (ready) onReady();
   }, [ready, onReady]);
@@ -99,7 +115,7 @@ export function Scene({ width, height, layout, state, toastText, onReady }: Prop
               <UnlockGesture screen={layout.screen} state={state} hand={parentHand} />
             </PhoneMockup>
 
-            {images && <Buddy layout={layout} state={state} images={images} />}
+            {images && <Buddy layout={layout} state={state} images={images} clips={clips} ground={ground} />}
           </>
         )}
       </Canvas>

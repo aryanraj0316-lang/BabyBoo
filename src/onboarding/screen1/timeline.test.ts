@@ -38,8 +38,9 @@ describe('demo timeline', () => {
     const slow = at(swipes.times[last] + 0.1).feedOffset - last;
     expect(slow).toBeLessThan(fast);
     const stallPeak = at(swipes.stall.time + swipes.stall.rise).feedOffset;
-    expect(stallPeak).toBeGreaterThan(swipes.times.length + swipes.stall.reach * 0.9);
-    expect(at(demo.beats.shutdown + 0.35).feedOffset).toBeCloseTo(swipes.times.length, 1);
+    const totalScroll = swipes.distance.reduce((a, b) => a + b, 0);
+    expect(stallPeak).toBeGreaterThan(totalScroll + swipes.stall.reach * 0.9);
+    expect(at(demo.beats.shutdown + 0.35).feedOffset).toBeCloseTo(totalScroll, 1);
   });
 
   it('stretches the feed only while it moves fast', () => {
@@ -48,8 +49,8 @@ describe('demo timeline', () => {
     expect(at(swipes.times[0] + 0.8).feedStretch).toBeLessThan(1.001);
   });
 
-  it('holds the large battery at 5% before draining to zero', () => {
-    expect(at(batteryTakeover.from + batteryTakeover.length).batteryLevel).toBeCloseTo(0.05, 3);
+  it('holds the large battery at 3% before draining to zero', () => {
+    expect(at(batteryTakeover.from + batteryTakeover.length).batteryLevel).toBeCloseTo(0.03, 3);
     expect(at(battery.drainTo).batteryLevel).toBe(0);
     expect(at(1).batteryColor).toEqual([255, 59, 48]);
     expect(at(battery.drainTo).batteryColor.map(Math.round)).toEqual([255, 59, 48]);
@@ -90,17 +91,22 @@ describe('demo timeline', () => {
     expect(at(demo.beats.unlock + 0.1).dotVisible).toBe(1);
   });
 
-  it('keeps all five reel holds and adds two seconds of sleep before the parent turn', () => {
-    expect(demo.loop).toBe(26);
-    expect(demo.beats.unlock).toBe(17.5);
+  it('reacts after one full and one partial scroll, preserving a long sleep before parents', () => {
+    expect(demo.loop).toBe(21.5);
+    expect(demo.beats.unlock).toBe(13);
     expect(demo.beats.unlocked - demo.beats.unlock).toBe(3.5);
-    expect(FRAME_IDS[at(15.6).frameTo]).toBe('sleepy');
+    expect(FRAME_IDS[at(11).frameTo]).toBe('sleepy');
     expect(FRAME_IDS[at(demo.beats.unlock - 0.01).frameTo]).toBe('sleepy');
-    expect(at(16.5).dotVisible).toBe(0);
-    expect(swipes.times).toHaveLength(4);
+    expect(at(demo.beats.unlock - 1).dotVisible).toBe(0);
+    expect(swipes.times).toHaveLength(2);
+    expect(swipes.distance).toEqual([1, 0.6]);
+    expect(demo.beats.battery).toBeCloseTo(3.9);
+    expect(battery.drainFrom).toBeCloseTo(5.4);
+    expect(at(4).feedOffset).toBeLessThan(2);
+    expect(FRAME_IDS[at(4.2).frameTo]).toBe('worried_wavy');
     expect(swipes.times[0]).toBeGreaterThanOrEqual(1.5);
     for (let i = 1; i < swipes.times.length; i++) expect(swipes.times[i] - swipes.times[i - 1]).toBeGreaterThanOrEqual(1.5);
-    expect(batteryTakeover.from - swipes.times[3]).toBeGreaterThan(2);
+    expect(batteryTakeover.from - swipes.times[1]).toBeGreaterThan(1);
   });
 
   it('shows the frame mapping from section 7', () => {

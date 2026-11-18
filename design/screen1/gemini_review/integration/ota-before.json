@@ -1,0 +1,12 @@
+{
+  "channel": "preview",
+  "previousUpdates": [
+    {
+      "branch": "preview",
+      "id": "01a14861-1de3-7b02-b1be-26d3ccf3b7a0",
+      "group": "3bf043b7-8904-424f-a041-840ce0de84cf",
+      "runtimeVersion": "1.0.0",
+      "platform": "android"
+    }
+  ]
+}
