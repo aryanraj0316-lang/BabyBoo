@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -28,7 +29,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'react-native': 'react-native-web',
-      'expo': 'c:/Users/LENOVO/Desktop/BabyBoo/src/stubs/expo-stub.ts',
+      'expo': fileURLToPath(new URL('./src/stubs/expo-stub.ts', import.meta.url)),
     },
   },
 });
