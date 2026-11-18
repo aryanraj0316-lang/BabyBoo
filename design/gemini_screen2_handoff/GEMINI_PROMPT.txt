@@ -1,0 +1,35 @@
+Animate Buddy for BabyBoo onboarding Screen 2: a parent enters their child's name, then selects their age. Animate ONLY the mascot, never the app screen.
+
+REFERENCES
+01_buddy_master.png is the definitive identity, colour, face, fur, lighting, softness and dimensional-rendering authority.
+02_buddy_card_pen_reference.png supplies the seated writing pose, blank cream card, pen and paw grip. Preserve the master's appearance if the references differ. Ignore transparency-preview colours and isolated background specks; do not reproduce them.
+
+IDENTITY LOCK
+Keep the same light lavender plush fur, wide rounded head, chubby body, glossy black eyes, original white eye reflections, pink blush and inner ears, open dark-purple smile with pink tongue, stubby plush paws and heart pads. Preserve the premium soft 3D-rendered appearance. No redesign, darker purple, desaturation, smooth plastic skin, flattened lighting, new eyebrows/nose, human fingers, distorted face, or changing head size.
+The white circles in the eyes are lighting reflections, not movable pupils. Keep their master-style placement under fixed lighting. Convey looking down through a small, natural three-dimensional head nod, never by sliding the white circles down the eyes. Keep the face cute and nearly frontal; do not bow so deeply that the eyes or smile collapse.
+
+PROPS AND MOTION
+Buddy's right paw (viewer-left) securely grips the dark-green/gold pen. His left paw (viewer-right) supports the small rounded cream card on his lap. Preserve the existing grip and dimensions. Move the writing paw, forearm and held pen coherently; the pen must never float away, slide through the paw, change length or detach. The pen tip must meet the card surface while writing. Keep the supporting paw and card steady.
+The card must stay completely blank: no name, age, letters, numbers or scribble. The application adds personal details and a single black ink line, so keep any writing motion confined to one short shallow stroke in one small area. Never generate multiple writing rows.
+
+REGISTRATION
+Fixed camera, lighting, scale and perspective. Entire seated mascot visible with generous margins around ears, paws, pen and card. Both feet stay planted at identical screen coordinates across all clips. Keep the same seated centre and baseline. No side drift, zooming, size changes, bouncing, flying, body sway or exaggerated deformation. Only purposeful head/paw/pen motion and restrained natural blinking.
+
+INTERACTIVE FLOW: SEPARATE CLIPS
+01 Greeting: face the viewer, one small welcoming wave, then settle with the card on the lap. About3seconds.
+02 Prepare to write: begin in the card-and-pen reference pose, gently lower the head a little toward the card, place the pen tip on the card, and hold this attentive pose. End looking down. About2seconds of action; remaining time may hold still.
+03 Writing loop: remain looking down; make small connected paw/pen strokes with the tip contacting the card. A tiny shallow left-to-right path and gentle return, confined to the same area. Blank card. First and last pose/tip location must match. About3seconds, seamless.
+04 Finish and look up: start from03's endpoint. Lift the nib slightly, settle the paw, gently raise the head and look directly at the viewer, centred toward the camera, with a warm smile. About2seconds; end hold.
+05 Age question/listening: maintain04's forward-facing pose, holding the blank card steadily. Quiet attentive expression and an occasional gentle blink. About3seconds, loopable.
+06 Age confirmed: gently present the blank card more clearly, facing mostly toward the camera, with one small pleased nod. No number or text. About2seconds; end hold.
+07 Friendship complete: carefully rest the pen across the card and present the blank card with both paws and a delighted on-model smile. About3seconds; stable end hold.
+
+IMPORTANT INTERACTION BEHAVIOR
+These are separately controlled app assets, not a continuous timed movie. While the name input is focused, the app uses02/03; Buddy must keep looking down even during typing pauses. Only submission or keyboard dismissal triggers04. Do not automatically look up within the writing loop. Correcting the name can return to writing. The app supplies speech bubbles, so no lip-sync or generated dialogue is needed.
+
+OUTPUT
+Prefer true transparency if supported. Otherwise a perfectly uniform flat #00FF00 chroma-green background, without floor, ground shadow, gradients, green spill, sparkles, stars, scenery or particles. The app supplies its own ground shadow. Preserve soft fur edges. Use24fps consistently if available, highest available resolution, no audio, text, captions or watermark overlays.
+If the tool only creates fixed-length clips, perform the specified action at natural speed and hold the requested final pose for the remaining duration. Do not stretch movement, add unrelated gestures or generate a return to looking up.
+
+GENERATE CLIP02 ONLY NOW: PREPARE TO WRITE.
+Begin with the approved card-and-pen reference pose. Make one small cute head nod toward the card, without shifting the white eye reflections independently. Keep the pen attached to the paw, lower its tip to the blank card, and end holding the downward attentive pose. No writing yet and no look-up at the end. Preserve both foot positions. Generate only this video; wait for approval before any other clip.

@@ -1,0 +1,12 @@
+{
+  "01_buddy_master.png": {
+    "source": "design\\buddy\\buddy_master.png",
+    "sha256": "7ff7b807d49f3bef89595765a6c156ae44daea61b13e2f7841d97a1fed7b0f77",
+    "byteIdentical": true
+  },
+  "02_buddy_card_pen_reference.png": {
+    "source": "design\\buddy\\generated\\buddy_screen2_localized_note-original.png",
+    "sha256": "9cf41cb296043456d36c35796baa23ee2a9524ccc9429b164cc8520e398dbbcf",
+    "byteIdentical": true
+  }
+}

@@ -1,0 +1,1 @@
+Upload BOTH numbered PNGs individually to Gemini, then paste GEMINI_PROMPT.txt. Only2images, below10image limit. Master identity outranks pose reference. Start with Clip02 only. Later unapproved head-down candidates excluded. Existing images copied byte-for-byte; no application code or artwork changed.
