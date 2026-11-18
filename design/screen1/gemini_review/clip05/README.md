@@ -1,0 +1,1 @@
+User-supplied fifth clip: gemini_generated_video_6470e7df.mp4. Original retained byte-for-byte. 1280x720,24fps,10s; selected source1.5-6.5s at native speed for story16.5-21.5s. Celebration, wave, happy rest. Background sparkles/green removed by existing keyed-image preparation. No new mascot artwork.

@@ -1,0 +1,424 @@
+Applications Graphics Acceleration Info:
+Uptime: 154633090 Realtime: 187781418
+
+** Graphics info for pid 1195 [com.babyboo.app] **
+
+Stats since: 154601257816598ns
+Total frames rendered: 2032
+Janky frames: 74 (3.64%)
+Janky frames (legacy): 2032 (100.00%)
+50th percentile: 46ms
+90th percentile: 89ms
+95th percentile: 109ms
+99th percentile: 150ms
+Number Missed Vsync: 74
+Number High input latency: 3917
+Number Slow UI thread: 74
+Number Slow bitmap uploads: 0
+Number Slow issue draw commands: 0
+Number Frame deadline missed: 74
+Number Frame deadline missed (legacy): 73
+HISTOGRAM: 5ms=0 6ms=0 7ms=0 8ms=0 9ms=0 10ms=0 11ms=0 12ms=0 13ms=0 14ms=0 15ms=0 16ms=0 17ms=0 18ms=0 19ms=0 20ms=0 21ms=0 22ms=0 23ms=0 24ms=0 25ms=0 26ms=8 27ms=0 28ms=4 29ms=0 30ms=12 31ms=36 32ms=70 34ms=102 36ms=118 38ms=158 40ms=152 42ms=148 44ms=148 46ms=122 48ms=178 53ms=72 57ms=36 61ms=34 65ms=52 69ms=64 73ms=60 77ms=92 81ms=66 85ms=74 89ms=50 93ms=22 97ms=28 101ms=12 105ms=10 109ms=12 113ms=0 117ms=8 121ms=6 125ms=2 129ms=4 133ms=20 150ms=48 200ms=4 250ms=0 300ms=0 350ms=0 400ms=0 450ms=0 500ms=0 550ms=0 600ms=0 650ms=0 700ms=0 750ms=0 800ms=0 850ms=0 900ms=0 950ms=0 1000ms=0 1050ms=0 1100ms=0 1150ms=0 1200ms=0 1250ms=0 1300ms=0 1350ms=0 1400ms=0 1450ms=0 1500ms=0 1550ms=0 1600ms=0 1650ms=0 1700ms=0 1750ms=0 1800ms=0 1850ms=0 1900ms=0 1950ms=0 2000ms=0 2050ms=0 2100ms=0 2150ms=0 2200ms=0 2250ms=0 2300ms=0 2350ms=0 2400ms=0 2450ms=0 2500ms=0 2550ms=0 2600ms=0 2650ms=0 2700ms=0 2750ms=0 2800ms=0 2850ms=0 2900ms=0 2950ms=0 3000ms=0 3050ms=0 3100ms=0 3150ms=0 3200ms=0 3250ms=0 3300ms=0 3350ms=0 3400ms=0 3450ms=0 3500ms=0 3550ms=0 3600ms=0 3650ms=0 3700ms=0 3750ms=0 3800ms=0 3850ms=0 3900ms=0 3950ms=0 4000ms=0 4050ms=0 4100ms=0 4150ms=0 4200ms=0 4250ms=0 4300ms=0 4350ms=0 4400ms=0 4450ms=0 4500ms=0 4550ms=0 4600ms=0 4650ms=0 4700ms=0 4750ms=0 4800ms=0 4850ms=0 4900ms=0 4950ms=0
+50th gpu percentile: 3ms
+90th gpu percentile: 4ms
+95th gpu percentile: 5ms
+99th gpu percentile: 5ms
+GPU HISTOGRAM: 1ms=0 2ms=92 3ms=1206 4ms=624 5ms=96 6ms=12 7ms=2 8ms=0 9ms=0 10ms=0 11ms=0 12ms=0 13ms=0 14ms=0 15ms=0 16ms=0 17ms=0 18ms=0 19ms=0 20ms=0 21ms=0 22ms=0 23ms=0 24ms=0 25ms=0 4950ms=0
+
+Pipeline=Skia (OpenGL)
+Memory policy:
+  Max surface area: 2073600
+  Max resource usage: 298.60MB (x144)
+  Background retention: 50% (altUiHidden = true)
+  GPU Context timeout: 10
+Contexts: 1 (stopped = 0)
+CPU Caches:
+  Glyph Cache: 68.24 KB (1 entry)
+  Glyph Count: 17 
+Total CPU memory usage:
+  69879 bytes, 68.24 KB (0.00 bytes is purgeable)
+
+GPU Caches:
+  Other:
+    Other: 5.61 KB (1 entry)
+  Image:
+    Texture: 6.57 KB (1 entry)
+  Scratch:
+    Buffer Object: 78.00 KB (2 entries)
+    Texture: 2.00 MB (4 entries)
+Layer Info:
+    GlLayer size 720x1600
+  Layers Total         4500.00 KB (numLayers = 1)
+Total GPU memory usage:
+  2189620 bytes, 2.09 MB (0.00 bytes is purgeable)
+TextureView: 720x1600
+
+GraphicBufferAllocator buffers:
+            Handle |         Size |     W (Stride) x H | Layers |   Format |      Usage | Requestor
+0xb4000076ca3f0130 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca3f41d0 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca3f45f0 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca3f5930 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca3f6590 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca3f7770 |  4600.00 KiB |  720 ( 736) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity,type=1]#0(BLAST Consumer)0
+0xb4000076ca4184b0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca42c0f0 |  4800.00 KiB |  720 ( 768) x 1600 |      1 |        1 | 0x40000000000300 | SurfaceTexture-0-1195-0
+0xb4000076ca42e350 |  4800.00 KiB |  720 ( 768) x 1600 |      1 |        1 | 0x40000000000300 | SurfaceTexture-0-1195-0
+0xb4000076ca434390 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca4347b0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca434d30 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca435150 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca435af0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca436070 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca436330 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca436750 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca4368b0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca436a10 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca436b70 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca437930 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca437a90 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca437d50 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca438170 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca4389b0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca439a30 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca43a690 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca43b870 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-1
+0xb4000076ca43bf50 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca43d3f0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca440f10 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca4415f0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca443010 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca443170 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca443b10 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca444a30 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca446870 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca448130 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca4495d0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca44a230 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca44c330 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca44d0f0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca44deb0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca44f1f0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca451df0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+0xb4000076ca4524d0 |      unknown |  540 ( 544) x  960 |      1 | 32315659 | 0x     103 | ImageReader-540x960f22m2-1195-4
+Total allocated by GraphicBufferAllocator (estimate): 37200.00 KB
+Imported gralloc buffers:
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364402, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x10020000, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364227, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364401, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x10020000, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364400, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x10020000, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364225, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364194, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364399, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x10020000, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364222, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364200, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364184, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364205, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364190, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364228, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364226, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364286, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364215, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364229, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364223, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364286, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363332, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363327, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363321, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364227, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364223, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364205, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364194, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364186, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364184, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363311, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363334, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363310, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363306, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363317, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363353, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363354, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364226, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364211, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363332, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363333, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363354, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363315, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363337, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363313, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363315, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364229, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363321, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364225, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363267, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363324, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363307, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363335, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363268, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363334, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:SurfaceTexture-0-1195-0, id:5480378363269, size:5072.00KiB, w/h:720x1600, usage: 0x40000000000300, req fmt:1, fourcc/mod:875708993/576460752303424337, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:768x1664, stride:3072 bytes, size:5193728
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363324, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363307, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363327, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364222, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363313, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363310, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364186, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363335, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363306, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:SurfaceTexture-0-1195-0, id:5480378363270, size:5072.00KiB, w/h:720x1600, usage: 0x40000000000300, req fmt:1, fourcc/mod:875708993/576460752303424337, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:768x1664, stride:3072 bytes, size:5193728
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364190, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364200, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363353, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364211, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363333, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363317, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364228, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363329, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363337, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363264, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363329, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363266, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363265, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
++ name:ImageReader-540x960f22m2-1195-1, id:5480378363311, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:ImageReader-540x960f22m2-1195-4, id:5480378364215, size:810.00KiB, w/h:540x960, usage: 0x103, req fmt:842094169, fourcc/mod:842094169/0, dataspace: 0x104, compressed: false
+	planes: Y:	 w/h:544x960, stride:544 bytes, size:522240
+	        Cr:	 w/h:272x480, stride:272 bytes, size:652800
+	        Cb:	 w/h:272x480, stride:272 bytes, size:176640
++ name:VRI[MainActivity,type=1]#0(BLAST Consumer)0, id:5480378363263, size:4672.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423602, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:736x1600, stride:2944 bytes, size:4784128
+Total imported by gralloc: 96496.00KiB
+
+Profile data in ms:
+
+	com.babyboo.app/com.babyboo.app.MainActivity/android.view.ViewRootImpl@8a11422 (visibility=0)
+View hierarchy:
+
+  com.babyboo.app/com.babyboo.app.MainActivity/android.view.ViewRootImpl@8a11422
+  41 views, 96.73 kB of render nodes
+
+
+Total ViewRootImpl   : 1
+Total attached Views : 41
+Total RenderNode     : 96.73 kB (used) / 290.80 kB (capacity)
+

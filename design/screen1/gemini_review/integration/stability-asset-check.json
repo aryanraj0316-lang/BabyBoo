@@ -1,0 +1,16 @@
+{
+  "allFrames": 516,
+  "footMidpointRange": [
+    158.0,
+    160.5
+  ],
+  "soleRange": [
+    310,
+    311
+  ],
+  "visibleGreenPixels": 0,
+  "watchingFramesPerSecond": 24,
+  "sourcePlaybackSpeed": 1,
+  "loopSeconds": 21.5,
+  "measurement": "alpha>100 in bottom20pixels at planted soles"
+}

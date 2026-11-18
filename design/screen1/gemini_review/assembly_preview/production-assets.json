@@ -1,7 +1,7 @@
 {
   "fps": 24,
-  "watchingFps": 12,
-  "until": 16.5,
+  "watchingFps": 24,
+  "until": 21.5,
   "loop": 21.5,
   "segments": [
     [
@@ -73,80 +73,118 @@
       "04",
       3.65,
       5.5
+    ],
+    [
+      16.5,
+      21.5,
+      "05",
+      1.5,
+      6.5
     ]
   ],
   "sourceSpeed": 1,
-  "timelineFrames": 396,
-  "uniqueFrames": 348,
+  "timelineFrames": 516,
+  "uniqueFrames": 516,
   "atlases": [
     {
       "file": "buddy-clip-atlas-00.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 420894
+      "bytes": 413654
     },
     {
       "file": "buddy-clip-atlas-01.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 417638
+      "bytes": 417488
     },
     {
       "file": "buddy-clip-atlas-02.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 400196
+      "bytes": 424074
     },
     {
       "file": "buddy-clip-atlas-03.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 401190
+      "bytes": 396334
     },
     {
       "file": "buddy-clip-atlas-04.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 417774
+      "bytes": 406606
     },
     {
       "file": "buddy-clip-atlas-05.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 418352
+      "bytes": 420932
     },
     {
       "file": "buddy-clip-atlas-06.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 415864
+      "bytes": 419422
     },
     {
       "file": "buddy-clip-atlas-07.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 421256
+      "bytes": 415820
     },
     {
       "file": "buddy-clip-atlas-08.webp",
       "width": 1944,
       "height": 1932,
-      "bytes": 451472
+      "bytes": 417878
     },
     {
       "file": "buddy-clip-atlas-09.webp",
       "width": 1944,
-      "height": 1288,
-      "bytes": 300346
+      "height": 1932,
+      "bytes": 446194
+    },
+    {
+      "file": "buddy-clip-atlas-10.webp",
+      "width": 1944,
+      "height": 1932,
+      "bytes": 456430
+    },
+    {
+      "file": "buddy-clip-atlas-11.webp",
+      "width": 1944,
+      "height": 1932,
+      "bytes": 462416
+    },
+    {
+      "file": "buddy-clip-atlas-12.webp",
+      "width": 1944,
+      "height": 1932,
+      "bytes": 451612
+    },
+    {
+      "file": "buddy-clip-atlas-13.webp",
+      "width": 1944,
+      "height": 1932,
+      "bytes": 400190
+    },
+    {
+      "file": "buddy-clip-atlas-14.webp",
+      "width": 1944,
+      "height": 644,
+      "bytes": 136038
     }
   ],
-  "downloadBytes": 4064982,
-  "decodedRgbaBytes": 145224576,
+  "downloadBytes": 6085088,
+  "decodedRgbaBytes": 215332992,
   "sourceSha256": {
     "01": "92e47df5e45166db2f60d095ec7ac955ef7222e559056310a304c665724e645d",
     "02": "84a7d94af476a6f6856c54e09d88bf589440d43798c604c7c2fa519872d010e8",
     "03": "5a209575ecd72218b52b4f74864982fa828e89a150da570241cc1f1f0c7dddae",
-    "04": "48c7bab5488d83fa1ba64b0bbc4a2fc3768bd7a6e2a92ff3be438f70a88df307"
+    "04": "48c7bab5488d83fa1ba64b0bbc4a2fc3768bd7a6e2a92ff3be438f70a88df307",
+    "05": "1dd165031c738322facdb013a69fd0971b905e539903d28f84347a6bfb2992ee"
   },
   "alphaUnchangedAfterWebp": true,
   "noClippedSprites": true,
@@ -234,8 +272,56 @@
       ],
       "targetBaseline": 310,
       "initialVisibleHeight": 280
+    },
+    "05": {
+      "sourceFrame": 36,
+      "fixedAffine": [
+        [
+          0.48275861144065857,
+          0.0,
+          -147.27090454101562
+        ],
+        [
+          0.0,
+          0.48275861144065857,
+          -9.103447914123535
+        ]
+      ],
+      "targetCanvas": [
+        320,
+        318
+      ],
+      "targetBaseline": 310,
+      "initialVisibleHeight": 280
     }
   },
-  "clip5": "Unchanged approved static frames16.5-21.5s",
+  "stabilization": {
+    "01": {
+      "minCorrectionX": 1.1072616577148438,
+      "maxCorrectionX": 2.0437240600585938,
+      "anchor": "foot silhouette midpoint / baseline310"
+    },
+    "02": {
+      "minCorrectionX": -9.644607543945312,
+      "maxCorrectionX": 1.4588470458984375,
+      "anchor": "foot silhouette midpoint / baseline310"
+    },
+    "03": {
+      "minCorrectionX": -0.323944091796875,
+      "maxCorrectionX": 0.65167236328125,
+      "anchor": "foot silhouette midpoint / baseline310"
+    },
+    "04": {
+      "minCorrectionX": -2.9014892578125,
+      "maxCorrectionX": 0.477813720703125,
+      "anchor": "foot silhouette midpoint / baseline310"
+    },
+    "05": {
+      "minCorrectionX": -0.487701416015625,
+      "maxCorrectionX": 0.477813720703125,
+      "anchor": "foot silhouette midpoint / baseline310"
+    }
+  },
+  "clip5": "Celebration/wave/rest original source1.5-6.5s",
   "note": "RGB WebPquality88; lossless alpha; opaque source artwork protected before encoding. No new artwork or motion."
 }

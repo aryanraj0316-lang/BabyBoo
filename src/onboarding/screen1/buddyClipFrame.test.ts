@@ -5,10 +5,14 @@ import { sceneAt } from './timeline';
 import { demo } from './tokens';
 
 describe('reviewed Buddy video frames on the shared story clock', () => {
-  it('returns to the original ending frames at the exact unlock-success boundary', () => {
+  it('plays the supplied ending clip until the shared loop boundary', () => {
     expect(buddyClipFrame(demo.beats.unlocked - 0.001, 1)).toBeGreaterThanOrEqual(0);
-    for (const t of [demo.beats.unlocked, demo.beats.rest, demo.loop]) expect(buddyClipFrame(t, 1)).toBe(-1);
-    expect(CLIP_UNTIL).toBe(demo.beats.unlocked);
+    for (const t of [demo.beats.unlocked, demo.beats.rest, demo.loop - 0.001]) expect(buddyClipFrame(t, 1)).toBeGreaterThanOrEqual(0);
+    expect(buddyClipFrame(demo.loop, 1)).toBe(-1);
+    expect(CLIP_UNTIL).toBe(demo.loop);
+  });
+  it('retains every native watching frame instead of halving its frame rate', () => {
+    expect(new Set(CLIP_FRAME_INDEX.slice(0, 4 * 24)).size).toBe(4 * 24);
   });
   it('keeps reduced motion on the existing composed still', () => {
     for (const t of [0, 9, 13, 17.5, 20.5]) expect(buddyClipFrame(t, 0)).toBe(-1);

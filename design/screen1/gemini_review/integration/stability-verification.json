@@ -1,0 +1,14 @@
+{
+  "typescript": "passed",
+  "tests": 27,
+  "androidBuild": "passed",
+  "recording": "stability-final/phone.mp4",
+  "visualReview": "16 chronological frames reviewed; nap seat stable; ending clip visible; no debug controls/background rectangle",
+  "performance": {
+    "baselineJankyPercent": 2.02,
+    "rejectedMultiAtlasNodesJankyPercent": 4.6,
+    "finalSingleAtlasJankyPercent": 3.64,
+    "note": "Different30s runs; device load uncontrolled. Native24fps restored from12fps watching. Do not claim zero stutter or improved overall jank."
+  },
+  "scope": "Screen1 assets only,21.5s timeline unchanged; other screens untouched"
+}
