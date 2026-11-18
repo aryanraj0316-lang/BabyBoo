@@ -1,0 +1,37 @@
+{
+  "projectId": "appgprj_6afdc85389648191abe7079c72695ceb",
+  "versionId": "appgprj_6afdc85389648191abe7079c72695ceb~appgver_e96e821556288191ade7bd19e4feacd1",
+  "deploymentId": "appgdep_6afdcbc36cf481919931fafadba11528",
+  "status": "succeeded",
+  "url": "https://babyboo-app-download.mistyemery2.chatgpt.site",
+  "adminUrl": "https://babyboo-app-download.mistyemery2.chatgpt.site/admin",
+  "audience": "public",
+  "sourceCommit": "379a7aa06357825c7762eba36ded3114293b1496",
+  "envRevision": 1,
+  "apkPublished": false,
+  "testsPassed": 17,
+  "visualBrowserQa": "unavailable - both automation kernels failed",
+  "phoneQa": "unavailable - no ADB device",
+  "liveChecks": {
+    "landing": 200,
+    "availability": {
+      "status": 200,
+      "available": false
+    },
+    "download": 404,
+    "legacyApkUrl": 404,
+    "anonymousAdminApi": 403,
+    "forgedOwnerIdentity": 403,
+    "anonymousAdminPage": 302,
+    "d1Tables": [
+      "sessions",
+      "releases",
+      "downloads",
+      "transfers"
+    ],
+    "releaseRows": 0,
+    "downloadRows": 0,
+    "sessionDeduplicationVerified": true,
+    "firstTouchCampaignVerified": true
+  }
+}

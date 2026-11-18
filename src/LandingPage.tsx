@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useRelease } from './website/useRelease';
 
 /* ───────────────────── Icon Components (inline SVG) ───────────────────── */
 
@@ -665,6 +666,7 @@ const InstallCasesDemo: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 export const LandingPage: React.FC = () => {
+  const release = useRelease();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -1217,14 +1219,14 @@ export const LandingPage: React.FC = () => {
                   <DownloadIcon className="w-7 h-7 text-violet-400" />
                 </div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ background: 'rgba(139,92,246,0.1)', color: '#a78bfa' }}>
-                  AVAILABLE NOW
+                  {release.available ? 'AVAILABLE NOW' : 'COMING SOON'}
                 </div>
                 <h3 className="text-white font-bold text-xl mb-2">Direct Download</h3>
                 <p className="text-white/40 text-sm mb-6 leading-relaxed">
                   Download the APK directly from our website. BabyBoo will guide you through the simple setup.
                 </p>
                 <div className="space-y-2 mb-6">
-                  {['Same app, same security', 'Built-in setup guide', 'v1.0.3 (Latest)'].map((item, i) => (
+                  {['Same app, same security', 'Built-in setup guide', release.available ? `v${release.version} (Latest)` : 'APK release coming soon'].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-white/50 text-xs">
                       <CheckCircleIcon className="w-4 h-4 text-violet-400/60" />
                       {item}
@@ -1232,13 +1234,15 @@ export const LandingPage: React.FC = () => {
                   ))}
                 </div>
                 <a
-                  href="/BabyBoo-preview.apk"
-                  download
+                  href={release.available ? '/download' : undefined}
+                  aria-disabled={!release.available}
+                  tabIndex={release.available ? 0 : -1}
+                  onClick={e => { if(!release.available) e.preventDefault(); }}
                   className="block w-full text-center px-6 py-3.5 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span className="flex items-center justify-center gap-2">
                     <DownloadIcon className="w-5 h-5" />
-                    Download APK (42 MB)
+                    {release.available ? `Download APK (${(release.size! / 1048576).toFixed(1)} MB)` : 'APK coming soon'}
                   </span>
                 </a>
               </div>
@@ -1387,6 +1391,7 @@ export const LandingPage: React.FC = () => {
               <h4 className="text-white/60 text-xs font-bold uppercase tracking-wider mb-4">Legal</h4>
               <div className="space-y-3">
                 <a href="/privacy" className="block text-white/30 hover:text-white/60 text-sm transition-colors">Privacy Policy</a>
+                <a href="/website-privacy" className="block text-white/30 hover:text-white/60 text-sm transition-colors">Website Measurement</a>
                 <a href="mailto:support@babyboo.app" className="block text-white/30 hover:text-white/60 text-sm transition-colors">Contact Support</a>
               </div>
             </div>

@@ -31,3 +31,7 @@ Use platform authentication plus server-side owner authorization for dashboard a
 
 - Public APK: existing stable1.0.3/build4 release OR a newly prepared signed release for approval. Asked user; do not silently publish the current debug build or unfinished onboarding.
 - Initial audited checkpoint ready. Hosting/backend/admin implementation is next; project rule requires checkpoint approval. No Site registration or new deployment has been created yet.
+
+## Implemented after user direction
+
+User chose EMPTY APK, build everything else. Website and owner-protected reporting are now hosted through Sites; details in website-hosting/README.md and docs/WEBSITE_LAUNCH_VERIFICATION.json. Original APK is never served by the hosted site. The initial pending-APK choice above is resolved. No native/onboarding source changed.
