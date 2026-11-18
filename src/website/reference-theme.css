@@ -210,7 +210,7 @@
  .bb-site .site-hero{padding-top:130px;padding-bottom:60px;min-height:max(590px,78svh)}
  .bb-site .site-hero-copy h1{font-size:clamp(44px,3.7vw,68px);margin-bottom:22px}
  .bb-site .site-hero-copy>p{font-size:19px;max-width:540px;margin-bottom:32px}
- .bb-site .site-hero-figure{height:400px}
+ .bb-site .site-hero-figure{height:400px;top:-32px}
  .bb-site .site-hero-figure img{width:390px}
  .bb-site .site-buddy-shadow{width:290px;height:32px;bottom:12px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:18px;height:50px;min-width:198px;padding-inline:34px}
