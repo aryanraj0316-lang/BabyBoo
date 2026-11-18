@@ -141,7 +141,7 @@
 .bb-site #features .grid .w-12 { width: 64px; height: 64px; border-radius: 18px; background: #b28bd224 !important; }
 .bb-site #demo > div.max-w-6xl { max-width: 1440px; }
 .bb-site #demo .text-white\/40,.bb-site #demo .text-white\/50 { color: #bcb6c8; }
-.bb-site #demo .bg-gradient-to-r { background: #d4b4f3; color: #191220; box-shadow: none; }
+.bb-site #demo .bg-gradient-to-r:not(.bg-clip-text) { background: #d4b4f3; color: #191220; box-shadow: none; }
 .bb-site #demo .rounded-2xl.border-white\/5 { background: #21182b80 !important; border-color: #56415f80; }
 .bb-site #privacy .grid > div { border-color: #54415e99; background: #1a152380 !important; border-radius: 26px; padding: 30px; }
 .bb-site #privacy .grid h3 { font-size: 23px; }.bb-site #privacy .grid p { color: #bcb6c8; font-size: 17px; }
