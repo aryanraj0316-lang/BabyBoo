@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRelease } from './website/useRelease';
+import './website/reference-theme.css';
 
 /* ───────────────────── Icon Components (inline SVG) ───────────────────── */
 
@@ -105,6 +106,7 @@ const AnimatedCounter: React.FC<{ end: number; suffix?: string; label: string }>
   const hasAnimated = useRef(false);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setCount(end); return; }
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !hasAnimated.current) {
         hasAnimated.current = true;
@@ -146,6 +148,7 @@ const FAQItem: React.FC<{ question: string; answer: string; isOpen: boolean; onC
   >
     <button
       onClick={onClick}
+      aria-expanded={isOpen}
       className="w-full flex items-center justify-between px-6 py-5 text-left cursor-pointer group"
     >
       <span className="text-white/90 font-semibold text-base pr-4 group-hover:text-violet-300 transition-colors">{question}</span>
@@ -153,7 +156,7 @@ const FAQItem: React.FC<{ question: string; answer: string; isOpen: boolean; onC
     </button>
     <div
       className="overflow-hidden transition-all duration-400"
-      style={{ maxHeight: isOpen ? '300px' : '0', opacity: isOpen ? 1 : 0 }}
+      style={{ maxHeight: isOpen ? '1000px' : '0', opacity: isOpen ? 1 : 0 }}
     >
       <div className="px-6 pb-5 text-white/60 text-sm leading-relaxed">{answer}</div>
     </div>
@@ -164,13 +167,13 @@ const FAQItem: React.FC<{ question: string; answer: string; isOpen: boolean; onC
 /* ───────────────────── Step Card (How It Works) ───────────────────── */
 
 const StepCard: React.FC<{ step: number; icon: React.ReactNode; title: string; description: string; color: string }> = ({ step, icon, title, description, color }) => (
-  <div className="relative group">
+  <div className="relative group site-step">
     <div
       className="relative rounded-3xl p-8 border border-white/[0.06] backdrop-blur-sm transition-all duration-500 group-hover:border-white/[0.12] group-hover:translate-y-[-4px]"
       style={{ background: 'rgba(255,255,255,0.03)' }}
     >
-      <div className="absolute -top-4 -left-2 w-10 h-10 rounded-full flex items-center justify-center text-sm font-black" style={{ background: color, color: '#0f0a1e' }}>
-        {step}
+      <div className="site-step-number">
+        {String(step).padStart(2, '0')}<span aria-hidden="true" />
       </div>
       <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5" style={{ background: `${color}15` }}>
         <div style={{ color }}>{icon}</div>
@@ -693,7 +696,7 @@ export const LandingPage: React.FC = () => {
   }, []);
 
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(id)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     setMobileMenuOpen(false);
   };
 
@@ -738,11 +741,10 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0614] text-white overflow-x-hidden">
-      <FloatingParticles />
+    <div className="bb-site min-h-screen text-white overflow-x-hidden">
 
       {/* ────────────── NAVBAR ────────────── */}
-      <nav
+      <nav aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'bg-[#0a0614]/80 backdrop-blur-xl border-b border-white/[0.05] shadow-lg shadow-black/20'
@@ -750,13 +752,12 @@ export const LandingPage: React.FC = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button onClick={() => scrollTo('hero')} className="flex items-center gap-3 cursor-pointer group">
-            <img src="/mascot.png" alt="BabyBoo" className="w-10 h-10 rounded-xl shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform" />
+          <button onClick={() => scrollTo('hero')} className="site-brand flex items-center gap-3 cursor-pointer group" aria-label="BabyBoo home">
             <span className="text-xl font-black tracking-tight bg-gradient-to-r from-violet-300 to-purple-400 bg-clip-text text-transparent">BabyBoo</span>
           </button>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="site-nav-links hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <button
                 key={link.id}
@@ -779,7 +780,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Mobile hamburger */}
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 cursor-pointer">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileMenuOpen} className="lg:hidden p-2 cursor-pointer">
             {mobileMenuOpen ? <XIcon className="w-6 h-6 text-white" /> : <MenuIcon className="w-6 h-6 text-white" />}
           </button>
         </div>
@@ -810,89 +811,27 @@ export const LandingPage: React.FC = () => {
 
 
       {/* ────────────── HERO ────────────── */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 pb-16">
-        {/* Background orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-20 blur-[120px]" style={{ background: 'radial-gradient(circle, #8b5cf6, transparent)' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-15 blur-[100px]" style={{ background: 'radial-gradient(circle, #6d28d9, transparent)' }} />
-
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          <div className="text-center lg:text-left relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-8 border border-violet-500/20" style={{ background: 'rgba(139,92,246,0.08)', color: '#a78bfa' }}>
-              <StarIcon className="w-3.5 h-3.5" />
-              Zero Data Collection • 100% Offline
+      <section id="hero" className="site-hero">
+        <div className="site-hero-ribbon" aria-hidden="true" />
+        <div className="site-hero-grid">
+          <div className="site-hero-copy">
+            <h1>End screen time<br /><span>without<br />tantrums.</span></h1>
+            <p>BabyBoo gently simulates a dead phone — your toddler thinks the battery died, while you stay in full control with a secret unlock gesture.</p>
+            <div className="site-hero-actions">
+              <button onClick={() => scrollTo('download')} className="site-primary">Download Free</button>
+              <button onClick={() => scrollTo('demo')} className="site-secondary"><PlayIcon className="w-5 h-5" />Watch Demo</button>
             </div>
-
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-              End screen time
-              <br />
-              <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                without tantrums.
-              </span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-white/50 max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed">
-              BabyBoo gently simulates a dead phone — your toddler thinks the battery died, 
-              while you stay in full control with a secret unlock gesture.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button
-                onClick={() => scrollTo('download')}
-                className="group px-8 py-4 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold text-base shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all cursor-pointer hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-              >
-                <DownloadIcon className="w-5 h-5" />
-                Download Free
-              </button>
-              <button
-                onClick={() => scrollTo('demo')}
-                className="group px-8 py-4 rounded-full border border-white/10 text-white/70 font-bold text-base hover:bg-white/5 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <PlayIcon className="w-4 h-4" />
-                Watch Demo
-              </button>
-            </div>
-
-            {/* Trust badges */}
-            <div className="flex items-center gap-6 mt-10 justify-center lg:justify-start text-white/30 text-xs font-medium">
-              <div className="flex items-center gap-1.5">
-                <ShieldIcon className="w-4 h-4 text-emerald-400/60" />
-                COPPA Compliant
-              </div>
-              <div className="flex items-center gap-1.5">
-                <EyeOffIcon className="w-4 h-4 text-violet-400/60" />
-                Zero Telemetry
-              </div>
-              <div className="flex items-center gap-1.5">
-                <WifiOffIcon className="w-4 h-4 text-amber-400/60" />
-                Works Offline
-              </div>
-            </div>
+            <div className="site-trust" aria-label="App benefits"><span>Safe &amp; Private</span><span>Works Offline</span><span>Lightweight</span></div>
           </div>
-
-          {/* Hero image */}
-          <div className="relative flex items-center justify-center">
-            <div className="absolute w-80 h-80 rounded-full blur-[80px] opacity-30" style={{ background: 'radial-gradient(circle, #7c3aed, #4c1d95)' }} />
-            <img
-              src="/mascot.png"
-              alt="BabyBoo mascot"
-              className="relative z-10 w-72 md:w-96 drop-shadow-[0_20px_60px_rgba(139,92,246,0.3)] animate-bounce-gentle"
-            />
+          <div className="site-hero-figure">
+            <div className="site-buddy-shadow" aria-hidden="true" />
+            <img src="/buddy-seated-wave.webp" width="480" height="477" alt="Buddy, BabyBoo’s lavender plush mascot, sitting and waving" fetchPriority="high" />
           </div>
         </div>
-
-        {/* Scroll indicator */}
-        <button
-          onClick={() => scrollTo('how-it-works')}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/20 hover:text-white/40 transition-colors cursor-pointer"
-        >
-          <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
-          <ChevronDownIcon className="w-5 h-5 animate-bounce" />
-        </button>
       </section>
 
-
       {/* ────────────── STATS BAR ────────────── */}
-      <section className="relative py-16 border-y border-white/[0.04]" style={{ background: 'rgba(139,92,246,0.03)' }}>
+      <section className="site-stats relative py-16 border-y border-white/[0.04]" style={{ background: 'rgba(139,92,246,0.03)' }}>
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           <AnimatedCounter end={0} suffix="" label="Data Collected" />
           <AnimatedCounter end={100} suffix="%" label="Offline" />
@@ -922,21 +861,21 @@ export const LandingPage: React.FC = () => {
               step={1}
               icon={<ClockIcon className="w-7 h-7" />}
               title="Set a Timer"
-              description="Choose how long your child can use the phone. BabyBoo's friendly mascot counts down with gentle visual cues — 4%, 3%, 2%, 1%… the battery is 'draining.'"
+              description="Choose how long your child can use the phone. BabyBoo’s friendly mascot counts down with gentle visual cues."
               color="#a78bfa"
             />
             <StepCard
               step={2}
               icon={<PhoneIcon className="w-7 h-7" />}
-              title="Phone 'Dies' Naturally"
-              description="When time's up, the screen transitions through a realistic battery-dead shutdown sequence. To your child, the phone's battery just died — no arguments, no tears."
+              title="Phone ‘Dies’ Naturally"
+              description="When time’s up, the screen transitions through a realistic battery-dead shutdown sequence."
               color="#f59e0b"
             />
             <StepCard
               step={3}
               icon={<LockIcon className="w-7 h-7" />}
               title="Secret Unlock"
-              description="Draw a capital 'A' on the pitch-black screen to unlock. Only you know the gesture. The power button shows a brief dead-battery flash to convince curious little ones."
+              description="Draw a capital ‘A’ on the pitch-black screen to unlock. Only you know the gesture."
               color="#22c55e"
             />
           </div>

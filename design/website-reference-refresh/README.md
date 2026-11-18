@@ -1,0 +1,7 @@
+# Website reference-theme checkpoint
+
+Three user reference screenshots retained as reference-hero/stats/steps.png. Existing approved seated Buddy WebP copied unchanged into public/buddy-seated-wave.webp. Public landing and privacy pages use scoped reference-theme.css: near-black plum, lavender curved lighting, flat white pill CTAs, wordmark-only header, three-line hero, stable seated mascot, subtle ground shadow, separated statistics and01/02/03 cards. Existing lower content, FAQ, demos and download availability retained. Admin dashboard and new explicit sign-in/account-switch pages carry the theme. Website-only scope, no onboarding changes.
+
+Production TypeScript/Vite build and18 backend tests pass. Live endpoint checks retained. Site version2 deployed successfully at the existing URL; APK still intentionally empty. No change to database history or stored download records.
+
+Visual accuracy NOT quantified. Supplied references are1835x857/1821x864; baseline platform capture is1200x750 and shows the old site. Current browser runtime failed, default-browser launch was blocked by automatic approval review("blocked by policy"), and get_site_version returned no screenshot forversion2. Do not treat hosted-before.png as the updated site. No95%claim. Need fresh matching-viewport hero/steps screenshots and owner-authenticated dashboard review before claiming the requested visual accuracy or admin login success.

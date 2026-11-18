@@ -1,4 +1,5 @@
 import React from 'react';
+import './website/reference-theme.css';
 
 const ShieldIcon = ({ className = '' }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -6,7 +7,7 @@ const ShieldIcon = ({ className = '' }: { className?: string }) => (
 
 export const PrivacyPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0a0614] text-white">
+    <div className="bb-site bb-site-privacy min-h-screen text-white">
       {/* Navbar */}
       <nav className="bg-[#0a0614]/80 backdrop-blur-xl border-b border-white/[0.05] sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">

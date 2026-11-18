@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "newCss": true
+  },
+  {
+    "path": "/admin",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "signInPage": true
+  },
+  {
+    "path": "/api/release",
+    "status": 200,
+    "type": "application/json",
+    "availability": {
+      "available": false
+    }
+  },
+  {
+    "path": "/api/admin/stats",
+    "status": 403,
+    "type": "application/json"
+  },
+  {
+    "path": "/download",
+    "status": 404,
+    "type": "application/json"
+  },
+  {
+    "path": "/fonts/nunito-latin-variable.woff2",
+    "status": 200,
+    "type": "font/woff2"
+  },
+  {
+    "path": "/buddy-seated-wave.webp",
+    "status": 200,
+    "type": "image/webp"
+  }
+]
