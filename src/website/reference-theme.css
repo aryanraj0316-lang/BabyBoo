@@ -200,59 +200,59 @@
  .bb-site>section>div>.text-center h2{font-size:34px;letter-spacing:-.5px}.bb-site>section>div>.text-center>p{font-size:18px}.bb-site .site-step h3{font-size:27px}.bb-site .site-step p{font-size:19px}
 }
 @media(max-width:380px){.bb-site .site-hero-actions{flex-direction:column;align-items:stretch}.bb-site .site-trust{font-size:12px}.bb-site .site-trust span{padding-inline:12px}}
-/* Slightly wider-feeling desktop composition, without CSS/browser zoom. */
+/* Compact desktop composition, approximately25?30% smaller than the original live theme, without CSS/browser zoom. */
 @media(min-width:901px){
- .bb-site>nav,.bb-site>nav>div:first-child{height:80px}
- .bb-site .site-brand span{font-size:30px}
- .bb-site .site-nav-links{gap:18px}
- .bb-site .site-nav-links>button{font-size:18px;padding:11px 10px}
- .bb-site .site-nav-links>button:last-child{font-size:18px;min-width:184px;padding:11px 23px}
- .bb-site .site-hero{padding-top:170px;padding-bottom:60px;min-height:max(720px,92svh)}
- .bb-site .site-hero-copy h1{font-size:clamp(54px,4.5vw,84px);margin-bottom:22px}
- .bb-site .site-hero-copy>p{font-size:23px;max-width:620px;margin-bottom:32px}
- .bb-site .site-hero-figure{height:500px}
- .bb-site .site-hero-figure img{width:490px}
- .bb-site .site-buddy-shadow{width:360px;height:32px;bottom:12px}
- .bb-site .site-primary,.bb-site .site-secondary{font-size:21px;height:60px;min-width:238px;padding-inline:34px}
- .bb-site .site-secondary{min-width:226px}
- .bb-site .site-trust{font-size:18px;margin-top:48px}
- .bb-site .site-trust span{padding-inline:42px}
- .bb-site .site-stats{padding-top:64px;padding-bottom:88px}
- .bb-site .site-stats .text-4xl{font-size:54px}
- .bb-site .site-stats .text-sm{font-size:20px}
- .bb-site>section:not(.site-hero):not(.site-stats){padding-block:80px 90px}
- .bb-site>section>div>.text-center h2{font-size:clamp(38px,3.3vw,60px)}
- .bb-site>section>div>.text-center>p{font-size:23px}
- .bb-site>section>div>.text-center>span:first-child{font-size:18px;margin-bottom:28px}
- .bb-site .site-step>div{padding:24px 42px 36px;min-height:350px}
- .bb-site .site-step-number{font-size:28px}
- .bb-site .site-step .w-14{width:80px;height:80px;border-radius:21px}
- .bb-site .site-step .w-7{width:39px;height:39px}
- .bb-site .site-step h3{font-size:30px}
- .bb-site .site-step p{font-size:20px}
+ .bb-site>nav,.bb-site>nav>div:first-child{height:68px}
+ .bb-site .site-brand span{font-size:26px}
+ .bb-site .site-nav-links{gap:14px}
+ .bb-site .site-nav-links>button{font-size:16px;padding:11px 10px}
+ .bb-site .site-nav-links>button:last-child{font-size:16px;min-width:156px;padding:11px 23px}
+ .bb-site .site-hero{padding-top:130px;padding-bottom:60px;min-height:max(590px,78svh)}
+ .bb-site .site-hero-copy h1{font-size:clamp(44px,3.7vw,68px);margin-bottom:22px}
+ .bb-site .site-hero-copy>p{font-size:19px;max-width:540px;margin-bottom:32px}
+ .bb-site .site-hero-figure{height:400px}
+ .bb-site .site-hero-figure img{width:390px}
+ .bb-site .site-buddy-shadow{width:290px;height:32px;bottom:12px}
+ .bb-site .site-primary,.bb-site .site-secondary{font-size:18px;height:50px;min-width:198px;padding-inline:34px}
+ .bb-site .site-secondary{min-width:188px}
+ .bb-site .site-trust{font-size:16px;margin-top:36px}
+ .bb-site .site-trust span{padding-inline:30px}
+ .bb-site .site-stats{padding-top:48px;padding-bottom:64px}
+ .bb-site .site-stats .text-4xl{font-size:44px}
+ .bb-site .site-stats .text-sm{font-size:17px}
+ .bb-site>section:not(.site-hero):not(.site-stats){padding-block:60px 68px}
+ .bb-site>section>div>.text-center h2{font-size:clamp(32px,2.7vw,49px)}
+ .bb-site>section>div>.text-center>p{font-size:19px}
+ .bb-site>section>div>.text-center>span:first-child{font-size:16px;margin-bottom:28px}
+ .bb-site .site-step>div{padding:22px 30px 28px;min-height:290px}
+ .bb-site .site-step-number{font-size:24px}
+ .bb-site .site-step .w-14{width:64px;height:64px;border-radius:21px}
+ .bb-site .site-step .w-7{width:32px;height:32px}
+ .bb-site .site-step h3{font-size:26px}
+ .bb-site .site-step p{font-size:17px}
  .bb-site #features .grid> .group>div:last-child{padding:28px}
- .bb-site #features h3{font-size:23px}.bb-site #features .grid p{font-size:17px}
- .bb-site #faq button span{font-size:18px}
+ .bb-site #features h3{font-size:19px}.bb-site #features .grid p{font-size:17px}
+ .bb-site #faq button span{font-size:16px}
 }
 @media(min-width:901px) and (max-width:1500px){
  .bb-site .site-nav-links{gap:8px}.bb-site .site-nav-links>button{font-size:16px}
  .bb-site .site-nav-links>button:last-child{font-size:16px;min-width:156px}
- .bb-site .site-hero{padding-top:150px}
- .bb-site .site-hero-copy>p{font-size:20px;max-width:520px}
- .bb-site .site-hero-figure{height:470px}.bb-site .site-hero-figure img{width:440px}
- .bb-site .site-primary,.bb-site .site-secondary{font-size:18px;height:55px;min-width:194px;padding-inline:24px}
- .bb-site .site-secondary{min-width:184px}
+ .bb-site .site-hero{padding-top:120px}
+ .bb-site .site-hero-copy>p{font-size:17px;max-width:520px}
+ .bb-site .site-hero-figure{height:380px}.bb-site .site-hero-figure img{width:350px}
+ .bb-site .site-primary,.bb-site .site-secondary{font-size:16px;height:48px;min-width:174px;padding-inline:24px}
+ .bb-site .site-secondary{min-width:156px}
  .bb-site .site-trust{font-size:15px}.bb-site .site-trust span{padding-inline:25px}
- .bb-site .site-step>div{padding:24px 26px 30px}.bb-site .site-step h3{font-size:25px}.bb-site .site-step p{font-size:18px}
+ .bb-site .site-step>div{padding:24px 26px 30px}.bb-site .site-step h3{font-size:22px}.bb-site .site-step p{font-size:16px}
 }
 @media(min-width:901px) and (max-width:1100px){
  .bb-site .site-brand span{font-size:26px}.bb-site .site-nav-links{gap:0}
  .bb-site .site-nav-links>button{font-size:14px;padding-inline:7px}.bb-site .site-nav-links>button:last-child{font-size:14px;min-width:130px;margin-left:6px}
- .bb-site .site-hero-copy h1{font-size:clamp(46px,4.9vw,58px)}
- .bb-site .site-hero-copy>p{font-size:18px}
+ .bb-site .site-hero-copy h1{font-size:clamp(40px,4.1vw,50px)}
+ .bb-site .site-hero-copy>p{font-size:16px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:16px;min-width:160px;padding-inline:16px}
- .bb-site .site-hero-figure img{width:420px}
+ .bb-site .site-hero-figure img{width:330px}
  .bb-site .site-trust{font-size:14px}.bb-site .site-trust span{padding-inline:16px}
- .bb-site .site-step>div{padding:22px}.bb-site .site-step h3{font-size:23px}
+ .bb-site .site-step>div{padding:22px}.bb-site .site-step h3{font-size:19px}
 }
 @media(prefers-reduced-motion:reduce){.bb-site *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}

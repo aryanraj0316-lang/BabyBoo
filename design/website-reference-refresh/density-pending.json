@@ -1,10 +1,11 @@
 {
-  "timestamp": "2026-11-18T22:50+05:30",
+  "timestamp": "2026-11-18T23:06+05:30",
   "task": "Slightly reduce desktop website content scale",
   "localBuild": "passed TypeScript/Vite",
-  "changes": "Desktop901px+ fonts, header, Buddy, buttons and cards about10?12percent smaller; shorter hero/sectionspacing; mobile unchanged",
+  "changes": "Further compact desktop layout, approximately25?30percent smaller than original live theme. Mainheading3.7vw/68max, Buddy390px desktop350px intermediate, header68px, smaller buttons/cards/shorter sections. Mobile preserved.",
   "deployed": false,
   "blocker": "Sites source credential returns NOT_FOUND/project_not_found. get_site returns current_user_role=null; list_sites(include_editable=true) returns empty. Existing publicsiteHTTP200, latestversion3 unchanged.",
   "projectId": "appgprj_6afdc85389648191abe7079c72695ceb",
-  "nextAction": "Reconnect Sites to original owner account then package/deploy existing prepared assets. Do not create replacement Site."
+  "nextAction": "Reconnect Sites to original owner account then package/deploy existing prepared assets. Do not create replacement Site.",
+  "accessRecheck": "get_site returns current_user_role=null and latest_version_number3; live still original larger version."
 }
