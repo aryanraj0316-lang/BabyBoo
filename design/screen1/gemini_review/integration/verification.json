@@ -46,7 +46,18 @@
     "reducedMotionBuddyPixelMaxDifference": 0,
     "reducedMotionBuddyDifferentPixels": 0
   },
-  "ota": "Not yet published; authorized preview Android publish is next",
+  "ota": {
+    "status": "published",
+    "channel": "preview",
+    "platform": "android",
+    "runtimeVersion": "1.0.0",
+    "group": "b0b08524-5d86-4dcc-90db-366d26087d88",
+    "updateId": "01a1edcf-8656-713d-8882-560658f8d270",
+    "sourceCommit": "733c7c21a27ae6c5b741bcdb81b791d41dfb5565",
+    "dashboardUrl": "https://expo.dev/accounts/harsh_16/projects/babyboo/updates/b0b08524-5d86-4dcc-90db-366d26087d88",
+    "deviceOtaFetchVerified": false,
+    "serverReadbackVerified": true
+  },
   "limitations": [
     "Clip05 stays static",
     "source-clip pose/colour discontinuities remain at cuts",

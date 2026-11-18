@@ -1,0 +1,20 @@
+{
+  "channel": "preview",
+  "environment": "preview",
+  "updates": [
+    {
+      "id": "01a1edcf-8656-713d-8882-560658f8d270",
+      "group": "b0b08524-5d86-4dcc-90db-366d26087d88",
+      "platform": "android",
+      "runtimeVersion": "1.0.0",
+      "createdAt": "2026-11-18T08:39:22.966Z",
+      "message": "Screen 1: reviewed Buddy clips, native-speed 21.5s loop, immediate CTA, 3 percent battery and ground contact",
+      "branch": "preview",
+      "gitCommitHash": "733c7c21a27ae6c5b741bcdb81b791d41dfb5565"
+    }
+  ],
+  "status": "published",
+  "productionChanged": false,
+  "dashboardUrl": "https://expo.dev/accounts/harsh_16/projects/babyboo/updates/b0b08524-5d86-4dcc-90db-366d26087d88",
+  "serverReadbackVerified": true
+}
