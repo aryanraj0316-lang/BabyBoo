@@ -1,0 +1,11 @@
+﻿Upload file,Purpose,Time intervals (seconds),Original app 3x asset
+upload/01_buddy_watch_34_left.png,Watching the phone,0-7.6; 25.2-26,assets\onboarding\screen1\buddy\buddy_watch_34_left@3x.webp
+upload/02_buddy_worried_wavy.png,Mild battery concern,7.6-10.5,assets\onboarding\screen1\buddy\buddy_worried_wavy@3x.webp
+upload/03_buddy_worried_paws.png,Critical battery / paws,10.5-12.7,assets\onboarding\screen1\buddy\buddy_worried_paws@3x.webp
+upload/04_buddy_yawn.png,Gentle yawn,12.7-13.6,assets\onboarding\screen1\buddy\buddy_yawn@3x.webp
+upload/05_buddy_sleepy.png,Peacefully sleepy,13.6-17.5,assets\onboarding\screen1\buddy\buddy_sleepy@3x.webp
+upload/06_buddy_surprised.png,Parent / surprised,17.5-18.15,assets\onboarding\screen1\buddy\buddy_surprised@3x.webp
+upload/07_buddy_point_left.png,Point toward phone LEFT,18.15-21,assets\onboarding\screen1\buddy\buddy_point_left@3x.webp
+upload/08_buddy_arms_up.png,Unlocked / arms raised,21-22.2,assets\onboarding\screen1\buddy\buddy_arms_up@3x.webp
+upload/09_buddy_wave.png,One friendly wave,22.2-23.5,assets\onboarding\screen1\buddy\buddy_wave@3x.webp
+upload/10_buddy_happy_front.png,Happy seated rest,23.5-25.2,assets\onboarding\screen1\buddy\buddy_happy_front@3x.webp

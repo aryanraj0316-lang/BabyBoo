@@ -1,0 +1,398 @@
+{
+  "createdAt": "2026-11-18T10:44:45+05:30",
+  "sourceCommit": "f0768f16442cb6fb3afdb203d36df0cf00831168",
+  "scope": "Existing approved Screen 1 artwork only. No new mascot artwork or app changes.",
+  "loopSeconds": 26,
+  "sourceCanvasPx": [
+    480,
+    477
+  ],
+  "logicalCanvasPt": [
+    160,
+    159
+  ],
+  "baselinePt": 155,
+  "headWidthPt": 106,
+  "master": {
+    "source": "design\\buddy\\buddy_master.png",
+    "upload": "upload/00_buddy_master.png",
+    "sha256": "7ff7b807d49f3bef89595765a6c156ae44daea61b13e2f7841d97a1fed7b0f77",
+    "byteIdentical": true
+  },
+  "frames": [
+    {
+      "id": "watch_34_left",
+      "title": "Watching the phone",
+      "upload": "upload/01_buddy_watch_34_left.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_watch_34_left@3x.webp",
+      "source3xSha256": "2f90c8e99de3f4283222b7119fdb610c2b6d585d3bf3a9e5d36de7a7fd5bf75b",
+      "uploadSha256": "2f5933823c425a1e8aa851634abc0adbce9de6e7541b2605b7175c7c3e9bf442",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        91,
+        40,
+        458,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 0,
+          "to": 7.6
+        },
+        {
+          "from": 25.2,
+          "to": 26
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_watch_34_left@2x.webp",
+          "sha256": "8f9c2a47e57120ed1ed295923620b6a9c1db8e5e8651feb3efbc642cb8258b61",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_watch_34_left@3x.webp",
+          "sha256": "2f90c8e99de3f4283222b7119fdb610c2b6d585d3bf3a9e5d36de7a7fd5bf75b",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "worried_wavy",
+      "title": "Mild battery concern",
+      "upload": "upload/02_buddy_worried_wavy.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_worried_wavy@3x.webp",
+      "source3xSha256": "9b7e334ab5080a3b4ed482da76a437b539025fc18bf8c8573cf3e294024afcb2",
+      "uploadSha256": "064574dd605d325aa9e34ed7f554a192c66bb4575f9150bcf44c06ce67ce4617",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        80,
+        23,
+        424,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 7.6,
+          "to": 10.5
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_worried_wavy@2x.webp",
+          "sha256": "b66577e4ff7c820deaf3745fd1c014994793c4284038e5b5b2c963e811fd6e3c",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_worried_wavy@3x.webp",
+          "sha256": "9b7e334ab5080a3b4ed482da76a437b539025fc18bf8c8573cf3e294024afcb2",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "worried_paws",
+      "title": "Critical battery / paws",
+      "upload": "upload/03_buddy_worried_paws.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_worried_paws@3x.webp",
+      "source3xSha256": "1662eae4472fe0bf53f3eca01eacaab625f4bd4807215d431702991d68e12095",
+      "uploadSha256": "998701be95cf051deed80f48b972976cc9ac8890277bb77096b3fbe8acea3a92",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        30,
+        57,
+        414,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 10.5,
+          "to": 12.7
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_worried_paws@2x.webp",
+          "sha256": "4f1f09192192e3784a13127e968dcba9f3a6080cd7ac7b9e2f4eb0598c708833",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_worried_paws@3x.webp",
+          "sha256": "1662eae4472fe0bf53f3eca01eacaab625f4bd4807215d431702991d68e12095",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "yawn",
+      "title": "Gentle yawn",
+      "upload": "upload/04_buddy_yawn.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_yawn@3x.webp",
+      "source3xSha256": "cfbfa842bf04cf6ed6ddcede9e8ed4c55b0806cce360d2c9beb77e0ec84fc3fa",
+      "uploadSha256": "622da186b6065af91d8bdddf41af3b5cd8e4147e73aff02df602594600e1ca78",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        64,
+        29,
+        442,
+        466
+      ],
+      "intervals": [
+        {
+          "from": 12.7,
+          "to": 13.6
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_yawn@2x.webp",
+          "sha256": "fee5f8b2d830d90f430ea8b4b0317c93df91f6cbca88ec1263e94dc35395853d",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_yawn@3x.webp",
+          "sha256": "cfbfa842bf04cf6ed6ddcede9e8ed4c55b0806cce360d2c9beb77e0ec84fc3fa",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "sleepy",
+      "title": "Peacefully sleepy",
+      "upload": "upload/05_buddy_sleepy.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_sleepy@3x.webp",
+      "source3xSha256": "3725887d4ce9cc8ebe63ccc4b3afea9e093e7a5f2bbf62e4708908ef839d14d6",
+      "uploadSha256": "f0f3728bfcae171f72a30a788477c6ce9c36500867e4043f9f1c50c27c5c5542",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        78,
+        50,
+        446,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 13.6,
+          "to": 17.5
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_sleepy@2x.webp",
+          "sha256": "bc59f3f9160ef97d1166e1509b9e8727f6e26cc363a938bf22dc0ec412ffabe6",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_sleepy@3x.webp",
+          "sha256": "3725887d4ce9cc8ebe63ccc4b3afea9e093e7a5f2bbf62e4708908ef839d14d6",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "surprised",
+      "title": "Parent / surprised",
+      "upload": "upload/06_buddy_surprised.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_surprised@3x.webp",
+      "source3xSha256": "48355e6bf036a36f3a4bb5f73f89a5b58759521a06a216cd9af64f6945f1d12e",
+      "uploadSha256": "1f086a670243b2aee53aafc3351c28f41379ba0da7d623c1113135b357f0df17",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        80,
+        28,
+        425,
+        466
+      ],
+      "intervals": [
+        {
+          "from": 17.5,
+          "to": 18.15
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_surprised@2x.webp",
+          "sha256": "77e2415a7418afddb6a26614fe06d6657fedbad4ca414abafbf538058cc663ec",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_surprised@3x.webp",
+          "sha256": "48355e6bf036a36f3a4bb5f73f89a5b58759521a06a216cd9af64f6945f1d12e",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "point_left",
+      "title": "Point toward phone LEFT",
+      "upload": "upload/07_buddy_point_left.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_point_left@3x.webp",
+      "source3xSha256": "c26a99ca3b7dd304bb30c728b3d0520e53da26e5c7b9389cfd4e4139ea4489a8",
+      "uploadSha256": "2c2d83439ae77efb61c1876b1fa22d58e52d1ffc6a83eaab140fc3df1b9a1bf6",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        53,
+        32,
+        459,
+        466
+      ],
+      "intervals": [
+        {
+          "from": 18.15,
+          "to": 21
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_point_left@2x.webp",
+          "sha256": "204b18d86fc2e27d98ea55e90b47ed9a0bde2fd13cb00d2044f54d6c65ba73ca",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_point_left@3x.webp",
+          "sha256": "c26a99ca3b7dd304bb30c728b3d0520e53da26e5c7b9389cfd4e4139ea4489a8",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "arms_up",
+      "title": "Unlocked / arms raised",
+      "upload": "upload/08_buddy_arms_up.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_arms_up@3x.webp",
+      "source3xSha256": "5591eb989842a68e0c593f11684402905e1fa0a442f22498b5fb623774f878aa",
+      "uploadSha256": "00d15558f6410fa68ab2b9886f47b764a702a8acac68ffb0ce6c30ef1c4a5929",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        25,
+        19,
+        467,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 21,
+          "to": 22.2
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_arms_up@2x.webp",
+          "sha256": "7efce4d7d4e1f2712bc468072a2bb9e0993907bcff1b9569b7932745795c83f3",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_arms_up@3x.webp",
+          "sha256": "5591eb989842a68e0c593f11684402905e1fa0a442f22498b5fb623774f878aa",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "wave",
+      "title": "One friendly wave",
+      "upload": "upload/09_buddy_wave.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_wave@3x.webp",
+      "source3xSha256": "d4daab9a748152cb5a46d240921f3fbfb00f142c3207190262b0f8c1846e642b",
+      "uploadSha256": "ee11ef9042c669f4cceda8018b347c0a79d3ca4d7de1f6faca0630ab1a3008a0",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        24,
+        15,
+        442,
+        466
+      ],
+      "intervals": [
+        {
+          "from": 22.2,
+          "to": 23.5
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_wave@2x.webp",
+          "sha256": "31f7a1583e7f9cba17c5f0c6e04a6560ed08e9bdb7f2fc5efac8d8bd995944b5",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_wave@3x.webp",
+          "sha256": "d4daab9a748152cb5a46d240921f3fbfb00f142c3207190262b0f8c1846e642b",
+          "byteIdenticalToApp": true
+        }
+      ]
+    },
+    {
+      "id": "happy_front",
+      "title": "Happy seated rest",
+      "upload": "upload/10_buddy_happy_front.png",
+      "source3x": "assets\\onboarding\\screen1\\buddy\\buddy_happy_front@3x.webp",
+      "source3xSha256": "a4752a09900f29e39f494df02b6ddfb335e744ea233f85f140f89efd518727f2",
+      "uploadSha256": "3aea33a9eba777ef927f44e105f1021f9feb887230b7054ec604c8ad1d8e1846",
+      "decodedRgbaPixelsIdentical": true,
+      "size": [
+        480,
+        477
+      ],
+      "visibleAlphaBounds": [
+        78,
+        65,
+        444,
+        467
+      ],
+      "intervals": [
+        {
+          "from": 23.5,
+          "to": 25.2
+        }
+      ],
+      "originalWebpCopies": [
+        {
+          "file": "source_webp/buddy_happy_front@2x.webp",
+          "sha256": "814da8bc3b2f03c8c0302a3e3713fdda69e241b4bf2222009f862a9326ab10a3",
+          "byteIdenticalToApp": true
+        },
+        {
+          "file": "source_webp/buddy_happy_front@3x.webp",
+          "sha256": "a4752a09900f29e39f494df02b6ddfb335e744ea233f85f140f89efd518727f2",
+          "byteIdenticalToApp": true
+        }
+      ]
+    }
+  ]
+}

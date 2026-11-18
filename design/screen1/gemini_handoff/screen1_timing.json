@@ -1,0 +1,147 @@
+{
+  "loopSeconds": 26,
+  "canvasPt": {
+    "width": 160,
+    "height": 159
+  },
+  "baselinePt": 155,
+  "seatXPt": 80,
+  "headWidthPt": 106,
+  "phone": {
+    "reelSwipes": [
+      1.5,
+      3,
+      4.5,
+      6
+    ],
+    "scrollStall": 7.5,
+    "batteryWarning": 7.6,
+    "batteryTakeover": 8.3,
+    "batteryDrain": {
+      "from": 9,
+      "to": 12.4,
+      "startPercent": 5,
+      "endPercent": 0
+    },
+    "shutdown": {
+      "from": 12.5,
+      "to": 13.5
+    },
+    "parentPrompt": 17.5,
+    "drawA": {
+      "from": 18.15,
+      "to": 20.25
+    },
+    "unlocked": 21,
+    "rest": 23.5,
+    "loopSeam": {
+      "at": 25.2,
+      "length": 0.8
+    }
+  },
+  "buddyFrames": [
+    {
+      "id": "watch_34_left",
+      "from": 0,
+      "to": 7.6,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_watch_34_left.webp"
+    },
+    {
+      "id": "worried_wavy",
+      "from": 7.6,
+      "to": 10.5,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_worried_wavy.webp"
+    },
+    {
+      "id": "worried_paws",
+      "from": 10.5,
+      "to": 12.7,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_worried_paws.webp"
+    },
+    {
+      "id": "yawn",
+      "from": 12.7,
+      "to": 13.6,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_yawn.webp"
+    },
+    {
+      "id": "sleepy",
+      "from": 13.6,
+      "to": 17.5,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_sleepy.webp"
+    },
+    {
+      "id": "surprised",
+      "from": 17.5,
+      "to": 18.15,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_surprised.webp"
+    },
+    {
+      "id": "point_left",
+      "from": 18.15,
+      "to": 21,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_point_left.webp"
+    },
+    {
+      "id": "arms_up",
+      "from": 21,
+      "to": 22.2,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_arms_up.webp"
+    },
+    {
+      "id": "wave",
+      "from": 22.2,
+      "to": 23.5,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_wave.webp"
+    },
+    {
+      "id": "happy_front",
+      "from": 23.5,
+      "to": 25.2,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_happy_front.webp"
+    },
+    {
+      "id": "watch_34_left",
+      "from": 25.2,
+      "to": 26,
+      "sourceStem": "assets/onboarding/screen1/buddy/buddy_watch_34_left.webp"
+    }
+  ],
+  "dialogueTurns": [
+    {
+      "id": "reels",
+      "from": 0.7,
+      "to": 5.3
+    },
+    {
+      "id": "battery",
+      "from": 9,
+      "to": 12.15
+    },
+    {
+      "id": "timesUp",
+      "from": 12.5,
+      "to": 13.6
+    },
+    {
+      "id": "sleepy",
+      "from": 13.6,
+      "to": 16.8
+    },
+    {
+      "id": "parents",
+      "from": 16.8,
+      "to": 18.55
+    },
+    {
+      "id": "drawA",
+      "from": 18.55,
+      "to": 20.85
+    },
+    {
+      "id": "success",
+      "from": 21,
+      "to": 23.8
+    }
+  ]
+}
