@@ -1,0 +1,4911 @@
+{
+  "duration": 26,
+  "fps": 30,
+  "frames": 780,
+  "missing": "Clip05 blocked by Gemini video-generation limit; original approved PNG placeholders from21-26s",
+  "sourceSha256": {
+    "01": "92e47df5e45166db2f60d095ec7ac955ef7222e559056310a304c665724e645d",
+    "02": "84a7d94af476a6f6856c54e09d88bf589440d43798c604c7c2fa519872d010e8",
+    "03": "5a209575ecd72218b52b4f74864982fa828e89a150da570241cc1f1f0c7dddae",
+    "04": "48c7bab5488d83fa1ba64b0bbc4a2fc3768bd7a6e2a92ff3be438f70a88df307"
+  },
+  "registrations": {
+    "01": {
+      "sourceFrame": 0,
+      "fixedAffine": [
+        [
+          0.46822741627693176,
+          0.0,
+          -119.00023651123047
+        ],
+        [
+          0.0,
+          0.46822741627693176,
+          -6.98996639251709
+        ]
+      ],
+      "targetCanvas": [
+        320,
+        318
+      ],
+      "targetBaseline": 310,
+      "initialVisibleHeight": 280
+    },
+    "02": {
+      "sourceFrame": 26,
+      "fixedAffine": [
+        [
+          0.48275861144065857,
+          0.0,
+          -137.63124084472656
+        ],
+        [
+          0.0,
+          0.48275861144065857,
+          -11.034482955932617
+        ]
+      ],
+      "targetCanvas": [
+        320,
+        318
+      ],
+      "targetBaseline": 310,
+      "initialVisibleHeight": 280
+    },
+    "03": {
+      "sourceFrame": 27,
+      "fixedAffine": [
+        [
+          0.4878048896789551,
+          0.0,
+          -150.65167236328125
+        ],
+        [
+          0.0,
+          0.4878048896789551,
+          -13.414633750915527
+        ]
+      ],
+      "targetCanvas": [
+        320,
+        318
+      ],
+      "targetBaseline": 310,
+      "initialVisibleHeight": 280
+    },
+    "04": {
+      "sourceFrame": 36,
+      "fixedAffine": [
+        [
+          0.48275861144065857,
+          0.0,
+          -147.27090454101562
+        ],
+        [
+          0.0,
+          0.48275861144065857,
+          -9.103447914123535
+        ]
+      ],
+      "targetCanvas": [
+        320,
+        318
+      ],
+      "targetBaseline": 310,
+      "initialVisibleHeight": 280
+    }
+  },
+  "edits": [
+    [
+      0,
+      7.6,
+      "01",
+      0,
+      7.6,
+      "Watching reels"
+    ],
+    [
+      7.6,
+      7.9,
+      "02",
+      1.1,
+      1.55,
+      "Battery concern"
+    ],
+    [
+      7.9,
+      10.05,
+      "02",
+      1.55,
+      2.8,
+      "Battery concern"
+    ],
+    [
+      10.05,
+      10.5,
+      "02",
+      2.8,
+      3.5,
+      "Paws rise / low battery"
+    ],
+    [
+      10.5,
+      12.7,
+      "02",
+      3.5,
+      5.7,
+      "Critical battery"
+    ],
+    [
+      12.7,
+      13.6,
+      "03",
+      1.125,
+      2.35,
+      "Yawn"
+    ],
+    [
+      13.6,
+      14.05,
+      "03",
+      2.35,
+      2.8,
+      "Settle into sleep"
+    ],
+    [
+      14.05,
+      17.5,
+      "03",
+      2.8,
+      6.25,
+      "Peaceful sleep"
+    ],
+    [
+      17.5,
+      17.9,
+      "04",
+      1.5,
+      1.9,
+      "Wake for parent"
+    ],
+    [
+      17.9,
+      18.15,
+      "04",
+      1.9,
+      2.15,
+      "Surprised"
+    ],
+    [
+      18.15,
+      19.05,
+      "04",
+      2.65,
+      3.65,
+      "Point toward unlock"
+    ],
+    [
+      19.05,
+      21,
+      "04",
+      3.65,
+      5.6,
+      "Point toward unlock"
+    ],
+    [
+      21,
+      22.2,
+      "08",
+      0,
+      0,
+      "Arms up / STILL PLACEHOLDER"
+    ],
+    [
+      22.2,
+      23.5,
+      "09",
+      0,
+      0,
+      "Wave pose / STILL PLACEHOLDER"
+    ],
+    [
+      23.5,
+      25.2,
+      "10",
+      0,
+      0,
+      "Happy rest / STILL PLACEHOLDER"
+    ],
+    [
+      25.2,
+      26,
+      "01png",
+      0,
+      0,
+      "Watch reset / STILL PLACEHOLDER"
+    ]
+  ],
+  "interpolation": "nearest original video frame; no generated motion, optical flow or facial edits",
+  "perFrame": [
+    {
+      "outputTime": 0.0,
+      "source": "01",
+      "sourceFrame": 0,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.03333333333333333,
+      "source": "01",
+      "sourceFrame": 1,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.06666666666666667,
+      "source": "01",
+      "sourceFrame": 2,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.1,
+      "source": "01",
+      "sourceFrame": 2,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.13333333333333333,
+      "source": "01",
+      "sourceFrame": 3,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.16666666666666666,
+      "source": "01",
+      "sourceFrame": 4,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.2,
+      "source": "01",
+      "sourceFrame": 5,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.23333333333333334,
+      "source": "01",
+      "sourceFrame": 6,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.26666666666666666,
+      "source": "01",
+      "sourceFrame": 6,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.3,
+      "source": "01",
+      "sourceFrame": 7,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.3333333333333333,
+      "source": "01",
+      "sourceFrame": 8,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.36666666666666664,
+      "source": "01",
+      "sourceFrame": 9,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.4,
+      "source": "01",
+      "sourceFrame": 10,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.43333333333333335,
+      "source": "01",
+      "sourceFrame": 10,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.4666666666666667,
+      "source": "01",
+      "sourceFrame": 11,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.5,
+      "source": "01",
+      "sourceFrame": 12,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.5333333333333333,
+      "source": "01",
+      "sourceFrame": 13,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.5666666666666667,
+      "source": "01",
+      "sourceFrame": 14,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.6,
+      "source": "01",
+      "sourceFrame": 14,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.6333333333333333,
+      "source": "01",
+      "sourceFrame": 15,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.6666666666666666,
+      "source": "01",
+      "sourceFrame": 16,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.7,
+      "source": "01",
+      "sourceFrame": 17,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.7333333333333333,
+      "source": "01",
+      "sourceFrame": 18,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.7666666666666667,
+      "source": "01",
+      "sourceFrame": 18,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.8,
+      "source": "01",
+      "sourceFrame": 19,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.8333333333333334,
+      "source": "01",
+      "sourceFrame": 20,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.8666666666666667,
+      "source": "01",
+      "sourceFrame": 21,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.9,
+      "source": "01",
+      "sourceFrame": 22,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.9333333333333333,
+      "source": "01",
+      "sourceFrame": 22,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 0.9666666666666667,
+      "source": "01",
+      "sourceFrame": 23,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.0,
+      "source": "01",
+      "sourceFrame": 24,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.0333333333333334,
+      "source": "01",
+      "sourceFrame": 25,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.0666666666666667,
+      "source": "01",
+      "sourceFrame": 26,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.1,
+      "source": "01",
+      "sourceFrame": 26,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.1333333333333333,
+      "source": "01",
+      "sourceFrame": 27,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.1666666666666667,
+      "source": "01",
+      "sourceFrame": 28,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.2,
+      "source": "01",
+      "sourceFrame": 29,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.2333333333333334,
+      "source": "01",
+      "sourceFrame": 30,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.2666666666666666,
+      "source": "01",
+      "sourceFrame": 30,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.3,
+      "source": "01",
+      "sourceFrame": 31,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.3333333333333333,
+      "source": "01",
+      "sourceFrame": 32,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.3666666666666667,
+      "source": "01",
+      "sourceFrame": 33,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.4,
+      "source": "01",
+      "sourceFrame": 34,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.4333333333333333,
+      "source": "01",
+      "sourceFrame": 34,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.4666666666666666,
+      "source": "01",
+      "sourceFrame": 35,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.5,
+      "source": "01",
+      "sourceFrame": 36,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.5333333333333334,
+      "source": "01",
+      "sourceFrame": 37,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.5666666666666667,
+      "source": "01",
+      "sourceFrame": 38,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.6,
+      "source": "01",
+      "sourceFrame": 38,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.6333333333333333,
+      "source": "01",
+      "sourceFrame": 39,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.6666666666666667,
+      "source": "01",
+      "sourceFrame": 40,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.7,
+      "source": "01",
+      "sourceFrame": 41,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.7333333333333334,
+      "source": "01",
+      "sourceFrame": 42,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.7666666666666666,
+      "source": "01",
+      "sourceFrame": 42,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.8,
+      "source": "01",
+      "sourceFrame": 43,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.8333333333333333,
+      "source": "01",
+      "sourceFrame": 44,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.8666666666666667,
+      "source": "01",
+      "sourceFrame": 45,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.9,
+      "source": "01",
+      "sourceFrame": 46,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.9333333333333333,
+      "source": "01",
+      "sourceFrame": 46,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 1.9666666666666666,
+      "source": "01",
+      "sourceFrame": 47,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.0,
+      "source": "01",
+      "sourceFrame": 48,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.033333333333333,
+      "source": "01",
+      "sourceFrame": 49,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.066666666666667,
+      "source": "01",
+      "sourceFrame": 50,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.1,
+      "source": "01",
+      "sourceFrame": 50,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.1333333333333333,
+      "source": "01",
+      "sourceFrame": 51,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.1666666666666665,
+      "source": "01",
+      "sourceFrame": 52,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.2,
+      "source": "01",
+      "sourceFrame": 53,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.2333333333333334,
+      "source": "01",
+      "sourceFrame": 54,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.2666666666666666,
+      "source": "01",
+      "sourceFrame": 54,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.3,
+      "source": "01",
+      "sourceFrame": 55,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.3333333333333335,
+      "source": "01",
+      "sourceFrame": 56,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.3666666666666667,
+      "source": "01",
+      "sourceFrame": 57,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.4,
+      "source": "01",
+      "sourceFrame": 58,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.433333333333333,
+      "source": "01",
+      "sourceFrame": 58,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.466666666666667,
+      "source": "01",
+      "sourceFrame": 59,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.5,
+      "source": "01",
+      "sourceFrame": 60,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.533333333333333,
+      "source": "01",
+      "sourceFrame": 61,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.566666666666667,
+      "source": "01",
+      "sourceFrame": 62,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.6,
+      "source": "01",
+      "sourceFrame": 62,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.6333333333333333,
+      "source": "01",
+      "sourceFrame": 63,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.6666666666666665,
+      "source": "01",
+      "sourceFrame": 64,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.7,
+      "source": "01",
+      "sourceFrame": 65,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.7333333333333334,
+      "source": "01",
+      "sourceFrame": 66,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.7666666666666666,
+      "source": "01",
+      "sourceFrame": 66,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.8,
+      "source": "01",
+      "sourceFrame": 67,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.8333333333333335,
+      "source": "01",
+      "sourceFrame": 68,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.8666666666666667,
+      "source": "01",
+      "sourceFrame": 69,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.9,
+      "source": "01",
+      "sourceFrame": 70,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.933333333333333,
+      "source": "01",
+      "sourceFrame": 70,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 2.966666666666667,
+      "source": "01",
+      "sourceFrame": 71,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.0,
+      "source": "01",
+      "sourceFrame": 72,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.033333333333333,
+      "source": "01",
+      "sourceFrame": 73,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.066666666666667,
+      "source": "01",
+      "sourceFrame": 74,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.1,
+      "source": "01",
+      "sourceFrame": 74,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.1333333333333333,
+      "source": "01",
+      "sourceFrame": 75,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.1666666666666665,
+      "source": "01",
+      "sourceFrame": 76,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.2,
+      "source": "01",
+      "sourceFrame": 77,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.2333333333333334,
+      "source": "01",
+      "sourceFrame": 78,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.2666666666666666,
+      "source": "01",
+      "sourceFrame": 78,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.3,
+      "source": "01",
+      "sourceFrame": 79,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.3333333333333335,
+      "source": "01",
+      "sourceFrame": 80,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.3666666666666667,
+      "source": "01",
+      "sourceFrame": 81,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.4,
+      "source": "01",
+      "sourceFrame": 82,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.433333333333333,
+      "source": "01",
+      "sourceFrame": 82,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.466666666666667,
+      "source": "01",
+      "sourceFrame": 83,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.5,
+      "source": "01",
+      "sourceFrame": 84,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.533333333333333,
+      "source": "01",
+      "sourceFrame": 85,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.566666666666667,
+      "source": "01",
+      "sourceFrame": 86,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.6,
+      "source": "01",
+      "sourceFrame": 86,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.6333333333333333,
+      "source": "01",
+      "sourceFrame": 87,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.6666666666666665,
+      "source": "01",
+      "sourceFrame": 88,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.7,
+      "source": "01",
+      "sourceFrame": 89,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.7333333333333334,
+      "source": "01",
+      "sourceFrame": 90,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.7666666666666666,
+      "source": "01",
+      "sourceFrame": 90,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.8,
+      "source": "01",
+      "sourceFrame": 91,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.8333333333333335,
+      "source": "01",
+      "sourceFrame": 92,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.8666666666666667,
+      "source": "01",
+      "sourceFrame": 93,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.9,
+      "source": "01",
+      "sourceFrame": 94,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.933333333333333,
+      "source": "01",
+      "sourceFrame": 94,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 3.966666666666667,
+      "source": "01",
+      "sourceFrame": 95,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.0,
+      "source": "01",
+      "sourceFrame": 96,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.033333333333333,
+      "source": "01",
+      "sourceFrame": 97,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.066666666666666,
+      "source": "01",
+      "sourceFrame": 98,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.1,
+      "source": "01",
+      "sourceFrame": 98,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.133333333333334,
+      "source": "01",
+      "sourceFrame": 99,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.166666666666667,
+      "source": "01",
+      "sourceFrame": 100,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.2,
+      "source": "01",
+      "sourceFrame": 101,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.233333333333333,
+      "source": "01",
+      "sourceFrame": 102,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.266666666666667,
+      "source": "01",
+      "sourceFrame": 102,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.3,
+      "source": "01",
+      "sourceFrame": 103,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.333333333333333,
+      "source": "01",
+      "sourceFrame": 104,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.366666666666666,
+      "source": "01",
+      "sourceFrame": 105,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.4,
+      "source": "01",
+      "sourceFrame": 106,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.433333333333334,
+      "source": "01",
+      "sourceFrame": 106,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.466666666666667,
+      "source": "01",
+      "sourceFrame": 107,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.5,
+      "source": "01",
+      "sourceFrame": 108,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.533333333333333,
+      "source": "01",
+      "sourceFrame": 109,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.566666666666666,
+      "source": "01",
+      "sourceFrame": 110,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.6,
+      "source": "01",
+      "sourceFrame": 110,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.633333333333334,
+      "source": "01",
+      "sourceFrame": 111,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.666666666666667,
+      "source": "01",
+      "sourceFrame": 112,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.7,
+      "source": "01",
+      "sourceFrame": 113,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.733333333333333,
+      "source": "01",
+      "sourceFrame": 114,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.766666666666667,
+      "source": "01",
+      "sourceFrame": 114,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.8,
+      "source": "01",
+      "sourceFrame": 115,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.833333333333333,
+      "source": "01",
+      "sourceFrame": 116,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.866666666666666,
+      "source": "01",
+      "sourceFrame": 117,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.9,
+      "source": "01",
+      "sourceFrame": 118,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.933333333333334,
+      "source": "01",
+      "sourceFrame": 118,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 4.966666666666667,
+      "source": "01",
+      "sourceFrame": 119,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.0,
+      "source": "01",
+      "sourceFrame": 120,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.033333333333333,
+      "source": "01",
+      "sourceFrame": 121,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.066666666666666,
+      "source": "01",
+      "sourceFrame": 122,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.1,
+      "source": "01",
+      "sourceFrame": 122,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.133333333333334,
+      "source": "01",
+      "sourceFrame": 123,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.166666666666667,
+      "source": "01",
+      "sourceFrame": 124,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.2,
+      "source": "01",
+      "sourceFrame": 125,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.233333333333333,
+      "source": "01",
+      "sourceFrame": 126,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.266666666666667,
+      "source": "01",
+      "sourceFrame": 126,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.3,
+      "source": "01",
+      "sourceFrame": 127,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.333333333333333,
+      "source": "01",
+      "sourceFrame": 128,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.366666666666666,
+      "source": "01",
+      "sourceFrame": 129,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.4,
+      "source": "01",
+      "sourceFrame": 130,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.433333333333334,
+      "source": "01",
+      "sourceFrame": 130,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.466666666666667,
+      "source": "01",
+      "sourceFrame": 131,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.5,
+      "source": "01",
+      "sourceFrame": 132,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.533333333333333,
+      "source": "01",
+      "sourceFrame": 133,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.566666666666666,
+      "source": "01",
+      "sourceFrame": 134,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.6,
+      "source": "01",
+      "sourceFrame": 134,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.633333333333334,
+      "source": "01",
+      "sourceFrame": 135,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.666666666666667,
+      "source": "01",
+      "sourceFrame": 136,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.7,
+      "source": "01",
+      "sourceFrame": 137,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.733333333333333,
+      "source": "01",
+      "sourceFrame": 138,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.766666666666667,
+      "source": "01",
+      "sourceFrame": 138,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.8,
+      "source": "01",
+      "sourceFrame": 139,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.833333333333333,
+      "source": "01",
+      "sourceFrame": 140,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.866666666666666,
+      "source": "01",
+      "sourceFrame": 141,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.9,
+      "source": "01",
+      "sourceFrame": 142,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.933333333333334,
+      "source": "01",
+      "sourceFrame": 142,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 5.966666666666667,
+      "source": "01",
+      "sourceFrame": 143,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.0,
+      "source": "01",
+      "sourceFrame": 144,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.033333333333333,
+      "source": "01",
+      "sourceFrame": 145,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.066666666666666,
+      "source": "01",
+      "sourceFrame": 146,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.1,
+      "source": "01",
+      "sourceFrame": 146,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.133333333333334,
+      "source": "01",
+      "sourceFrame": 147,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.166666666666667,
+      "source": "01",
+      "sourceFrame": 148,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.2,
+      "source": "01",
+      "sourceFrame": 149,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.233333333333333,
+      "source": "01",
+      "sourceFrame": 150,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.266666666666667,
+      "source": "01",
+      "sourceFrame": 150,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.3,
+      "source": "01",
+      "sourceFrame": 151,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.333333333333333,
+      "source": "01",
+      "sourceFrame": 152,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.366666666666666,
+      "source": "01",
+      "sourceFrame": 153,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.4,
+      "source": "01",
+      "sourceFrame": 154,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.433333333333334,
+      "source": "01",
+      "sourceFrame": 154,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.466666666666667,
+      "source": "01",
+      "sourceFrame": 155,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.5,
+      "source": "01",
+      "sourceFrame": 156,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.533333333333333,
+      "source": "01",
+      "sourceFrame": 157,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.566666666666666,
+      "source": "01",
+      "sourceFrame": 158,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.6,
+      "source": "01",
+      "sourceFrame": 158,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.633333333333334,
+      "source": "01",
+      "sourceFrame": 159,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.666666666666667,
+      "source": "01",
+      "sourceFrame": 160,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.7,
+      "source": "01",
+      "sourceFrame": 161,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.733333333333333,
+      "source": "01",
+      "sourceFrame": 162,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.766666666666667,
+      "source": "01",
+      "sourceFrame": 162,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.8,
+      "source": "01",
+      "sourceFrame": 163,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.833333333333333,
+      "source": "01",
+      "sourceFrame": 164,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.866666666666666,
+      "source": "01",
+      "sourceFrame": 165,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.9,
+      "source": "01",
+      "sourceFrame": 166,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.933333333333334,
+      "source": "01",
+      "sourceFrame": 166,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 6.966666666666667,
+      "source": "01",
+      "sourceFrame": 167,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.0,
+      "source": "01",
+      "sourceFrame": 168,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.033333333333333,
+      "source": "01",
+      "sourceFrame": 169,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.066666666666666,
+      "source": "01",
+      "sourceFrame": 170,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.1,
+      "source": "01",
+      "sourceFrame": 170,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.133333333333334,
+      "source": "01",
+      "sourceFrame": 171,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.166666666666667,
+      "source": "01",
+      "sourceFrame": 172,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.2,
+      "source": "01",
+      "sourceFrame": 173,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.233333333333333,
+      "source": "01",
+      "sourceFrame": 174,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.266666666666667,
+      "source": "01",
+      "sourceFrame": 174,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.3,
+      "source": "01",
+      "sourceFrame": 175,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.333333333333333,
+      "source": "01",
+      "sourceFrame": 176,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.366666666666666,
+      "source": "01",
+      "sourceFrame": 177,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.4,
+      "source": "01",
+      "sourceFrame": 178,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.433333333333334,
+      "source": "01",
+      "sourceFrame": 178,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.466666666666667,
+      "source": "01",
+      "sourceFrame": 179,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.5,
+      "source": "01",
+      "sourceFrame": 180,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.533333333333333,
+      "source": "01",
+      "sourceFrame": 181,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.566666666666666,
+      "source": "01",
+      "sourceFrame": 182,
+      "label": "Watching reels"
+    },
+    {
+      "outputTime": 7.6,
+      "source": "02",
+      "sourceFrame": 26,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.633333333333334,
+      "source": "02",
+      "sourceFrame": 28,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.666666666666667,
+      "source": "02",
+      "sourceFrame": 29,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.7,
+      "source": "02",
+      "sourceFrame": 30,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.733333333333333,
+      "source": "02",
+      "sourceFrame": 31,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.766666666666667,
+      "source": "02",
+      "sourceFrame": 32,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.8,
+      "source": "02",
+      "sourceFrame": 34,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.833333333333333,
+      "source": "02",
+      "sourceFrame": 35,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.866666666666666,
+      "source": "02",
+      "sourceFrame": 36,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.9,
+      "source": "02",
+      "sourceFrame": 37,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.933333333333334,
+      "source": "02",
+      "sourceFrame": 38,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 7.966666666666667,
+      "source": "02",
+      "sourceFrame": 38,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.0,
+      "source": "02",
+      "sourceFrame": 39,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.033333333333333,
+      "source": "02",
+      "sourceFrame": 39,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.066666666666666,
+      "source": "02",
+      "sourceFrame": 40,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.1,
+      "source": "02",
+      "sourceFrame": 40,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.133333333333333,
+      "source": "02",
+      "sourceFrame": 40,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.166666666666666,
+      "source": "02",
+      "sourceFrame": 41,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.2,
+      "source": "02",
+      "sourceFrame": 41,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.233333333333333,
+      "source": "02",
+      "sourceFrame": 42,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.266666666666667,
+      "source": "02",
+      "sourceFrame": 42,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.3,
+      "source": "02",
+      "sourceFrame": 43,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.333333333333334,
+      "source": "02",
+      "sourceFrame": 43,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.366666666666667,
+      "source": "02",
+      "sourceFrame": 44,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.4,
+      "source": "02",
+      "sourceFrame": 44,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.433333333333334,
+      "source": "02",
+      "sourceFrame": 45,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.466666666666667,
+      "source": "02",
+      "sourceFrame": 45,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.5,
+      "source": "02",
+      "sourceFrame": 46,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.533333333333333,
+      "source": "02",
+      "sourceFrame": 46,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.566666666666666,
+      "source": "02",
+      "sourceFrame": 47,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.6,
+      "source": "02",
+      "sourceFrame": 47,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.633333333333333,
+      "source": "02",
+      "sourceFrame": 47,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.666666666666666,
+      "source": "02",
+      "sourceFrame": 48,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.7,
+      "source": "02",
+      "sourceFrame": 48,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.733333333333333,
+      "source": "02",
+      "sourceFrame": 49,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.766666666666667,
+      "source": "02",
+      "sourceFrame": 49,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.8,
+      "source": "02",
+      "sourceFrame": 50,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.833333333333334,
+      "source": "02",
+      "sourceFrame": 50,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.866666666666667,
+      "source": "02",
+      "sourceFrame": 51,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.9,
+      "source": "02",
+      "sourceFrame": 51,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.933333333333334,
+      "source": "02",
+      "sourceFrame": 52,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 8.966666666666667,
+      "source": "02",
+      "sourceFrame": 52,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.0,
+      "source": "02",
+      "sourceFrame": 53,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.033333333333333,
+      "source": "02",
+      "sourceFrame": 53,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.066666666666666,
+      "source": "02",
+      "sourceFrame": 53,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.1,
+      "source": "02",
+      "sourceFrame": 54,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.133333333333333,
+      "source": "02",
+      "sourceFrame": 54,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.166666666666666,
+      "source": "02",
+      "sourceFrame": 55,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.2,
+      "source": "02",
+      "sourceFrame": 55,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.233333333333333,
+      "source": "02",
+      "sourceFrame": 56,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.266666666666667,
+      "source": "02",
+      "sourceFrame": 56,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.3,
+      "source": "02",
+      "sourceFrame": 57,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.333333333333334,
+      "source": "02",
+      "sourceFrame": 57,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.366666666666667,
+      "source": "02",
+      "sourceFrame": 58,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.4,
+      "source": "02",
+      "sourceFrame": 58,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.433333333333334,
+      "source": "02",
+      "sourceFrame": 59,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.466666666666667,
+      "source": "02",
+      "sourceFrame": 59,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.5,
+      "source": "02",
+      "sourceFrame": 60,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.533333333333333,
+      "source": "02",
+      "sourceFrame": 60,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.566666666666666,
+      "source": "02",
+      "sourceFrame": 60,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.6,
+      "source": "02",
+      "sourceFrame": 61,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.633333333333333,
+      "source": "02",
+      "sourceFrame": 61,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.666666666666666,
+      "source": "02",
+      "sourceFrame": 62,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.7,
+      "source": "02",
+      "sourceFrame": 62,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.733333333333333,
+      "source": "02",
+      "sourceFrame": 63,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.766666666666667,
+      "source": "02",
+      "sourceFrame": 63,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.8,
+      "source": "02",
+      "sourceFrame": 64,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.833333333333334,
+      "source": "02",
+      "sourceFrame": 64,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.866666666666667,
+      "source": "02",
+      "sourceFrame": 65,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.9,
+      "source": "02",
+      "sourceFrame": 65,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.933333333333334,
+      "source": "02",
+      "sourceFrame": 66,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 9.966666666666667,
+      "source": "02",
+      "sourceFrame": 66,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 10.0,
+      "source": "02",
+      "sourceFrame": 67,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 10.033333333333333,
+      "source": "02",
+      "sourceFrame": 67,
+      "label": "Battery concern"
+    },
+    {
+      "outputTime": 10.066666666666666,
+      "source": "02",
+      "sourceFrame": 68,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.1,
+      "source": "02",
+      "sourceFrame": 69,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.133333333333333,
+      "source": "02",
+      "sourceFrame": 70,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.166666666666666,
+      "source": "02",
+      "sourceFrame": 72,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.2,
+      "source": "02",
+      "sourceFrame": 73,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.233333333333333,
+      "source": "02",
+      "sourceFrame": 74,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.266666666666667,
+      "source": "02",
+      "sourceFrame": 75,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.3,
+      "source": "02",
+      "sourceFrame": 77,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.333333333333334,
+      "source": "02",
+      "sourceFrame": 78,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.366666666666667,
+      "source": "02",
+      "sourceFrame": 79,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.4,
+      "source": "02",
+      "sourceFrame": 80,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.433333333333334,
+      "source": "02",
+      "sourceFrame": 82,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.466666666666667,
+      "source": "02",
+      "sourceFrame": 83,
+      "label": "Paws rise / low battery"
+    },
+    {
+      "outputTime": 10.5,
+      "source": "02",
+      "sourceFrame": 84,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.533333333333333,
+      "source": "02",
+      "sourceFrame": 85,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.566666666666666,
+      "source": "02",
+      "sourceFrame": 86,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.6,
+      "source": "02",
+      "sourceFrame": 86,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.633333333333333,
+      "source": "02",
+      "sourceFrame": 87,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.666666666666666,
+      "source": "02",
+      "sourceFrame": 88,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.7,
+      "source": "02",
+      "sourceFrame": 89,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.733333333333333,
+      "source": "02",
+      "sourceFrame": 90,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.766666666666667,
+      "source": "02",
+      "sourceFrame": 90,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.8,
+      "source": "02",
+      "sourceFrame": 91,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.833333333333334,
+      "source": "02",
+      "sourceFrame": 92,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.866666666666667,
+      "source": "02",
+      "sourceFrame": 93,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.9,
+      "source": "02",
+      "sourceFrame": 94,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.933333333333334,
+      "source": "02",
+      "sourceFrame": 94,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 10.966666666666667,
+      "source": "02",
+      "sourceFrame": 95,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.0,
+      "source": "02",
+      "sourceFrame": 96,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.033333333333333,
+      "source": "02",
+      "sourceFrame": 97,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.066666666666666,
+      "source": "02",
+      "sourceFrame": 98,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.1,
+      "source": "02",
+      "sourceFrame": 98,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.133333333333333,
+      "source": "02",
+      "sourceFrame": 99,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.166666666666666,
+      "source": "02",
+      "sourceFrame": 100,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.2,
+      "source": "02",
+      "sourceFrame": 101,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.233333333333333,
+      "source": "02",
+      "sourceFrame": 102,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.266666666666667,
+      "source": "02",
+      "sourceFrame": 102,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.3,
+      "source": "02",
+      "sourceFrame": 103,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.333333333333334,
+      "source": "02",
+      "sourceFrame": 104,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.366666666666667,
+      "source": "02",
+      "sourceFrame": 105,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.4,
+      "source": "02",
+      "sourceFrame": 106,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.433333333333334,
+      "source": "02",
+      "sourceFrame": 106,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.466666666666667,
+      "source": "02",
+      "sourceFrame": 107,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.5,
+      "source": "02",
+      "sourceFrame": 108,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.533333333333333,
+      "source": "02",
+      "sourceFrame": 109,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.566666666666666,
+      "source": "02",
+      "sourceFrame": 110,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.6,
+      "source": "02",
+      "sourceFrame": 110,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.633333333333333,
+      "source": "02",
+      "sourceFrame": 111,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.666666666666666,
+      "source": "02",
+      "sourceFrame": 112,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.7,
+      "source": "02",
+      "sourceFrame": 113,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.733333333333333,
+      "source": "02",
+      "sourceFrame": 114,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.766666666666667,
+      "source": "02",
+      "sourceFrame": 114,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.8,
+      "source": "02",
+      "sourceFrame": 115,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.833333333333334,
+      "source": "02",
+      "sourceFrame": 116,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.866666666666667,
+      "source": "02",
+      "sourceFrame": 117,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.9,
+      "source": "02",
+      "sourceFrame": 118,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.933333333333334,
+      "source": "02",
+      "sourceFrame": 118,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 11.966666666666667,
+      "source": "02",
+      "sourceFrame": 119,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.0,
+      "source": "02",
+      "sourceFrame": 120,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.033333333333333,
+      "source": "02",
+      "sourceFrame": 121,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.066666666666666,
+      "source": "02",
+      "sourceFrame": 122,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.1,
+      "source": "02",
+      "sourceFrame": 122,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.133333333333333,
+      "source": "02",
+      "sourceFrame": 123,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.166666666666666,
+      "source": "02",
+      "sourceFrame": 124,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.2,
+      "source": "02",
+      "sourceFrame": 125,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.233333333333333,
+      "source": "02",
+      "sourceFrame": 126,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.266666666666667,
+      "source": "02",
+      "sourceFrame": 126,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.3,
+      "source": "02",
+      "sourceFrame": 127,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.333333333333334,
+      "source": "02",
+      "sourceFrame": 128,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.366666666666667,
+      "source": "02",
+      "sourceFrame": 129,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.4,
+      "source": "02",
+      "sourceFrame": 130,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.433333333333334,
+      "source": "02",
+      "sourceFrame": 130,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.466666666666667,
+      "source": "02",
+      "sourceFrame": 131,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.5,
+      "source": "02",
+      "sourceFrame": 132,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.533333333333333,
+      "source": "02",
+      "sourceFrame": 133,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.566666666666666,
+      "source": "02",
+      "sourceFrame": 134,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.6,
+      "source": "02",
+      "sourceFrame": 134,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.633333333333333,
+      "source": "02",
+      "sourceFrame": 135,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.666666666666666,
+      "source": "02",
+      "sourceFrame": 136,
+      "label": "Critical battery"
+    },
+    {
+      "outputTime": 12.7,
+      "source": "03",
+      "sourceFrame": 27,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.733333333333333,
+      "source": "03",
+      "sourceFrame": 28,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.766666666666667,
+      "source": "03",
+      "sourceFrame": 29,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.8,
+      "source": "03",
+      "sourceFrame": 30,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.833333333333334,
+      "source": "03",
+      "sourceFrame": 31,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.866666666666667,
+      "source": "03",
+      "sourceFrame": 32,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.9,
+      "source": "03",
+      "sourceFrame": 34,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.933333333333334,
+      "source": "03",
+      "sourceFrame": 35,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 12.966666666666667,
+      "source": "03",
+      "sourceFrame": 36,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.0,
+      "source": "03",
+      "sourceFrame": 37,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.033333333333333,
+      "source": "03",
+      "sourceFrame": 38,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.066666666666666,
+      "source": "03",
+      "sourceFrame": 39,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.1,
+      "source": "03",
+      "sourceFrame": 40,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.133333333333333,
+      "source": "03",
+      "sourceFrame": 41,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.166666666666666,
+      "source": "03",
+      "sourceFrame": 42,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.2,
+      "source": "03",
+      "sourceFrame": 43,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.233333333333333,
+      "source": "03",
+      "sourceFrame": 44,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.266666666666667,
+      "source": "03",
+      "sourceFrame": 46,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.3,
+      "source": "03",
+      "sourceFrame": 47,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.333333333333334,
+      "source": "03",
+      "sourceFrame": 48,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.366666666666667,
+      "source": "03",
+      "sourceFrame": 49,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.4,
+      "source": "03",
+      "sourceFrame": 50,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.433333333333334,
+      "source": "03",
+      "sourceFrame": 51,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.466666666666667,
+      "source": "03",
+      "sourceFrame": 52,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.5,
+      "source": "03",
+      "sourceFrame": 53,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.533333333333333,
+      "source": "03",
+      "sourceFrame": 54,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.566666666666666,
+      "source": "03",
+      "sourceFrame": 55,
+      "label": "Yawn"
+    },
+    {
+      "outputTime": 13.6,
+      "source": "03",
+      "sourceFrame": 56,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.633333333333333,
+      "source": "03",
+      "sourceFrame": 57,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.666666666666666,
+      "source": "03",
+      "sourceFrame": 58,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.7,
+      "source": "03",
+      "sourceFrame": 59,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.733333333333333,
+      "source": "03",
+      "sourceFrame": 60,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.766666666666667,
+      "source": "03",
+      "sourceFrame": 60,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.8,
+      "source": "03",
+      "sourceFrame": 61,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.833333333333334,
+      "source": "03",
+      "sourceFrame": 62,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.866666666666667,
+      "source": "03",
+      "sourceFrame": 63,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.9,
+      "source": "03",
+      "sourceFrame": 64,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.933333333333334,
+      "source": "03",
+      "sourceFrame": 64,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 13.966666666666667,
+      "source": "03",
+      "sourceFrame": 65,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 14.0,
+      "source": "03",
+      "sourceFrame": 66,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 14.033333333333333,
+      "source": "03",
+      "sourceFrame": 67,
+      "label": "Settle into sleep"
+    },
+    {
+      "outputTime": 14.066666666666666,
+      "source": "03",
+      "sourceFrame": 68,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.1,
+      "source": "03",
+      "sourceFrame": 68,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.133333333333333,
+      "source": "03",
+      "sourceFrame": 69,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.166666666666666,
+      "source": "03",
+      "sourceFrame": 70,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.2,
+      "source": "03",
+      "sourceFrame": 71,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.233333333333333,
+      "source": "03",
+      "sourceFrame": 72,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.266666666666667,
+      "source": "03",
+      "sourceFrame": 72,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.3,
+      "source": "03",
+      "sourceFrame": 73,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.333333333333334,
+      "source": "03",
+      "sourceFrame": 74,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.366666666666667,
+      "source": "03",
+      "sourceFrame": 75,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.4,
+      "source": "03",
+      "sourceFrame": 76,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.433333333333334,
+      "source": "03",
+      "sourceFrame": 76,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.466666666666667,
+      "source": "03",
+      "sourceFrame": 77,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.5,
+      "source": "03",
+      "sourceFrame": 78,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.533333333333333,
+      "source": "03",
+      "sourceFrame": 79,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.566666666666666,
+      "source": "03",
+      "sourceFrame": 80,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.6,
+      "source": "03",
+      "sourceFrame": 80,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.633333333333333,
+      "source": "03",
+      "sourceFrame": 81,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.666666666666666,
+      "source": "03",
+      "sourceFrame": 82,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.7,
+      "source": "03",
+      "sourceFrame": 83,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.733333333333333,
+      "source": "03",
+      "sourceFrame": 84,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.766666666666667,
+      "source": "03",
+      "sourceFrame": 84,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.8,
+      "source": "03",
+      "sourceFrame": 85,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.833333333333334,
+      "source": "03",
+      "sourceFrame": 86,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.866666666666667,
+      "source": "03",
+      "sourceFrame": 87,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.9,
+      "source": "03",
+      "sourceFrame": 88,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.933333333333334,
+      "source": "03",
+      "sourceFrame": 88,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 14.966666666666667,
+      "source": "03",
+      "sourceFrame": 89,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.0,
+      "source": "03",
+      "sourceFrame": 90,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.033333333333333,
+      "source": "03",
+      "sourceFrame": 91,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.066666666666666,
+      "source": "03",
+      "sourceFrame": 92,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.1,
+      "source": "03",
+      "sourceFrame": 92,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.133333333333333,
+      "source": "03",
+      "sourceFrame": 93,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.166666666666666,
+      "source": "03",
+      "sourceFrame": 94,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.2,
+      "source": "03",
+      "sourceFrame": 95,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.233333333333333,
+      "source": "03",
+      "sourceFrame": 96,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.266666666666667,
+      "source": "03",
+      "sourceFrame": 96,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.3,
+      "source": "03",
+      "sourceFrame": 97,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.333333333333334,
+      "source": "03",
+      "sourceFrame": 98,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.366666666666667,
+      "source": "03",
+      "sourceFrame": 99,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.4,
+      "source": "03",
+      "sourceFrame": 100,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.433333333333334,
+      "source": "03",
+      "sourceFrame": 100,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.466666666666667,
+      "source": "03",
+      "sourceFrame": 101,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.5,
+      "source": "03",
+      "sourceFrame": 102,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.533333333333333,
+      "source": "03",
+      "sourceFrame": 103,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.566666666666666,
+      "source": "03",
+      "sourceFrame": 104,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.6,
+      "source": "03",
+      "sourceFrame": 104,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.633333333333333,
+      "source": "03",
+      "sourceFrame": 105,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.666666666666666,
+      "source": "03",
+      "sourceFrame": 106,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.7,
+      "source": "03",
+      "sourceFrame": 107,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.733333333333333,
+      "source": "03",
+      "sourceFrame": 108,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.766666666666667,
+      "source": "03",
+      "sourceFrame": 108,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.8,
+      "source": "03",
+      "sourceFrame": 109,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.833333333333334,
+      "source": "03",
+      "sourceFrame": 110,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.866666666666667,
+      "source": "03",
+      "sourceFrame": 111,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.9,
+      "source": "03",
+      "sourceFrame": 112,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.933333333333334,
+      "source": "03",
+      "sourceFrame": 112,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 15.966666666666667,
+      "source": "03",
+      "sourceFrame": 113,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.0,
+      "source": "03",
+      "sourceFrame": 114,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.033333333333335,
+      "source": "03",
+      "sourceFrame": 115,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.066666666666666,
+      "source": "03",
+      "sourceFrame": 116,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.1,
+      "source": "03",
+      "sourceFrame": 116,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.133333333333333,
+      "source": "03",
+      "sourceFrame": 117,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.166666666666668,
+      "source": "03",
+      "sourceFrame": 118,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.2,
+      "source": "03",
+      "sourceFrame": 119,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.233333333333334,
+      "source": "03",
+      "sourceFrame": 120,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.266666666666666,
+      "source": "03",
+      "sourceFrame": 120,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.3,
+      "source": "03",
+      "sourceFrame": 121,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.333333333333332,
+      "source": "03",
+      "sourceFrame": 122,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.366666666666667,
+      "source": "03",
+      "sourceFrame": 123,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.4,
+      "source": "03",
+      "sourceFrame": 124,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.433333333333334,
+      "source": "03",
+      "sourceFrame": 124,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.466666666666665,
+      "source": "03",
+      "sourceFrame": 125,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.5,
+      "source": "03",
+      "sourceFrame": 126,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.533333333333335,
+      "source": "03",
+      "sourceFrame": 127,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.566666666666666,
+      "source": "03",
+      "sourceFrame": 128,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.6,
+      "source": "03",
+      "sourceFrame": 128,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.633333333333333,
+      "source": "03",
+      "sourceFrame": 129,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.666666666666668,
+      "source": "03",
+      "sourceFrame": 130,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.7,
+      "source": "03",
+      "sourceFrame": 131,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.733333333333334,
+      "source": "03",
+      "sourceFrame": 132,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.766666666666666,
+      "source": "03",
+      "sourceFrame": 132,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.8,
+      "source": "03",
+      "sourceFrame": 133,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.833333333333332,
+      "source": "03",
+      "sourceFrame": 134,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.866666666666667,
+      "source": "03",
+      "sourceFrame": 135,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.9,
+      "source": "03",
+      "sourceFrame": 136,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.933333333333334,
+      "source": "03",
+      "sourceFrame": 136,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 16.966666666666665,
+      "source": "03",
+      "sourceFrame": 137,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.0,
+      "source": "03",
+      "sourceFrame": 138,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.033333333333335,
+      "source": "03",
+      "sourceFrame": 139,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.066666666666666,
+      "source": "03",
+      "sourceFrame": 140,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.1,
+      "source": "03",
+      "sourceFrame": 140,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.133333333333333,
+      "source": "03",
+      "sourceFrame": 141,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.166666666666668,
+      "source": "03",
+      "sourceFrame": 142,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.2,
+      "source": "03",
+      "sourceFrame": 143,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.233333333333334,
+      "source": "03",
+      "sourceFrame": 144,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.266666666666666,
+      "source": "03",
+      "sourceFrame": 144,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.3,
+      "source": "03",
+      "sourceFrame": 145,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.333333333333332,
+      "source": "03",
+      "sourceFrame": 146,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.366666666666667,
+      "source": "03",
+      "sourceFrame": 147,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.4,
+      "source": "03",
+      "sourceFrame": 148,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.433333333333334,
+      "source": "03",
+      "sourceFrame": 148,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.466666666666665,
+      "source": "03",
+      "sourceFrame": 149,
+      "label": "Peaceful sleep"
+    },
+    {
+      "outputTime": 17.5,
+      "source": "04",
+      "sourceFrame": 36,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.533333333333335,
+      "source": "04",
+      "sourceFrame": 37,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.566666666666666,
+      "source": "04",
+      "sourceFrame": 38,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.6,
+      "source": "04",
+      "sourceFrame": 38,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.633333333333333,
+      "source": "04",
+      "sourceFrame": 39,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.666666666666668,
+      "source": "04",
+      "sourceFrame": 40,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.7,
+      "source": "04",
+      "sourceFrame": 41,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.733333333333334,
+      "source": "04",
+      "sourceFrame": 42,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.766666666666666,
+      "source": "04",
+      "sourceFrame": 42,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.8,
+      "source": "04",
+      "sourceFrame": 43,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.833333333333332,
+      "source": "04",
+      "sourceFrame": 44,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.866666666666667,
+      "source": "04",
+      "sourceFrame": 45,
+      "label": "Wake for parent"
+    },
+    {
+      "outputTime": 17.9,
+      "source": "04",
+      "sourceFrame": 46,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 17.933333333333334,
+      "source": "04",
+      "sourceFrame": 46,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 17.966666666666665,
+      "source": "04",
+      "sourceFrame": 47,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.0,
+      "source": "04",
+      "sourceFrame": 48,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.033333333333335,
+      "source": "04",
+      "sourceFrame": 49,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.066666666666666,
+      "source": "04",
+      "sourceFrame": 50,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.1,
+      "source": "04",
+      "sourceFrame": 50,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.133333333333333,
+      "source": "04",
+      "sourceFrame": 51,
+      "label": "Surprised"
+    },
+    {
+      "outputTime": 18.166666666666668,
+      "source": "04",
+      "sourceFrame": 64,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.2,
+      "source": "04",
+      "sourceFrame": 65,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.233333333333334,
+      "source": "04",
+      "sourceFrame": 66,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.266666666666666,
+      "source": "04",
+      "sourceFrame": 67,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.3,
+      "source": "04",
+      "sourceFrame": 68,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.333333333333332,
+      "source": "04",
+      "sourceFrame": 68,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.366666666666667,
+      "source": "04",
+      "sourceFrame": 69,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.4,
+      "source": "04",
+      "sourceFrame": 70,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.433333333333334,
+      "source": "04",
+      "sourceFrame": 71,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.466666666666665,
+      "source": "04",
+      "sourceFrame": 72,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.5,
+      "source": "04",
+      "sourceFrame": 73,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.533333333333335,
+      "source": "04",
+      "sourceFrame": 74,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.566666666666666,
+      "source": "04",
+      "sourceFrame": 75,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.6,
+      "source": "04",
+      "sourceFrame": 76,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.633333333333333,
+      "source": "04",
+      "sourceFrame": 76,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.666666666666668,
+      "source": "04",
+      "sourceFrame": 77,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.7,
+      "source": "04",
+      "sourceFrame": 78,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.733333333333334,
+      "source": "04",
+      "sourceFrame": 79,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.766666666666666,
+      "source": "04",
+      "sourceFrame": 80,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.8,
+      "source": "04",
+      "sourceFrame": 81,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.833333333333332,
+      "source": "04",
+      "sourceFrame": 82,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.866666666666667,
+      "source": "04",
+      "sourceFrame": 83,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.9,
+      "source": "04",
+      "sourceFrame": 84,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.933333333333334,
+      "source": "04",
+      "sourceFrame": 84,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 18.966666666666665,
+      "source": "04",
+      "sourceFrame": 85,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.0,
+      "source": "04",
+      "sourceFrame": 86,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.033333333333335,
+      "source": "04",
+      "sourceFrame": 87,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.066666666666666,
+      "source": "04",
+      "sourceFrame": 88,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.1,
+      "source": "04",
+      "sourceFrame": 89,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.133333333333333,
+      "source": "04",
+      "sourceFrame": 90,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.166666666666668,
+      "source": "04",
+      "sourceFrame": 90,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.2,
+      "source": "04",
+      "sourceFrame": 91,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.233333333333334,
+      "source": "04",
+      "sourceFrame": 92,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.266666666666666,
+      "source": "04",
+      "sourceFrame": 93,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.3,
+      "source": "04",
+      "sourceFrame": 94,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.333333333333332,
+      "source": "04",
+      "sourceFrame": 94,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.366666666666667,
+      "source": "04",
+      "sourceFrame": 95,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.4,
+      "source": "04",
+      "sourceFrame": 96,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.433333333333334,
+      "source": "04",
+      "sourceFrame": 97,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.466666666666665,
+      "source": "04",
+      "sourceFrame": 98,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.5,
+      "source": "04",
+      "sourceFrame": 98,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.533333333333335,
+      "source": "04",
+      "sourceFrame": 99,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.566666666666666,
+      "source": "04",
+      "sourceFrame": 100,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.6,
+      "source": "04",
+      "sourceFrame": 101,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.633333333333333,
+      "source": "04",
+      "sourceFrame": 102,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.666666666666668,
+      "source": "04",
+      "sourceFrame": 102,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.7,
+      "source": "04",
+      "sourceFrame": 103,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.733333333333334,
+      "source": "04",
+      "sourceFrame": 104,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.766666666666666,
+      "source": "04",
+      "sourceFrame": 105,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.8,
+      "source": "04",
+      "sourceFrame": 106,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.833333333333332,
+      "source": "04",
+      "sourceFrame": 106,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.866666666666667,
+      "source": "04",
+      "sourceFrame": 107,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.9,
+      "source": "04",
+      "sourceFrame": 108,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.933333333333334,
+      "source": "04",
+      "sourceFrame": 109,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 19.966666666666665,
+      "source": "04",
+      "sourceFrame": 110,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.0,
+      "source": "04",
+      "sourceFrame": 110,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.033333333333335,
+      "source": "04",
+      "sourceFrame": 111,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.066666666666666,
+      "source": "04",
+      "sourceFrame": 112,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.1,
+      "source": "04",
+      "sourceFrame": 113,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.133333333333333,
+      "source": "04",
+      "sourceFrame": 114,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.166666666666668,
+      "source": "04",
+      "sourceFrame": 114,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.2,
+      "source": "04",
+      "sourceFrame": 115,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.233333333333334,
+      "source": "04",
+      "sourceFrame": 116,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.266666666666666,
+      "source": "04",
+      "sourceFrame": 117,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.3,
+      "source": "04",
+      "sourceFrame": 118,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.333333333333332,
+      "source": "04",
+      "sourceFrame": 118,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.366666666666667,
+      "source": "04",
+      "sourceFrame": 119,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.4,
+      "source": "04",
+      "sourceFrame": 120,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.433333333333334,
+      "source": "04",
+      "sourceFrame": 121,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.466666666666665,
+      "source": "04",
+      "sourceFrame": 122,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.5,
+      "source": "04",
+      "sourceFrame": 122,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.533333333333335,
+      "source": "04",
+      "sourceFrame": 123,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.566666666666666,
+      "source": "04",
+      "sourceFrame": 124,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.6,
+      "source": "04",
+      "sourceFrame": 125,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.633333333333333,
+      "source": "04",
+      "sourceFrame": 126,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.666666666666668,
+      "source": "04",
+      "sourceFrame": 126,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.7,
+      "source": "04",
+      "sourceFrame": 127,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.733333333333334,
+      "source": "04",
+      "sourceFrame": 128,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.766666666666666,
+      "source": "04",
+      "sourceFrame": 129,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.8,
+      "source": "04",
+      "sourceFrame": 130,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.833333333333332,
+      "source": "04",
+      "sourceFrame": 130,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.866666666666667,
+      "source": "04",
+      "sourceFrame": 131,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.9,
+      "source": "04",
+      "sourceFrame": 132,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.933333333333334,
+      "source": "04",
+      "sourceFrame": 133,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 20.966666666666665,
+      "source": "04",
+      "sourceFrame": 134,
+      "label": "Point toward unlock"
+    },
+    {
+      "outputTime": 21.0,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.033333333333335,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.066666666666666,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.1,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.133333333333333,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.166666666666668,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.2,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.233333333333334,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.266666666666666,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.3,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.333333333333332,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.366666666666667,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.4,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.433333333333334,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.466666666666665,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.5,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.533333333333335,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.566666666666666,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.6,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.633333333333333,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.666666666666668,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.7,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.733333333333334,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.766666666666666,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.8,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.833333333333332,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.866666666666667,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.9,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.933333333333334,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 21.966666666666665,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.0,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.033333333333335,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.066666666666666,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.1,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.133333333333333,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.166666666666668,
+      "source": "08",
+      "sourceFrame": 0,
+      "label": "Arms up / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.2,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.233333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.266666666666666,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.3,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.333333333333332,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.366666666666667,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.4,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.433333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.466666666666665,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.5,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.533333333333335,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.566666666666666,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.6,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.633333333333333,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.666666666666668,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.7,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.733333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.766666666666666,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.8,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.833333333333332,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.866666666666667,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.9,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.933333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 22.966666666666665,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.0,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.033333333333335,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.066666666666666,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.1,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.133333333333333,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.166666666666668,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.2,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.233333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.266666666666666,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.3,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.333333333333332,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.366666666666667,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.4,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.433333333333334,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.466666666666665,
+      "source": "09",
+      "sourceFrame": 0,
+      "label": "Wave pose / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.5,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.533333333333335,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.566666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.6,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.633333333333333,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.666666666666668,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.7,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.733333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.766666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.8,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.833333333333332,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.866666666666667,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.9,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.933333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 23.966666666666665,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.0,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.033333333333335,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.066666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.1,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.133333333333333,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.166666666666668,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.2,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.233333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.266666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.3,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.333333333333332,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.366666666666667,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.4,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.433333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.466666666666665,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.5,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.533333333333335,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.566666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.6,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.633333333333333,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.666666666666668,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.7,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.733333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.766666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.8,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.833333333333332,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.866666666666667,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.9,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.933333333333334,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 24.966666666666665,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.0,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.033333333333335,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.066666666666666,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.1,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.133333333333333,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.166666666666668,
+      "source": "10",
+      "sourceFrame": 0,
+      "label": "Happy rest / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.2,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.233333333333334,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.266666666666666,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.3,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.333333333333332,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.366666666666667,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.4,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.433333333333334,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.466666666666665,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.5,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.533333333333335,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.566666666666666,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.6,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.633333333333333,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.666666666666668,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.7,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.733333333333334,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.766666666666666,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.8,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.833333333333332,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.866666666666667,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.9,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.933333333333334,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    },
+    {
+      "outputTime": 25.966666666666665,
+      "source": "01png",
+      "sourceFrame": 0,
+      "label": "Watch reset / STILL PLACEHOLDER"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "decodedFrames": 780,
+  "expectedFrames": 780,
+  "durationSeconds": 26,
+  "sampledWholeSeconds": 26,
+  "joinSamples": 15,
+  "review": "Whole-sequence26samples,15joinframes and fullsize stills reviewed",
+  "findings": [
+    "green/sparkle removal looks usable in inspected samples",
+    "pose/scale and colour discontinuities remain at joins",
+    "21-26s clearly labelled original still placeholders; Clip05 not generated"
+  ],
+  "phone": "ADB device list empty; no Android playback verified",
+  "appChanged": false,
+  "sourceHashesUnchanged": true
+}

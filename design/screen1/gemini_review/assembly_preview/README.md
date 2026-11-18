@@ -1,0 +1,13 @@
+# Offline26-second Buddy timing draft
+
+Reviewed 2026-11-18 12:20 +0530. Gemini reached its video-generation limit, so Clip05 is missing. No request to bypass that limit, make purchases or upload/generate externally was made. This draft uses the four retained source clips and the approved original PNG end poses. No app changes.
+
+Open buddy_26s_timing_preview.mp4. It is a silent960x640H26430fps review with light/dark panels, not an alpha app deliverable. All780frames decoded successfully; ffprobe confirms exactly26.000seconds. The21-26second ending is explicitly labelled STILL PLACEHOLDER, using original arms-up/wave/happy/watch images. It is not newly generated motion and must not be presented as completed Clip05.
+
+The first21seconds use green-keyed original generated footage, retimed to current Screen1 beat intervals. Background effects are removed using the same silhouette/edge-key approach proved on Clip03. Fixed affine registration per clip; no per-frame subject scaling/tracking, optical flow, face edits or new artwork. Clip04 source after5.6seconds is excluded, so the off-context worried-mouth change is not used. No phone demo/UI was recreated or included in this asset-only review.
+
+Visual review:26whole-second samples and15join-detail frames from encoded output reviewed, plus fullsize boundary stills. No conspicuous external sparkles/green rectangles in inspected composites. Silhouette remains slightly hard/light-edged enlarged, and original generated identity/colour differences persist. The joins are NOT seamless: head size/orientation and paw positions shift between sources; the switch to saturated approved stills at21seconds is obvious, and reset-to-first identity is not exact. Retiming uses nearest existing frames and may look faster/choppier in the compressed yawn. Some settling/pointing necessarily spans original reaction boundaries; not claimed exact pose matching. This draft is useful to judge overall pacing, not ready for app installation.
+
+edit_decisions.json records every source frame, interval and fixed transform; verification.json records decode/source-hash checks. Original four source SHA256 values rechecked unchanged. Reproduce with tools/.venv/Scripts/python.exe tools/buddy/assemble_gemini_preview.py. No dependencies installed, app source/assets/timeline/navigation/other screens modified, builds or TypeScript checks needed.
+
+ADB returned no connected device; no phone recording or Android performance/playback approval claimed. Next phase remains a user-reviewed choice of handling unfinished Clip05 and visible joins; no further generation/automaticpolish/integration performed at this checkpoint. Existing production Screen1 remains intact.
