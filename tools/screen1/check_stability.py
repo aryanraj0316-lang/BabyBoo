@@ -18,4 +18,3 @@ adb('pull','/sdcard/buddy-stability.mp4',str(OUT/'phone.mp4'))
 (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-s','ReactNativeJS:V','AndroidRuntime:E','libc:F'))
 (OUT/'meminfo.txt').write_bytes(adb('shell','dumpsys','meminfo','com.babyboo.app'))
 print('Recorded and pulled actual phone loop',flush=True)
-
