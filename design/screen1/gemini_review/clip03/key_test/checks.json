@@ -1,0 +1,798 @@
+{
+  "sourceSha256": "5a209575ecd72218b52b4f74864982fa828e89a150da570241cc1f1f0c7dddae",
+  "sourceIntervalSeconds": [
+    1,
+    5
+  ],
+  "fps": 24.0,
+  "framesProcessed": 96,
+  "method": "green dominance matte, largest lavender silhouette, filled opaque interior, edge-only screen unmix",
+  "fixedPreviewSourceCrop": [
+    360,
+    40,
+    960,
+    700
+  ],
+  "frames": [
+    {
+      "sourceFrame": 24,
+      "sourceTime": 1.0,
+      "opaquePixels": 192272,
+      "softEdgePixels": 2600,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 25,
+      "sourceTime": 1.0416666666666667,
+      "opaquePixels": 192228,
+      "softEdgePixels": 2860,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 26,
+      "sourceTime": 1.0833333333333333,
+      "opaquePixels": 192712,
+      "softEdgePixels": 2852,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 27,
+      "sourceTime": 1.125,
+      "opaquePixels": 193176,
+      "softEdgePixels": 2936,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 28,
+      "sourceTime": 1.1666666666666667,
+      "opaquePixels": 194196,
+      "softEdgePixels": 2736,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 29,
+      "sourceTime": 1.2083333333333333,
+      "opaquePixels": 194776,
+      "softEdgePixels": 2872,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 30,
+      "sourceTime": 1.25,
+      "opaquePixels": 195552,
+      "softEdgePixels": 2868,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 31,
+      "sourceTime": 1.2916666666666667,
+      "opaquePixels": 195972,
+      "softEdgePixels": 2888,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 32,
+      "sourceTime": 1.3333333333333333,
+      "opaquePixels": 196484,
+      "softEdgePixels": 2780,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 33,
+      "sourceTime": 1.375,
+      "opaquePixels": 196508,
+      "softEdgePixels": 2996,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 34,
+      "sourceTime": 1.4166666666666667,
+      "opaquePixels": 196708,
+      "softEdgePixels": 2948,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 35,
+      "sourceTime": 1.4583333333333333,
+      "opaquePixels": 196760,
+      "softEdgePixels": 2956,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 36,
+      "sourceTime": 1.5,
+      "opaquePixels": 196940,
+      "softEdgePixels": 2764,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 37,
+      "sourceTime": 1.5416666666666667,
+      "opaquePixels": 196772,
+      "softEdgePixels": 2836,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 38,
+      "sourceTime": 1.5833333333333333,
+      "opaquePixels": 196652,
+      "softEdgePixels": 2896,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 39,
+      "sourceTime": 1.625,
+      "opaquePixels": 196368,
+      "softEdgePixels": 2840,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 40,
+      "sourceTime": 1.6666666666666667,
+      "opaquePixels": 196168,
+      "softEdgePixels": 2748,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 41,
+      "sourceTime": 1.7083333333333333,
+      "opaquePixels": 195528,
+      "softEdgePixels": 2932,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 42,
+      "sourceTime": 1.75,
+      "opaquePixels": 195132,
+      "softEdgePixels": 2784,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 43,
+      "sourceTime": 1.7916666666666667,
+      "opaquePixels": 194852,
+      "softEdgePixels": 2748,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 44,
+      "sourceTime": 1.8333333333333333,
+      "opaquePixels": 194896,
+      "softEdgePixels": 2648,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 45,
+      "sourceTime": 1.875,
+      "opaquePixels": 194772,
+      "softEdgePixels": 2664,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 46,
+      "sourceTime": 1.9166666666666667,
+      "opaquePixels": 194616,
+      "softEdgePixels": 2708,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 47,
+      "sourceTime": 1.9583333333333333,
+      "opaquePixels": 194632,
+      "softEdgePixels": 2664,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 48,
+      "sourceTime": 2.0,
+      "opaquePixels": 194664,
+      "softEdgePixels": 2636,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 49,
+      "sourceTime": 2.0416666666666665,
+      "opaquePixels": 194660,
+      "softEdgePixels": 2636,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 50,
+      "sourceTime": 2.0833333333333335,
+      "opaquePixels": 194620,
+      "softEdgePixels": 2692,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 51,
+      "sourceTime": 2.125,
+      "opaquePixels": 194516,
+      "softEdgePixels": 2792,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 52,
+      "sourceTime": 2.1666666666666665,
+      "opaquePixels": 194696,
+      "softEdgePixels": 2732,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 53,
+      "sourceTime": 2.2083333333333335,
+      "opaquePixels": 194700,
+      "softEdgePixels": 2852,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 54,
+      "sourceTime": 2.25,
+      "opaquePixels": 194872,
+      "softEdgePixels": 2868,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 55,
+      "sourceTime": 2.2916666666666665,
+      "opaquePixels": 194908,
+      "softEdgePixels": 2928,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 56,
+      "sourceTime": 2.3333333333333335,
+      "opaquePixels": 195328,
+      "softEdgePixels": 2716,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 57,
+      "sourceTime": 2.375,
+      "opaquePixels": 195348,
+      "softEdgePixels": 2844,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 58,
+      "sourceTime": 2.4166666666666665,
+      "opaquePixels": 195424,
+      "softEdgePixels": 2856,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 59,
+      "sourceTime": 2.4583333333333335,
+      "opaquePixels": 195420,
+      "softEdgePixels": 2856,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 60,
+      "sourceTime": 2.5,
+      "opaquePixels": 195612,
+      "softEdgePixels": 2628,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 61,
+      "sourceTime": 2.5416666666666665,
+      "opaquePixels": 195380,
+      "softEdgePixels": 2860,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 62,
+      "sourceTime": 2.5833333333333335,
+      "opaquePixels": 195612,
+      "softEdgePixels": 2848,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 63,
+      "sourceTime": 2.625,
+      "opaquePixels": 195596,
+      "softEdgePixels": 2940,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 64,
+      "sourceTime": 2.6666666666666665,
+      "opaquePixels": 195932,
+      "softEdgePixels": 2644,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 65,
+      "sourceTime": 2.7083333333333335,
+      "opaquePixels": 195860,
+      "softEdgePixels": 2832,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 66,
+      "sourceTime": 2.75,
+      "opaquePixels": 196048,
+      "softEdgePixels": 2664,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 67,
+      "sourceTime": 2.7916666666666665,
+      "opaquePixels": 195968,
+      "softEdgePixels": 2756,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 68,
+      "sourceTime": 2.8333333333333335,
+      "opaquePixels": 196424,
+      "softEdgePixels": 2516,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 69,
+      "sourceTime": 2.875,
+      "opaquePixels": 196332,
+      "softEdgePixels": 2788,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 70,
+      "sourceTime": 2.9166666666666665,
+      "opaquePixels": 196404,
+      "softEdgePixels": 2740,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 71,
+      "sourceTime": 2.9583333333333335,
+      "opaquePixels": 196552,
+      "softEdgePixels": 2680,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 72,
+      "sourceTime": 3.0,
+      "opaquePixels": 196708,
+      "softEdgePixels": 2608,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 73,
+      "sourceTime": 3.0416666666666665,
+      "opaquePixels": 196652,
+      "softEdgePixels": 2772,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 74,
+      "sourceTime": 3.0833333333333335,
+      "opaquePixels": 196704,
+      "softEdgePixels": 2728,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 75,
+      "sourceTime": 3.125,
+      "opaquePixels": 196764,
+      "softEdgePixels": 2692,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 76,
+      "sourceTime": 3.1666666666666665,
+      "opaquePixels": 196860,
+      "softEdgePixels": 2680,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 77,
+      "sourceTime": 3.2083333333333335,
+      "opaquePixels": 196716,
+      "softEdgePixels": 2832,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 78,
+      "sourceTime": 3.25,
+      "opaquePixels": 196680,
+      "softEdgePixels": 2812,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 79,
+      "sourceTime": 3.2916666666666665,
+      "opaquePixels": 196684,
+      "softEdgePixels": 2724,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 80,
+      "sourceTime": 3.3333333333333335,
+      "opaquePixels": 196772,
+      "softEdgePixels": 2592,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 81,
+      "sourceTime": 3.375,
+      "opaquePixels": 196612,
+      "softEdgePixels": 2616,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 82,
+      "sourceTime": 3.4166666666666665,
+      "opaquePixels": 196452,
+      "softEdgePixels": 2660,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 83,
+      "sourceTime": 3.4583333333333335,
+      "opaquePixels": 196460,
+      "softEdgePixels": 2512,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 84,
+      "sourceTime": 3.5,
+      "opaquePixels": 196416,
+      "softEdgePixels": 2520,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 85,
+      "sourceTime": 3.5416666666666665,
+      "opaquePixels": 196384,
+      "softEdgePixels": 2596,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 86,
+      "sourceTime": 3.5833333333333335,
+      "opaquePixels": 196344,
+      "softEdgePixels": 2608,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 87,
+      "sourceTime": 3.625,
+      "opaquePixels": 196304,
+      "softEdgePixels": 2640,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 88,
+      "sourceTime": 3.6666666666666665,
+      "opaquePixels": 196260,
+      "softEdgePixels": 2636,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 89,
+      "sourceTime": 3.7083333333333335,
+      "opaquePixels": 196244,
+      "softEdgePixels": 2660,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 90,
+      "sourceTime": 3.75,
+      "opaquePixels": 196192,
+      "softEdgePixels": 2628,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 91,
+      "sourceTime": 3.7916666666666665,
+      "opaquePixels": 196148,
+      "softEdgePixels": 2568,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 92,
+      "sourceTime": 3.8333333333333335,
+      "opaquePixels": 196100,
+      "softEdgePixels": 2588,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 93,
+      "sourceTime": 3.875,
+      "opaquePixels": 196100,
+      "softEdgePixels": 2532,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 94,
+      "sourceTime": 3.9166666666666665,
+      "opaquePixels": 195976,
+      "softEdgePixels": 2604,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 95,
+      "sourceTime": 3.9583333333333335,
+      "opaquePixels": 195912,
+      "softEdgePixels": 2512,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 96,
+      "sourceTime": 4.0,
+      "opaquePixels": 195892,
+      "softEdgePixels": 2480,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 97,
+      "sourceTime": 4.041666666666667,
+      "opaquePixels": 195852,
+      "softEdgePixels": 2492,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 98,
+      "sourceTime": 4.083333333333333,
+      "opaquePixels": 195664,
+      "softEdgePixels": 2560,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 99,
+      "sourceTime": 4.125,
+      "opaquePixels": 195576,
+      "softEdgePixels": 2572,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 100,
+      "sourceTime": 4.166666666666667,
+      "opaquePixels": 195544,
+      "softEdgePixels": 2536,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 101,
+      "sourceTime": 4.208333333333333,
+      "opaquePixels": 195440,
+      "softEdgePixels": 2648,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 102,
+      "sourceTime": 4.25,
+      "opaquePixels": 195332,
+      "softEdgePixels": 2684,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 103,
+      "sourceTime": 4.291666666666667,
+      "opaquePixels": 195340,
+      "softEdgePixels": 2616,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 104,
+      "sourceTime": 4.333333333333333,
+      "opaquePixels": 195336,
+      "softEdgePixels": 2588,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 105,
+      "sourceTime": 4.375,
+      "opaquePixels": 195352,
+      "softEdgePixels": 2604,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 106,
+      "sourceTime": 4.416666666666667,
+      "opaquePixels": 195248,
+      "softEdgePixels": 2680,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 107,
+      "sourceTime": 4.458333333333333,
+      "opaquePixels": 195296,
+      "softEdgePixels": 2664,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 108,
+      "sourceTime": 4.5,
+      "opaquePixels": 195352,
+      "softEdgePixels": 2608,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 109,
+      "sourceTime": 4.541666666666667,
+      "opaquePixels": 195372,
+      "softEdgePixels": 2572,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 110,
+      "sourceTime": 4.583333333333333,
+      "opaquePixels": 195308,
+      "softEdgePixels": 2624,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 111,
+      "sourceTime": 4.625,
+      "opaquePixels": 195336,
+      "softEdgePixels": 2624,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 112,
+      "sourceTime": 4.666666666666667,
+      "opaquePixels": 195412,
+      "softEdgePixels": 2604,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 113,
+      "sourceTime": 4.708333333333333,
+      "opaquePixels": 195424,
+      "softEdgePixels": 2644,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 114,
+      "sourceTime": 4.75,
+      "opaquePixels": 195432,
+      "softEdgePixels": 2680,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 115,
+      "sourceTime": 4.791666666666667,
+      "opaquePixels": 195456,
+      "softEdgePixels": 2664,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 116,
+      "sourceTime": 4.833333333333333,
+      "opaquePixels": 195552,
+      "softEdgePixels": 2600,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 117,
+      "sourceTime": 4.875,
+      "opaquePixels": 195584,
+      "softEdgePixels": 2616,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 118,
+      "sourceTime": 4.916666666666667,
+      "opaquePixels": 195512,
+      "softEdgePixels": 2660,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    },
+    {
+      "sourceFrame": 119,
+      "sourceTime": 4.958333333333333,
+      "opaquePixels": 195552,
+      "softEdgePixels": 2692,
+      "exteriorAlphaPixels": 0,
+      "opaqueInteriorRgbIdentical": true
+    }
+  ],
+  "encodedAlphaCheck": {
+    "decodedMin": 0,
+    "decodedMax": 65535,
+    "distinctValues": 41,
+    "actualAlphaPresent": true
+  },
+  "encodedPreviewCheck": {
+    "decodedFrames": 96,
+    "durationSeconds": 4,
+    "audio": false
+  },
+  "adbDevices": "No connected devices at test time"
+}
