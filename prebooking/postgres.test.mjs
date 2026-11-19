@@ -21,3 +21,10 @@ test('real PostgreSQL persists, deduplicates, reports and unsubscribes across ap
  }finally{await app.close();}
 });
 test('concurrent PostgreSQL signups keep a single reservation',{skip:!url},async()=>{const app=await start(),email='parallel-'+crypto.randomUUID()+'@example.test';try{const responses=await Promise.all(Array.from({length:8},()=>post(app.base,{email,consent:true})));assert.equal(responses.every(r=>r.status===200),true);assert.equal((await app.store.rows()).filter(r=>r.email===email).length,1);}finally{await app.close();}});
+
+
+test('weak production admin password locks admin without crashing public page',async()=>{
+ const app=createPrebookingServer({production:true,databaseUrl:'',adminPassword:'short'});await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
+ const base='http://127.0.0.1:'+app.server.address().port;
+ try{assert.equal((await fetch(base+'/')).status,200);assert.equal((await fetch(base+'/admin',{headers:{Authorization:'Basic '+Buffer.from('admin:short').toString('base64')}})).status,401);}finally{await app.close();}
+});

@@ -12,7 +12,7 @@ const validEmail=email=>email.length<=254&&/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]
 const csv=value=>'"'+String(value??'').replace(/^[=+@\-\t\r]/,"'$&").replaceAll('"','""')+'"';
 
 export function createPrebookingServer({dataDir=process.env.DATA_DIR||path.join(root,'prebooking/.data'),adminPassword=process.env.ADMIN_PASSWORD||'',production=process.env.NODE_ENV==='production'||process.env.RENDER==='true',databaseUrl=process.env.DATABASE_URL||'',allowDisk=process.env.STORAGE_DRIVER==='sqlite'}={}){
- if(production&&adminPassword&&adminPassword.length<16)throw new Error('ADMIN_PASSWORD must be at least 16 characters, or leave it unset to keep admin locked.');
+ if(production&&adminPassword&&adminPassword.length<16){adminPassword='';console.error('Admin is locked: configure ADMIN_PASSWORD with at least 16 characters.');}
  const store=createStore({databaseUrl,dataDir,production,allowDisk});const db=store.db;
  const rate=new Map(),salt=randomBytes(32);
  function limited(req){const address=production?(String(req.headers['x-forwarded-for']||req.socket.remoteAddress).split(',').at(-1).trim()):req.socket.remoteAddress;const key=createHash('sha256').update(salt).update(address||'').digest('hex');const now=Date.now();for(const [k,v]of rate)if(v.until<now)rate.delete(k);const v=rate.get(key)||{until:now+60000,hits:0};v.hits++;rate.set(key,v);return v.hits>15;}
@@ -76,6 +76,6 @@ export function createPrebookingServer({dataDir=process.env.DATA_DIR||path.join(
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const app=createPrebookingServer();const port=Number(process.env.PORT||4180);
- app.server.listen(port,process.env.HOST||(process.env.NODE_ENV==='production'?'0.0.0.0':'127.0.0.1'),()=>console.log(`BabyBoo pre-booking: http://localhost:${port}/prebook`));
+ app.server.listen(port,process.env.HOST||(process.env.NODE_ENV==='production'||process.env.RENDER==='true'?'0.0.0.0':'127.0.0.1'),()=>console.log(`BabyBoo pre-booking: http://localhost:${port}/prebook`));
  process.on('SIGTERM',async()=>{await app.close();process.exit(0);});
 }
