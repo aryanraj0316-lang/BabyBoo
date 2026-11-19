@@ -1,0 +1,26 @@
+{
+  "sources": {
+    "head": {
+      "path": "design\\screen2\\head_merge_67c27c23\\head_source_original.mp4",
+      "sha256": "e5c9c9f878a21c2de0a6d62ed8b1fad926f8b784ea9bb9d00a3b51200d76f243"
+    },
+    "body": {
+      "path": "design\\screen2\\head_merge_67c27c23\\..\\gemini_580657ec\\original.mp4",
+      "sha256": "abee6c4d03a61f809c1fd7cbe0eb293cd2239f09a868536b41ab4a369a5f89d8"
+    }
+  },
+  "output": "merged-context-preview.mp4",
+  "type": "existing-video-pixel composite",
+  "headTransform": {
+    "scale": 1,
+    "translation": [
+      20,
+      55
+    ]
+  },
+  "headTime": "max(1.8,bodyTime)",
+  "bodyTime": "native24fps",
+  "previewBackground": "cream",
+  "appIntegrated": false,
+  "referenceMatch": "subject to visual review"
+}
