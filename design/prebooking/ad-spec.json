@@ -1,0 +1,18 @@
+{
+  "video": "E:\\All Here\\BabyBoo\\design\\prebooking\\BabyBoo_Prebooking_Instagram_1080x1920.mp4",
+  "size": [
+    1080,
+    1920
+  ],
+  "fps": 24,
+  "duration": 12,
+  "audio": false,
+  "mascotSource": "public/buddy-idle-loop.webp",
+  "motion": "Original native24fps mascot; graphics use restrained stepped12fps accents, no new character/body-part animation",
+  "timeline": [
+    "0-3s Little screens / Calmer goodbyes",
+    "3-6s simulated3%-0%battery cue",
+    "6-12s Pre-booking is open / Link in bio / free launch notification"
+  ],
+  "publicURL": "Not baked in; actual Render hostname awaits deployment"
+}

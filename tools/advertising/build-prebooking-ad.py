@@ -25,7 +25,7 @@ for n in range(FPS*SECONDS):
  tick=math.floor(t*12)/12;reveal=min(1,tick/.7);ease=1-(1-reveal)**3
  d.arc((-370,400,1460,1650),195,330,fill='#50385F',width=2);d.arc((-500,310,1590,1730),190,335,fill='#2D213B',width=2)
  text(d,105,'BabyBoo.',58,'#F8F4FC',950)
- d.rounded_rectangle((345,205,735,255),radius=25,fill='#2A2039',outline='#574063',width=1);text(d,214,'ANDROID  /  COMING SOON',21,'#DCC5EE',800)
+ text(d,214,'COMING TO ANDROID',21,'#B9A7C9',700)
  headline=Image.new('RGBA',(W,280));hd=ImageDraw.Draw(headline)
  if t<3:
   text(hd,5,'Little screens.',87);text(hd,105,'Calmer goodbyes.',87,'#CEAAF0')
@@ -49,7 +49,7 @@ for n in range(FPS*SECONDS):
   text(d,1502,f'{amount}%  ·  A little rest for the phone.',31,'#C4B8D1',600)
  else:
   text(d,1430,'Reserve your launch notification.',36,'#CABDD5',600)
-  d.rounded_rectangle((145,1540,935,1664),radius=62,fill='#DFC3F4');text(d,1565,'Link in bio  ↗',49,'#24152F',900)
+  d.rounded_rectangle((145,1540,935,1664),radius=62,fill='#DFC3F4');text(d,1565,'Link in bio',49,'#24152F',900);d.line((717,1606,743,1580),fill='#24152F',width=4);d.line((720,1580,743,1580,743,1603),fill='#24152F',width=4)
   text(d,1705,'Free to reserve. No payment needed.',26,'#B5A5C2',650)
   text(d,1750,'BabyBoo for Android · Launch date coming soon',22,'#9F91AE',600)
  rgb=im.convert('RGB')
@@ -57,6 +57,6 @@ for n in range(FPS*SECONDS):
  pipe.stdin.write(rgb.tobytes())
 pipe.stdin.close();assert pipe.wait()==0
 # Social sharing thumbnail, with no invented URL or availability claims.
-share=BG.resize((1200,630));sd=ImageDraw.Draw(share);sd.text((70,80),'BabyBoo.',font=font(56,950),fill='#F8F4FC');sd.text((70,200),'Pre-booking is open.',font=font(56,850),fill='#D9B8F4');sd.text((70,300),'A gentler goodbye to screen time.',font=font(28,600),fill='#CFC2DA');sd.text((70,435),'Join the Android launch list  ↗',font=font(28,800),fill='#F8F4FC');animation.seek(0);b=animation.convert('RGBA').resize((500,497),Image.Resampling.LANCZOS);share.paste(b,(710,100),b);share.save(ROOT/'prebooking/public/share.jpg',quality=92)
+share=BG.resize((1200,630));sd=ImageDraw.Draw(share);sd.text((70,80),'BabyBoo.',font=font(56,950),fill='#F8F4FC');sd.text((70,200),'Pre-booking is open.',font=font(56,850),fill='#D9B8F4');sd.text((70,300),'A gentler goodbye to screen time.',font=font(28,600),fill='#CFC2DA');sd.text((70,435),'Join the Android launch list',font=font(28,800),fill='#F8F4FC');animation.seek(0);b=animation.convert('RGBA').resize((500,497),Image.Resampling.LANCZOS);share.paste(b,(710,100),b);share.save(ROOT/'prebooking/public/share.jpg',quality=92)
 (OUT/'ad-spec.json').write_text(json.dumps({'video':str(target),'size':[W,H],'fps':FPS,'duration':SECONDS,'audio':False,'mascotSource':'public/buddy-idle-loop.webp','motion':'Original native24fps mascot; graphics use restrained stepped12fps accents, no new character/body-part animation','timeline':['0-3s Little screens / Calmer goodbyes','3-6s simulated3%-0%battery cue','6-12s Pre-booking is open / Link in bio / free launch notification'],'publicURL':'Not baked in; actual Render hostname awaits deployment'},indent=2))
 print(target, target.stat().st_size,flush=True)
