@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
-  AppState, Image, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
+  AppState, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { loadProfileDraft, saveProfileDraft } from '../onboarding/screen2/profileDraftStorage';
+import { VideoWritingBuddy } from '../onboarding/screen2/VideoWritingBuddy';
 import { palette, type as typography } from '../onboarding/screen1/tokens';
 
 export interface OnboardingSecondChildData {
@@ -46,7 +47,7 @@ const COPY = {
   },
 };
 
-/** One calm, non-scrolling page. Animation is deferred; the original Buddy stays still. */
+/** One calm, non-scrolling page; approved video playback follows name entry. */
 export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNativeProps> = ({
   onBack, onContinue, initialLanguage = 'en',
 }) => {
@@ -143,8 +144,8 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           <View style={styles.buddySlot}>
             <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160, maxWidth: '100%' }}>
               <View pointerEvents="none" style={styles.buddyShadow} />
-              <Image source={require('../../assets/onboarding/screen2/buddy/buddy_note_approved.webp')}
-                accessibilityLabel={t.buddy} accessible resizeMode="contain"
+              <VideoWritingBuddy writing={keyboardVisible && !nameConfirmed && cleanName.length > 0}
+                label={t.buddy}
                 style={{ width: '100%', height: '100%' }} />
             </View>
           </View>

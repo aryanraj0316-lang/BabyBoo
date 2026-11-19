@@ -1,0 +1,13 @@
+{
+  "frames": 240,
+  "alpha": "transparent",
+  "noClipping": true,
+  "bottomRange": [
+    466,
+    467
+  ],
+  "durationMs": 10080,
+  "typecheck": "passed",
+  "screen2Tests": "10 passed",
+  "device": "adb devices empty; native playback not verified"
+}
