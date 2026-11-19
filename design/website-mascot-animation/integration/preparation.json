@@ -1,17 +1,15 @@
 {
-  "frames": 240,
+  "frames": 478,
   "size": [
-    480,
-    477
+    640,
+    636
   ],
-  "durationMs": 10000,
-  "bytes": 4271840,
+  "durationMs": 19917,
+  "bytes": 22013612,
   "opaqueSourceInteriorProtectedBeforeEncoding": true,
   "transparentBackground": true,
   "lastFrameMatchesFirst": false,
-  "seam": "250ms whole-pose premultiplied dissolve",
-  "registration": "fixed scale; planted feet midpoint240/baseline465",
-  "sourceArtworkRegenerated": false,
-  "encodedSeamMeanRgbDifference255": 0.0,
-  "encodedEndpointAlphaEqual": true
+  "seam": "native-speed forward/reverse retrace; no pose blend",
+  "registration": "fixed scale; planted feet midpoint320/baseline620",
+  "sourceArtworkRegenerated": false
 }

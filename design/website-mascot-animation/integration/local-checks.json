@@ -1,13 +1,8 @@
 {
-  "localUrl": "http://127.0.0.1:4178",
+  "url": "http://127.0.0.1:4178",
   "animationStatus": 200,
-  "mime": "image/webp",
-  "bytes": 4271840,
-  "assetByteMatch": true,
-  "reducedMotionStaticSource": true,
-  "staticErrorFallback": true,
-  "release": {
-    "available": false
-  },
-  "adminStatus": 200
+  "bytes": 22013612,
+  "sha256": "2437da1ac5b7a943d8f96c6d53d5efbc3d11709805cb78b1358fd3f5eab84766",
+  "servedAssetMatches": true,
+  "reducedMotionFallbackRetained": true
 }
