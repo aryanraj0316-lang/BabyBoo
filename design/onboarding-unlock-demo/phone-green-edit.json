@@ -1,0 +1,11 @@
+{
+  "source": "E:\\All Here\\BabyBoo\\design\\screen1\\gemini_review\\integration\\screen1-final-phone.mp4",
+  "duration": 8,
+  "fps": 30,
+  "dimensions": [
+    1080,
+    1920
+  ],
+  "background": "#00FF00",
+  "processing": "Existing recorded phone black/home states extracted, Buddy occlusion repaired with mirrored phone edge. Native onboarding A cubicpath and existing parent-hand.webp rendered separately to avoid source Buddy overlap hiding the parent hand. No mascot or page copy."
+}

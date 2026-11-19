@@ -6,3 +6,6 @@ Sequence: blackphone -> parenthand enters -> Aisdrawn includingcrossbar -> simul
 
 Reproduce:
 ffmpeg -ss 10.25 -i design/screen1/gemini_review/integration/screen1-final-phone.mp4 -t 8 -vf "crop=720:1280:0:150,scale=1080:1920:flags=lanczos,fps=30,setsar=1" -an -c:v libx264 -preset fast -crf 17 -pix_fmt yuv420p -movflags +faststart design/onboarding-unlock-demo/BabyBoo_Onboarding_A_Unlock.mp4
+
+## Phone-only green version
+`BabyBoo_Phone_A_Unlock_Green.mp4`:8s,1080x1920,30fps,silent H.264/yuv420p on solid#00FF00. Recorded phoneblack/home states reused; surroundingBuddy/page removed. The originalrecordinghasBuddycoveringpartofparenthand, so theexistingparent-hand.webp andnativeApath were renderedseparately, rather than delivering holes in the hand. Lower-rightoccludedphoneedge repairedusingmirroredleftbezel/screen. Motiontiming8s:blackhold->hand->Alegs/crossbar->unlock->homehold. Reviewed8decoded1ssamplesandlargehandpreview; fullffmpegdecodePASS. Scripttools/advertising/extract-phone-green.py. DesktopcopyBabyBoo_Phone_A_Unlock_Green.mp4.
