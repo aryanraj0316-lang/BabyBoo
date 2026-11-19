@@ -1,0 +1,17 @@
+{
+  "firstBounds": [
+    338,
+    64,
+    552,
+    612
+  ],
+  "lastBounds": [
+    340,
+    60,
+    566,
+    616
+  ],
+  "baselineDifferencePixels": 0,
+  "heightChangePercent": 0.65,
+  "note": "Largest lavender silhouette bounding box; wave/head motion changes bounds. This is diagnostic, not a pixel likeness score."
+}
