@@ -75,6 +75,7 @@
 .bb-site .site-trust span:last-child { padding-right: 0; }
 .bb-site .site-hero-figure { position: relative; height: 570px; display: flex; align-items: center; justify-content: center; transform: translateX(16px); }
 .bb-site .site-hero-figure img { width: 550px; max-width: 100%; height: auto; position: relative; z-index: 1; object-fit: contain; }
+.bb-site .site-buddy-artwork { display: contents; }
 .bb-site .site-buddy-shadow { position: absolute; width: 420px; height: 38px; border-radius: 50%; bottom: 15px; background: radial-gradient(ellipse, #a669e449, #7b4bb326 42%, transparent 72%); filter: blur(9px); }
 .bb-site .site-hero-ribbon { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
 .bb-site .site-hero-ribbon::before {

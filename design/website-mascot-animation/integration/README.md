@@ -1,0 +1,9 @@
+# Website Buddy animation integration
+
+User explicitly authorized complete integration without another approval checkpoint. Existing user video0b5f4e2d processed, no artwork generated. Largest lavender silhouette removes disconnected green background/ground shadow and exterior graphics. OriginalopaqueinteriorRGB protected beforelossyencoding. Fixedfeetmidpoint/baseline480x477,source24fps/10seconds,6frame250ms premultipliedwholeposeblend removesendpointjump. Asset public/buddy-idle-loop.webp is4,271,840bytes with240frames and genuinealpha. First/lastvisiblepremultipliedRGBmatch(0meanerror); transparentinvisibleRGBmaydiffer. Briefblend isnotnewcharactermotion and slightposeoverlapcanremainwithinlast250ms.
+
+LandingPage picture usesstaticapprovedwave forprefers-reduced-motion, defaultanimatedWebP and errorfallbacktoexistingstatic. Existinglayout/canvas/shadowremain. CSSpicturedisplaycontentskeepsimageexistingflexsizing. No native/onboarding/adminlogicchange; APKremainsunavailable. No newdependencies. Originalsourcepreserved.
+
+Preparedassetdecodedand12framesondarkwebsitecolourvisuallyreviewed(dark-background-review.jpg). Green/backgroundrectangleabsentinthosesamples,feetanchored. TypeScriptandproductionVitebuildpassed. LocalHTTP200image/webp/bytesequalhash verified; servedJScontainsanimation/reducedmotion/staticfallback. Localadmin200/releasefalseunchanged. No currentinteractivebrowser/devicecaptureclaimed becausepreviousbrowserautomationruntimewasunavailable; contactreviewisdecodedassetQA, notbrowserplaybackproof.
+
+LatestwebsiteLOCALONLYat http://127.0.0.1:4178; ownedserver84035leftrunning. PublicSitesunchanged, earlierownerconnectionblockedanduserchoseLocalhost. No automaticpublish. Reproduce tools/.venv/Scripts/python.exe tools/website/prepare-buddy-loop.py; npmrunbuild; node tools/website/export-site.mjs; restartwebsite-hosting/node local.mjs.

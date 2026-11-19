@@ -1,0 +1,17 @@
+{
+  "frames": 240,
+  "size": [
+    480,
+    477
+  ],
+  "durationMs": 10000,
+  "bytes": 4271840,
+  "opaqueSourceInteriorProtectedBeforeEncoding": true,
+  "transparentBackground": true,
+  "lastFrameMatchesFirst": false,
+  "seam": "250ms whole-pose premultiplied dissolve",
+  "registration": "fixed scale; planted feet midpoint240/baseline465",
+  "sourceArtworkRegenerated": false,
+  "encodedSeamMeanRgbDifference255": 0.0,
+  "encodedEndpointAlphaEqual": true
+}

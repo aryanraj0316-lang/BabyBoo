@@ -825,7 +825,11 @@ export const LandingPage: React.FC = () => {
           </div>
           <div className="site-hero-figure">
             <div className="site-buddy-shadow" aria-hidden="true" />
-            <img src="/buddy-seated-wave.webp" width="480" height="477" alt="Buddy, BabyBoo’s lavender plush mascot, sitting and waving" fetchPriority="high" />
+            <picture className="site-buddy-artwork">
+              <source media="(prefers-reduced-motion: reduce)" srcSet="/buddy-seated-wave.webp" />
+              <img src="/buddy-idle-loop.webp" width="480" height="477" alt="Buddy, BabyBoo’s lavender plush mascot, sitting and waving" fetchPriority="high"
+                onError={event => { const image = event.currentTarget; if (!image.src.endsWith('/buddy-seated-wave.webp')) image.src = '/buddy-seated-wave.webp'; }} />
+            </picture>
           </div>
         </div>
       </section>
