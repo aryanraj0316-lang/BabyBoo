@@ -1,10 +1,10 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
-  KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
+  AppState, Image, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ApprovedWritingBuddy } from '../onboarding/screen2/ApprovedWritingBuddy';
+import { loadProfileDraft, saveProfileDraft } from '../onboarding/screen2/profileDraftStorage';
 import { palette, type as typography } from '../onboarding/screen1/tokens';
 
 export interface OnboardingSecondChildData {
@@ -45,16 +45,16 @@ const COPY = {
   },
 };
 
-/** One calm page; images change only when input/submit/selection changes. */
+/** One calm, non-scrolling page. Animation is deferred; the original Buddy stays still. */
 export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNativeProps> = ({
-  onBack, onContinue, onSkip, initialLanguage = 'en',
+  onBack, onContinue, initialLanguage = 'en',
 }) => {
-  const [lang, setLang] = useState<Language>(initialLanguage);
-  const [childName, setChildName] = useState('');
-  const [selectedAge, setSelectedAge] = useState<string | null>(null);
-  const [nameConfirmed, setNameConfirmed] = useState(false);
+  const [saved] = useState(loadProfileDraft);
+  const [lang, setLang] = useState<Language>(saved.name ? saved.language : initialLanguage);
+  const [childName, setChildName] = useState(saved.name);
+  const [selectedAge, setSelectedAge] = useState<string | null>(saved.age);
+  const [nameConfirmed, setNameConfirmed] = useState(saved.confirmed);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [nameFocused, setNameFocused] = useState(false);
   const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
   const [contentHeight, setContentHeight] = useState(0);
   const insets = useSafeAreaInsets();
@@ -62,18 +62,33 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const t = COPY[lang];
   const cleanName = childName.trim();
   const compactAge = contentHeight > 0 && contentHeight < 630;
-  const buddySize = Math.min(width * 0.54, nameConfirmed ? 176 : keyboardVisible ? 156 : 240);
+  const tightKeyboard = keyboardVisible && contentHeight > 0 && contentHeight < 300;
+  const buddySize = Math.min(width * 0.54, nameConfirmed ? 176 : keyboardVisible ? 156 : 220);
+  const draft = useRef({ name: childName, age: selectedAge, confirmed: nameConfirmed, language: lang });
+  draft.current = { name: childName, age: selectedAge, confirmed: nameConfirmed, language: lang };
+
+  useEffect(() => {
+    const pending = setTimeout(() => saveProfileDraft(draft.current), 300);
+    return () => clearTimeout(pending);
+  }, [childName, selectedAge, nameConfirmed, lang]);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => {
+      if (state !== 'active') saveProfileDraft(draft.current);
+    });
+    return () => { subscription.remove(); saveProfileDraft(draft.current); };
+  }, []);
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
     const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
     // Focus after the existing page transition; no repeating focus/mascot clock.
-    const focus = requestAnimationFrame(() => inputRef.current?.focus());
+    const focus = requestAnimationFrame(() => { if (!saved.confirmed) inputRef.current?.focus(); });
     return () => { cancelAnimationFrame(focus); show.remove(); hide.remove(); };
   }, []);
 
   const submitName = () => {
     if (!cleanName) { inputRef.current?.focus(); return; }
+    setChildName(cleanName);
     setNameConfirmed(true);
     Keyboard.dismiss();
   };
@@ -88,7 +103,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   };
 
   return (
-    <KeyboardAvoidingView style={styles.root} behavior="padding" keyboardVerticalOffset={insets.top}>
+    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top}>
       <View style={styles.header}>
         {onBack ? <TouchableOpacity onPress={onBack} accessibilityRole="button" accessibilityLabel={t.back} style={styles.back}>
           <Text style={styles.backText}>←  {t.back}</Text>
@@ -103,24 +118,23 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
               {language === 'en' ? 'EN' : 'हिन्दी'}
             </Text>
           </TouchableOpacity>)}
-          {__DEV__ && onSkip && <TouchableOpacity onPress={onSkip} accessibilityLabel="Skip"><Text>Skip</Text></TouchableOpacity>}
         </View>
       </View>
       <View onLayout={event => setContentHeight(event.nativeEvent.layout.height)} style={[
-        styles.content, { paddingBottom: keyboardVisible ? 16 : insets.bottom + 32 },
+        styles.content, { paddingBottom: keyboardVisible ? 12 : insets.bottom + 20 },
       ]}>
-        <View style={styles.hero}>
+        <View style={[styles.hero, tightKeyboard && styles.heroCompact]}>
           <View style={styles.dialogue}>
-            <Text style={styles.message} maxFontSizeMultiplier={typography.maxFontScale}>
+            <Text style={[styles.message, tightKeyboard && styles.messageCompact]} maxFontSizeMultiplier={typography.maxFontScale}>
               {cleanName ? t.hi(cleanName) : t.intro}
             </Text>
             {nameConfirmed && <Text style={styles.ageQuestion} maxFontSizeMultiplier={typography.maxFontScale}>{t.age(cleanName)}</Text>}
           </View>
           <View style={styles.buddySlot}>
-            <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160 }}>
+            <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160, maxWidth: '100%' }}>
               <View pointerEvents="none" style={styles.buddyShadow} />
-              <ApprovedWritingBuddy text={childName} finished={nameConfirmed}
-                lookingDown={nameFocused && keyboardVisible && !nameConfirmed} label={t.buddy}
+              <Image source={require('../../assets/onboarding/screen1/buddy/buddy_wave.webp')}
+                accessibilityLabel={t.buddy} accessible resizeMode="contain"
                 style={{ width: '100%', height: '100%' }} />
             </View>
           </View>
@@ -128,10 +142,9 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
         {!nameConfirmed ? <View style={styles.nameSection}>
           <View style={styles.inputOutline}>
             <TextInput ref={inputRef} autoFocus value={childName} onChangeText={setChildName}
-              onFocus={() => setNameFocused(true)} onBlur={() => setNameFocused(false)}
               onSubmitEditing={submitName} placeholder={t.placeholder} placeholderTextColor="#777C78"
               accessibilityLabel={t.nameLabel} style={styles.input} maxLength={25}
-              autoCorrect={false} autoCapitalize="words" returnKeyType="next"
+              autoCorrect={false} autoCapitalize="words" returnKeyType="go"
               maxFontSizeMultiplier={typography.maxFontScale} />
             {cleanName.length > 0 && <>
               <TouchableOpacity onPress={() => { setChildName(''); inputRef.current?.focus(); }}
@@ -144,7 +157,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
             </>}
           </View>
         </View> : <View style={styles.ageSection}>
-          <TouchableOpacity onPress={editName} accessibilityRole="button" style={styles.edit}>
+          <TouchableOpacity onPress={editName} accessibilityRole="button" accessibilityLabel={t.edit} style={styles.edit}>
             <Text style={styles.editText}>{t.edit}</Text>
           </TouchableOpacity>
           <View style={styles.ageOptions}>
@@ -162,8 +175,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
               </View>
             </TouchableOpacity>)}
           </View>
-          <TouchableOpacity onPress={continueProfile} disabled={!selectedAge} accessibilityElementsHidden={!selectedAge}
-            importantForAccessibility={selectedAge ? 'auto' : 'no-hide-descendants'} accessibilityRole="button"
+          <TouchableOpacity onPress={continueProfile} disabled={!selectedAge} accessibilityState={{ disabled: !selectedAge }} accessibilityRole="button"
             style={[styles.continue, !selectedAge && styles.continueHidden]}>
             <Text style={styles.continueText}>{t.continue}</Text>
           </TouchableOpacity>
@@ -184,12 +196,14 @@ const styles = StyleSheet.create({
   languageText: { fontSize: 12, color: '#6B756E', fontWeight: '500' },
   languageTextActive: { color: palette.ink.primary },
   content: { flex: 1, minHeight: 0, paddingHorizontal: 24, alignItems: 'center' },
-  hero: { flex: 1, minHeight: 0, alignItems: 'center', width: '100%', gap: 12, paddingVertical: 12 },
-  buddySlot: { flex: 1, minHeight: 0, width: '100%', alignItems: 'center', justifyContent: 'center' },
+  hero: { flexGrow: 0, flexShrink: 1, minHeight: 0, height: '63%', alignItems: 'center', width: '100%', gap: 12, paddingTop: 14, paddingBottom: 20 },
+  heroCompact: { paddingTop: 4, paddingBottom: 8, gap: 6 },
+  buddySlot: { flex: 1, minHeight: 0, width: '100%', alignItems: 'center', justifyContent: 'flex-start' },
   buddyShadow: { position: 'absolute', bottom: '1.5%', left: '23%', width: '54%', height: 3,
     borderRadius: 100, backgroundColor: 'rgba(20,18,24,0.08)', boxShadow: '0 0 4px 2px rgba(20,18,24,0.12)' },
   dialogue: { alignItems: 'center', gap: 8, width: '100%', maxWidth: 400 },
   message: { fontFamily: Platform.select(typography.subline.family), fontSize: 18, lineHeight: 26, textAlign: 'center', color: '#424B44', fontWeight: '500' },
+  messageCompact: { fontSize: 16, lineHeight: 22 },
   ageQuestion: { fontSize: 16, lineHeight: 23, textAlign: 'center', color: '#5D6B61' },
   nameSection: { width: '100%', maxWidth: 430, paddingTop: 16, paddingBottom: 8 },
   inputOutline: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#315E47', borderRadius: 20, paddingLeft: 18, paddingRight: 8, backgroundColor: '#FFFFFF', minHeight: 56 },
@@ -213,5 +227,5 @@ const styles = StyleSheet.create({
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#53785B' },
   continue: { minHeight: 52, justifyContent: 'center', alignItems: 'center', backgroundColor: '#315E47', borderRadius: 20, marginTop: 18 },
   continueText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
-  continueHidden: { opacity: 0 },
+  continueHidden: { opacity: 0.4 },
 });
