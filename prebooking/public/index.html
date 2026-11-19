@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BabyBoo — A calmer goodbye to screen time</title>
+  <meta name="description" content="Meet Buddy. A gentler way to end your child's screen time. Reserve your free launch notification for BabyBoo on Android.">
+  <meta name="theme-color" content="#100e18"><meta property="og:title" content="BabyBoo pre-booking is open">
+  <meta property="og:description" content="Little screens. Calmer goodbyes. Join the Android launch list. No payment needed.">
+  <meta property="og:type" content="website"><meta property="og:image" content="/assets/share.jpg">
+  <link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/style.css">
+  <link rel="preload" href="/assets/nunito.ttf" as="font" type="font/ttf" crossorigin>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header><a class="wordmark" href="/" aria-label="BabyBoo home">BabyBoo<span class="brand-dot">.</span></a><span class="launch-tag">Coming to Android</span></header>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div class="copy">
+          <p class="eyebrow"><span></span> A LITTLE LESS SCREEN. A LITTLE MORE CALM.</p>
+          <h1 id="title">Their next reel.<br>Your next <em>real moment.</em></h1>
+          <p class="intro">Meet BabyBoo. A gentler goodbye to screen time, with a little help from Buddy.</p>
+          <div class="reservation" id="reserve">
+            <p class="form-kicker">PRE-BOOKING IS OPEN</p>
+            <h2>Be here for the first hello.</h2>
+            <p class="form-note">Join the Android launch list. Free to reserve. No payment needed.</p>
+            <form id="booking-form">
+              <label for="email">Your email address</label>
+              <div class="email-row"><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required><button type="submit">Reserve my spot <span aria-hidden="true">↗</span></button></div>
+              <div class="trap" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+              <label class="consent"><input name="consent" type="checkbox" required><span>Email me about BabyBoo’s launch. I can leave the list at any time.</span></label>
+              <p id="form-status" role="status" aria-live="polite"></p>
+            </form>
+            <p class="privacy-note">Just launch updates. No child details. <a href="/privacy">How we use your email</a></p>
+          </div>
+        </div>
+        <div class="buddy-stage">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="buddy-label"><span class="tiny-star">✦</span> YOUR LITTLE GOODBYE COMPANION</div>
+          <div class="buddy-floor"></div>
+          <video id="buddy" autoplay muted loop playsinline disablepictureinpicture disableremoteplayback poster="/assets/buddy.webp" width="640" height="636" aria-label="Buddy gently waving and blinking"><source src="/assets/buddy.webm" type="video/webm"></video>
+          <img id="buddy-still" src="/assets/buddy.webp" width="640" height="636" alt="Buddy, BabyBoo’s lavender plush companion" hidden>
+          <div class="hello"><span>Hi, I’m Buddy.</span><small>Big feelings. Gentle goodbyes.</small></div>
+        </div>
+      </section>
+      <section class="how" aria-label="How BabyBoo works">
+        <div class="how-intro"><span class="section-index">01 / THE LITTLE IDEA</span><h2>A softer ending.<br>A moment back together.</h2></div>
+        <ol><li><span class="step">01</span><div><h3>You set the time.</h3><p>Choose a screen-time session that works for your family.</p></div></li><li><span class="step">02</span><div><h3>The phone takes a rest.</h3><p>A simulated low battery and dark screen give the session a gentle ending.</p></div></li><li><span class="step">03</span><div><h3>You stay in control.</h3><p>A private parent gesture brings the phone back when you’re ready.</p></div></li></ol>
+      </section>
+      <section class="closing"><p>Something small. For your biggest little person.</p><a href="#reserve">Join the launch list <span aria-hidden="true">↗</span></a><small>In development for Android. Release date to be announced.</small></section>
+    </main>
+    <footer><a class="wordmark" href="/">BabyBoo<span class="brand-dot">.</span></a><span>Made for little moments.</span><a href="/privacy">Privacy &amp; your reservation</a></footer>
+  </div>
+</body></html>

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: babyboo-prebook
+    runtime: node
+    plan: starter
+    buildCommand: node --check prebooking/server.mjs
+    startCommand: node prebooking/server.mjs
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.15.0
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data/babyboo
+      - key: ADMIN_PASSWORD
+        generateValue: true
+    disk:
+      name: babyboo-reservations
+      mountPath: /var/data
+      sizeGB: 1
