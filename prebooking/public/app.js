@@ -8,8 +8,17 @@ const preference=matchMedia('(prefers-reduced-motion: reduce)');
 function showStill(){video.pause();video.hidden=true;video.style.display='none';still.hidden=false;}
 function motion(){if(preference.matches)showStill();else{still.hidden=true;video.hidden=false;video.style.display='';video.play().catch(showStill);}}
 preference.addEventListener('change',motion);video.addEventListener('error',showStill);motion();
+let available=false;
+async function checkAvailability(){
+ button.disabled=true;
+ try{const response=await fetch('/api/config');const config=await response.json();available=response.ok&&config.registrationsAvailable===true;}catch{available=false;}
+ button.disabled=false;button.formNoValidate=!available;button.firstChild.textContent=available?'Reserve my spot ':'Check availability ';
+ if(!available){status.className='error';status.textContent='Registration is temporarily unavailable. Please check again shortly.';}
+ else{status.className='';status.textContent='';}
+}
+checkAvailability();
 form.addEventListener('submit',async event=>{
- event.preventDefault();if(!form.reportValidity())return;
+ event.preventDefault();if(!available){await checkAvailability();return;}if(!form.reportValidity())return;
  button.disabled=true;button.firstChild.textContent='Saving your spot… ';status.className='';status.textContent='';
  try{
   const values=new FormData(form);const response=await fetch('/api/prebook',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:values.get('email'),consent:values.get('consent')==='on',website:values.get('website'),...campaign})});

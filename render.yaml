@@ -2,8 +2,8 @@ services:
   - type: web
     name: babyboo-prebook
     runtime: node
-    plan: starter
-    buildCommand: node --check prebooking/server.mjs
+    plan: free
+    buildCommand: npm ci --prefix prebooking && node --check prebooking/server.mjs
     startCommand: node prebooking/server.mjs
     healthCheckPath: /healthz
     envVars:
@@ -11,11 +11,7 @@ services:
         value: 24.15.0
       - key: NODE_ENV
         value: production
-      - key: DATA_DIR
-        value: /var/data/babyboo
+      - key: DATABASE_URL
+        sync: false
       - key: ADMIN_PASSWORD
         generateValue: true
-    disk:
-      name: babyboo-reservations
-      mountPath: /var/data
-      sizeGB: 1

@@ -1,30 +1,40 @@
 # BabyBoo pre-booking
 
-Independent, dependency-free Node24 service. Does not change onboarding or the existing website. Root and `/prebook` serve the same Instagram landing page. Free launch-list reservation, not a payment or Play Store pre-registration. No automated email is sent yet; connect a launch-email provider later, with unsubscribe links.
+Standalone Node 24 landing page and free launch-list reservation service. No payment or automated launch email is sent. Does not change onboarding.
 
 ## Local preview
 
-`node prebooking/server.mjs` → http://localhost:4180/prebook
+Run `npm ci --prefix prebooking`, then `node prebooking/server.mjs`.
+Open http://localhost:4180/prebook. Local development uses SQLite in ignored `prebooking/.data/`.
+Set ADMIN_PASSWORD to a unique password of at least 16 characters to enable /admin (username admin). Without it, admin stays locked. Never commit credentials.
 
-Set `ADMIN_PASSWORD` to a unique16+character password before starting to enable `/admin`. Username: `admin`. Without a password the dashboard is locked, including locally. Do not commit passwords or include them in URLs. Local data lives under ignored `prebooking/.data/`.
+## Render free web service
 
-## Render
+Use repository aryanraj0316-lang/BabyBoo, branch onboarding-screen1-rebuild. Leave Root Directory empty.
 
-Create a Blueprint from this repository using root `render.yaml`. It creates the `babyboo-prebook` Node24 service and a1GB persistent disk at `/var/data`. This is a **paid Starter service/disk configuration**, not a free-tier deployment. Deployment has not been performed. Render assigns the real public hostname; `https://babyboo-prebook.onrender.com` is only the requested name, not a claimed available/live URL. If Render adds a suffix, use the actual dashboard URL.
+- Build: `npm ci --prefix prebooking && node --check prebooking/server.mjs`
+- Start: `node prebooking/server.mjs`
+- Health check: `/healthz`
+- Node: 24.15.0
+- NODE_ENV: production
+- DATABASE_URL: external durable PostgreSQL connection string, entered privately in Render Environment. Use the provider's TLS-enabled URL.
+- ADMIN_PASSWORD: unique 16+ character secret, entered privately in Render Environment.
 
-Build: `node --check prebooking/server.mjs`
+The root render.yaml describes the same free web configuration. Existing manually created services need their settings updated manually.
 
-Start: `node prebooking/server.mjs`
+Do not use local SQLite storage on Render free: files can disappear on restart or redeployment. With no working database the page remains available, but reservations return 503 and the form shows unavailable. Health checks confirm the web process, not registration readiness; /api/config reports registration availability. No false success is returned. A failing database connection requires a restart after fixing its settings.
 
-Health: `/healthz`
+Free Render PostgreSQL expires after 30 days; do not rely on it for a continuing advertisement campaign. Connect a durable external PostgreSQL service, such as an owner-managed Neon project. Provider account setup and credentials remain required; no hosted database is provisioned by this repository.
 
-`DATA_DIR=/var/data/babyboo`, `NODE_ENV=production`. Blueprint generates `ADMIN_PASSWORD`; retrieve it from your Render service settings for owner login. SQLite/WAL stays on the persistent disk. Do not deploy without durable storage, move the DB to an ephemeral path, or enable multiple instances. Back up the DB/disk before changes. The local preview is not the deployment.
+Verified dashboard hostname: https://babyboo-0apz.onrender.com (deployment status must be checked separately).
+Bio URL: https://babyboo-0apz.onrender.com/prebook?utm_source=instagram&utm_medium=bio&utm_campaign=prelaunch
+Do not promote until a real test reservation appears in the protected dashboard and survives redeployment.
 
-Bio URL: actual Render hostname + `/prebook?utm_source=instagram&utm_medium=bio&utm_campaign=prelaunch`.
-Ad URL: actual Render hostname + `/prebook?utm_source=instagram&utm_medium=paid_social&utm_campaign=prelaunch&utm_content=ending01`.
+Optional paid-disk deployment: explicitly set STORAGE_DRIVER=sqlite and DATA_DIR to the mounted persistent disk directory. Never enable this mode on ephemeral free storage.
 
-## Owner reporting
+## Owner reporting and checks
 
-`/admin`: password-protected counts, email/status/date/source/campaign list and `/admin/export.csv`. Auth is enforced server-side. Duplicate email submissions stay one reservation. Unsubscribe `/leave` marks inactive; fresh explicit consent can reactivate. Reports distinguish active emails from repeat requests; no claim of verified identity or install conversion. Addresses are not email-verified. CSV is private and formula-escaped. Signup POST has consent validation, honeypot, body size limit, parameterized SQL, origin checks and short-lived hashed-IP throttling. No tracking pixels, child data, payment details or raw IP are stored in the reservation DB. No email vendor connected; export only active consented entries for future launch updates and include unsubscribe links.
+/admin and /admin/export.csv require authentication. Duplicate emails are case-insensitive; the original campaign is retained. /leave marks an entry unsubscribed; fresh consent can reactivate it. Reports count reservations and requests, not verified people or app installs. Addresses are not email-verified. CSV cells are formula-escaped. Requests have consent validation, honeypot, body limits, origin checks and short-lived hashed-IP throttling. No raw IP, child details, payment data or advertising pixels are stored in reservations. Export only active consented entries for launch email and include unsubscribe links.
 
-Test: `node --test prebooking/server.test.mjs`.
+Run `node --test prebooking/server.test.mjs prebooking/postgres.test.mjs`.
+For actual PostgreSQL coverage, set TEST_DATABASE_URL to a disposable test database first; PostgreSQL integration tests otherwise skip. Test emails use example.test. Production data must never be used as the test database.
