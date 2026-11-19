@@ -1,0 +1,1 @@
+Attach the2numberedPNGfiles toGemini, then pasteGEMINI_PROMPT.txt. Image01isexactlosslessPNGdecodeofthecurrentwebsiteWebP, notnewartwork. Image02isunchangedoriginalmaster. Websiteimage480x477; master1254px. Do notaskGeminitoredrawthemascot. Noapplicationintegrationperformed.

@@ -1,0 +1,18 @@
+Animate the attached seated lavender Buddy mascot for a premium website hero. Create ONE seamless looping video, approximately8seconds at24fps if supported. Only a gentle paw wave, small curious looks to either side, and natural blinks.
+
+REFERENCE PRIORITY
+01_exact_website_buddy.png is the exact character, seated pose, framing and appearance to animate. Begin AND end in this image's pose.02_buddy_master_identity.png is supporting identity/detail reference only. Do not change the website character's appearance to blend the two references. Preserve the exact lavender colour, plush fur, soft lighting, head/body proportions, glossy black eyes, original white specular reflections, pink inner ears and cheeks, open smile, paw pads and short rounded feet. No redesign, eyebrows, nose, teeth, human fingers, extra limbs or props.
+
+MOTION PLAN
+Start facing forward in the provided seated waving pose, briefly hold, and give two small relaxed waves using ONLY the already-raised paw on viewer-left. Bend smoothly at the shoulder and elbow with a subtle wrist turn. Keep the paw connected to the shoulder; no rubbery stretching, detached cutout or changing paw-pad shapes. The other paw rests as in the reference.
+Then look a little toward viewer-left, pause briefly, turn smoothly through centre toward viewer-right, pause, and return exactly to the starting forward-facing head pose. Keep turns subtle, about5?8degrees either side. Preserve both eyes fully inside the head silhouette with clear margins; ears and head retain their round volume. Convey looking around through natural small3Dheadturns rather than sliding the white eye reflections like pupils. The white reflections remain coherent with the fixed light source.
+Include two relaxed, brief blinks at irregular natural moments. Eyelids close and reopen smoothly to the original eye shapes. No sleepy half-closed eye hold, eye distortion or changing facial expression. Maintain the same friendly smile throughout.
+Finish with the original raised-paw position, head direction, open eyes and body placement. Hold this matching pose briefly at both ends so the loop joins without a snap. Avoid waving or blinking at the exact loop seam. Do not dissolve or crossfade between different faces to fake the loop.
+
+ANCHOR AND CAMERA
+The torso, seated bottom and both feet stay stationary at the same coordinates in EVERY frame. Fixed camera, framing, scale, focus, exposure and lighting. No camera pan/zoom, lateral drift, hopping, floating, bouncing, breathing expansion or whole-body sway. No pose reset that changes apparent head size. Keep the whole mascot visible with safe margins for ears and waving paw; no clipping. Motion must be gentle and restrained, not frantic or repetitive.
+
+BACKGROUND AND DELIVERY
+Prefer genuine transparent-background video if supported. Otherwise use a completely uniform flat saturated green #00FF00 for the entire frame: no gradient, floor, ground shadow, sparkles, stars, scenery, particles or green spill on fur. Preserve clean, soft plush edges. Do not include the website background, curved graphics, text or buttons from any screenshot. No music, voice, captions or added graphic overlays. Highest available resolution, native smooth movement; do not use slow-motion frame repetition.
+
+If the generator uses a fixed clip duration, fit this simple action to that duration naturally and preserve matching start/end poses. Generate only this single looping mascot clip.
