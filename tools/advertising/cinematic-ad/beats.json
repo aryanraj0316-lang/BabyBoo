@@ -1,0 +1,32 @@
+{
+  "duration": 15,
+  "fps": 30,
+  "audio": false,
+  "beats": [
+    {"time":0,"frame":0,"hit":"Phone-glow room, glass battery and Buddy establish"},
+    {"time":0.04,"frame":1,"hit":"Little screens / Big feelings word reveal begins"},
+    {"time":0.8,"frame":24,"hit":"Glass battery settles"},
+    {"time":2.85,"frame":86,"hit":"Hook match-moves into Time’s up"},
+    {"time":3,"frame":90,"hit":"Battery drains12 to3"},
+    {"time":4.25,"frame":128,"hit":"3percent arrives"},
+    {"time":4.55,"frame":137,"hit":"Keep the calm reveal"},
+    {"time":5.75,"frame":173,"hit":"1percent settles"},
+    {"time":6.5,"frame":195,"hit":"0percent, cold light falls"},
+    {"time":7.45,"frame":224,"hit":"Battery shell collapses into crescent/light transition"},
+    {"time":7.55,"frame":227,"hit":"Warm bloom and shockwave"},
+    {"time":7.6,"frame":228,"hit":"Sparkle burst"},
+    {"time":8.1,"frame":243,"hit":"Warm light settles around Buddy"},
+    {"time":9.02,"frame":271,"hit":"Real homepage BabyBoo wordmark springs in"},
+    {"time":9.45,"frame":284,"hit":"Calmer goodbyes feature chip"},
+    {"time":9.69,"frame":291,"hit":"Gentle screen-time limits chip"},
+    {"time":9.7,"frame":291,"hit":"Wordmark light sweep"},
+    {"time":9.93,"frame":298,"hit":"Parents stay in control chip"},
+    {"time":11.95,"frame":359,"hit":"CTA headline begins"},
+    {"time":12.35,"frame":371,"hit":"Link in bio pill springs in"},
+    {"time":12.85,"frame":386,"hit":"Free reservation / Android supporting line"},
+    {"time":13.1,"frame":393,"hit":"CTA shimmer pass"},
+    {"time":13.5,"frame":405,"hit":"Screenshot-ready final composition holds; gentle atmospheric motion only"},
+    {"time":14.9666666667,"frame":449,"hit":"Last frame"}
+  ],
+  "notes": ["Time values are editorial cue times; frame indices use nearest30fps output frame.","Exact header animation contains waving/head movement/blinks, no yawn/arms-up; those requested new poses are not synthesized.","12distinct poses/sec is represented at30fps with alternating2/3frame holds. Literal2frame holds would be15poses/sec."]
+}

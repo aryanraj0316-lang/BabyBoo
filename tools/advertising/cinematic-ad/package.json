@@ -1,0 +1,1 @@
+{"name":"babyboo-cinematic-prebooking-ad","private":true,"type":"module","scripts":{"prepare":"python prepare-assets.py","preview":"node render.mjs --preview","stills":"node render.mjs --stills","render":"node render.mjs"},"dependencies":{"gsap":"3.14.2","playwright":"1.58.2"}}

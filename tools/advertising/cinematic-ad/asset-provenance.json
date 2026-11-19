@@ -1,0 +1,14 @@
+{
+  "mascot": "public\\buddy-idle-loop.webp",
+  "sha256": "2437da1ac5b7a943d8f96c6d53d5efbc3d11709805cb78b1358fd3f5eab84766",
+  "originalFrames": 478,
+  "originalSize": [
+    640,
+    636
+  ],
+  "sampledFrames": 180,
+  "fps": 12,
+  "frameSelection": "pose*2 from existing24fps header animation; no generated/yawn/arms-up frames",
+  "logo": "Exact homepage BabyBoo text wordmark rendered in its existing Nunito900; no standalone logo asset found",
+  "grainSeed": 82716
+}
