@@ -38,13 +38,12 @@ for i in range(480):
  centered(d,title,1060,font(28,850),'#faf7fd');centered(d,desc,1106,font(20,500),'#c3b8cf')
  for j,p in enumerate(phases):
   x=210+j*62;d.rounded_rectangle((x,1169,x+42,1172),radius=2,fill='#c79dee'if t>=p[0]else'#46394f')
- centered(d,'Recorded in BabyBoo · Onboarding walkthrough',1220,font(14,500),'#a99ab7')
  if t>=18.5:
-  overlay=Image.new('RGBA',(W,H),(14,12,23,235));im=Image.alpha_composite(im.convert('RGBA'),overlay).convert('RGB');d=ImageDraw.Draw(im)
+  im=BG.copy();d=ImageDraw.Draw(im)
   centered(d,'BabyBoo',474,font(64,900),'#fcf8ff');centered(d,'A calmer goodbye.',565,font(35,800),'#c49aeb');centered(d,'Screen time ends. Connection stays.',625,font(23,500),'#d2c5df')
-  centered(d,'Explore BabyBoo below',727,font(19,650),'#faf7fd')
+  centered(d,'A little more peace.',727,font(21,650),'#faf7fd')
  if i in [0,96,192,288,384,456]:samples.append((t,im.copy()))
- if i==48:im.save(ROOT/'public/babyboo-app-demo-poster.jpg',quality=95)
+ if i==0:im.save(ROOT/'public/babyboo-app-demo-poster.jpg',quality=95)
  proc.stdin.write(np.asarray(im).tobytes())
 proc.stdin.close();assert proc.wait()==0
 sheet=Image.new('RGB',(1080,1280),'#0e0c17');d=ImageDraw.Draw(sheet)

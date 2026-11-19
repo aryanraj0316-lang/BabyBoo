@@ -209,7 +209,6 @@ const BatterySimDemo: React.FC = () => (
       <source src="/babyboo-app-demo.mp4" type="video/mp4" />
       Your browser does not support video playback. <a href="/babyboo-app-demo.mp4">Open the walkthrough video</a>.
     </video>
-    <figcaption>Recorded in BabyBoo ? Onboarding walkthrough ? 20 seconds</figcaption>
   </figure>
 );
 
