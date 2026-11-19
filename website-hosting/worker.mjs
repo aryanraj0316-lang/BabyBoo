@@ -180,6 +180,13 @@ async function handle(req,env,ctx) {
  const headers={'Content-Type':asset.type,'Cache-Control':path.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-store'};
  if(path==='/'&&req.method==='GET'&&!bot(req))try{const s=await session(req,env);if(s.cookie)headers['Set-Cookie']=s.cookie;}catch(e){console.error('visit_tracking_unavailable');}
  const bytes=Uint8Array.from(atob(asset.body),x=>x.charCodeAt(0));
+ if(asset.type==='video/mp4') {
+  const range=parseRange(req.headers.get('range'),bytes.length);
+  if(!range)return new Response(null,{status:416,headers:{'Content-Range':`bytes */${bytes.length}`}});
+  headers['Accept-Ranges']='bytes';headers['Content-Length']=String(range.end-range.start+1);
+  if(range.partial)headers['Content-Range']=`bytes ${range.start}-${range.end}/${bytes.length}`;
+  return new Response(req.method==='HEAD'?null:bytes.slice(range.start,range.end+1),{status:range.partial?206:200,headers});
+ }
  return new Response(req.method==='HEAD'?null:bytes,{headers});
 }
 

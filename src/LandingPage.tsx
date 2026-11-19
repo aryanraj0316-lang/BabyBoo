@@ -203,135 +203,15 @@ const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description:
 
 /* ───────────────────── Battery Simulation Demo ───────────────────── */
 
-const BatterySimDemo: React.FC = () => {
-  const [phase, setPhase] = useState(0); // 0=idle, 1=draining, 2=warning, 3=black, 4=wake
-  const [batteryLevel, setBatteryLevel] = useState(100);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const resetDemo = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setPhase(0);
-    setBatteryLevel(100);
-  };
-
-  const startDemo = () => {
-    resetDemo();
-    setPhase(1);
-    let level = 100;
-    timerRef.current = setInterval(() => {
-      level -= 2;
-      setBatteryLevel(level);
-      if (level <= 8) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        setPhase(2); // warning
-        setTimeout(() => {
-          setBatteryLevel(0);
-          setPhase(3); // blackout
-          setTimeout(() => {
-            setPhase(4); // wake flash
-            setTimeout(() => {
-              setPhase(3); // back to black
-              setTimeout(resetDemo, 2000);
-            }, 1500);
-          }, 2500);
-        }, 2000);
-      }
-    }, 60);
-  };
-
-  useEffect(() => {
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, []);
-
-  const bgColor = phase === 3 ? '#000' : phase === 4 ? '#0a0a0a' : phase === 2 ? '#0f0a1e' : '#1a1130';
-  const screenOpacity = phase === 3 ? 0.02 : phase === 4 ? 0.9 : 1;
-
-  return (
-    <div className="relative mx-auto" style={{ maxWidth: 280 }}>
-      {/* Phone frame */}
-      <div className="relative rounded-[40px] border-[3px] border-white/10 overflow-hidden shadow-[0_0_80px_rgba(139,92,246,0.15)]" style={{ background: '#0c0812', aspectRatio: '9/19.5' }}>
-        {/* Notch */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 rounded-b-2xl z-20" style={{ background: '#0c0812' }} />
-        
-        {/* Screen */}
-        <div
-          className="absolute inset-[3px] rounded-[37px] overflow-hidden flex flex-col items-center justify-center transition-all duration-700"
-          style={{ background: bgColor, opacity: screenOpacity }}
-        >
-          {phase === 0 && (
-            <div className="text-center animate-fade-in p-6">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-violet-500/10 flex items-center justify-center">
-                <PlayIcon className="w-8 h-8 text-violet-400 ml-1" />
-              </div>
-              <p className="text-white/60 text-sm font-medium mb-6">See how BabyBoo works</p>
-              <button
-                onClick={startDemo}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all cursor-pointer hover:scale-105 active:scale-95"
-              >
-                Play Demo
-              </button>
-            </div>
-          )}
-
-          {phase === 1 && (
-            <div className="text-center animate-fade-in p-6">
-              <div className="relative w-20 h-32 mx-auto mb-4 border-2 border-white/20 rounded-lg overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 transition-all duration-100" style={{
-                  height: `${batteryLevel}%`,
-                  background: batteryLevel > 20 ? 'linear-gradient(180deg, #22c55e, #16a34a)' : 'linear-gradient(180deg, #ef4444, #dc2626)',
-                  transformOrigin: 'bottom',
-                  position: 'absolute',
-                  bottom: 0,
-                  top: 'auto'
-                }} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-white font-black text-xl drop-shadow-lg">{batteryLevel}%</span>
-                </div>
-              </div>
-              <p className="text-white/40 text-xs">Screen time draining…</p>
-            </div>
-          )}
-
-          {phase === 2 && (
-            <div className="text-center animate-fade-in p-6">
-              <div className="w-20 h-20 mx-auto mb-3 animate-pulse">
-                <BatteryIcon className="w-full h-full text-red-500" />
-              </div>
-              <p className="text-red-400 font-bold text-lg mb-1">Battery Critically Low</p>
-              <p className="text-white/30 text-xs">Device shutting down…</p>
-            </div>
-          )}
-
-          {phase === 3 && (
-            <div className="absolute inset-0 bg-black" />
-          )}
-
-          {phase === 4 && (
-            <div className="text-center animate-fade-in">
-              <div className="w-16 h-16 mx-auto mb-2">
-                <BatteryIcon className="w-full h-full text-red-500/80" />
-              </div>
-              <p className="text-red-400/60 text-xs">0%</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Phase labels */}
-      <div className="mt-4 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium" style={{ background: 'rgba(139,92,246,0.1)', color: 'rgba(167,139,250,0.8)' }}>
-          {phase === 0 && '⭐ Ready to demonstrate'}
-          {phase === 1 && '⏱️ Timer counting down…'}
-          {phase === 2 && '🔋 Low battery warning'}
-          {phase === 3 && '📱 Phone appears dead'}
-          {phase === 4 && '⚡ Power button pressed — wake flash'}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ───────────────────── Installation & Permissions Simulator (Both Cases) ───────────────────── */
+const BatterySimDemo: React.FC = () => (
+  <figure className="site-demo-video">
+    <video controls playsInline preload="none" poster="/babyboo-app-demo-poster.jpg" width="720" height="1280" aria-label="BabyBoo app walkthrough: battery cue, blackout and parent unlock">
+      <source src="/babyboo-app-demo.mp4" type="video/mp4" />
+      Your browser does not support video playback. <a href="/babyboo-app-demo.mp4">Open the walkthrough video</a>.
+    </video>
+    <figcaption>Recorded in BabyBoo ? Onboarding walkthrough ? 20 seconds</figcaption>
+  </figure>
+);
 
 type DemoInstallChannel = 'playstore' | 'sideload';
 
@@ -987,7 +867,7 @@ export const LandingPage: React.FC = () => {
                   See the dead-phone illusion <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">in action</span>
                 </h2>
                 <p className="text-white/40 text-base leading-relaxed mb-8">
-                  Click "Play Demo" to watch BabyBoo's natural shutdown sequence — from battery drain to the realistic 0% alert, blackout screen, and the momentary power-button wake cue.
+                  Watch the walkthrough recorded in BabyBoo: the low-battery cue, the blackout, and the parent’s private A gesture to unlock.
                 </p>
 
                 <div className="space-y-4">
@@ -995,7 +875,7 @@ export const LandingPage: React.FC = () => {
                     { icon: <ClockIcon className="w-5 h-5" />, text: 'Timer counts down with battery drain animation' },
                     { icon: <BatteryIcon className="w-5 h-5" />, text: 'Critical battery warning at low percentage' },
                     { icon: <PhoneIcon className="w-5 h-5" />, text: 'Screen goes pitch black — looks completely dead' },
-                    { icon: <StarIcon className="w-5 h-5" />, text: 'Power button shows brief 0% flash, then black again' },
+                    { icon: <LockIcon className="w-5 h-5" />, text: 'Parents draw their private A gesture to unlock' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-white/50 text-sm">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.1)' }}>

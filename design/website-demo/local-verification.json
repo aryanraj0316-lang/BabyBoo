@@ -1,0 +1,13 @@
+{
+  "localUrl": "http://127.0.0.1:4178/#demo",
+  "videoIntegrated": true,
+  "rangeStatus": 206,
+  "rangeHeader": "bytes 0-63/1157565",
+  "mime": "video/mp4",
+  "bytes": 1157565,
+  "assetHashMatch": true,
+  "posterStatus": 200,
+  "release": {
+    "available": false
+  }
+}
