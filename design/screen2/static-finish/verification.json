@@ -1,12 +1,13 @@
 {
   "checkpoint": "Screen 2 static implementation; animation deferred",
-  "date": "2026-11-19T14:03:00+05:30",
+  "date": "2026-11-19T14:13:00+05:30",
   "scope": "Existing native name-to-age flow only; no changes to other screens or website",
-  "artwork": "Unchanged assets/onboarding/screen1/buddy/buddy_wave.webp, static; no generation or cutout renderer",
+  "artwork": "Unchanged assets/onboarding/screen2/buddy/buddy_note_approved.webp, static; no generation or cutout renderer",
+  "references": "reference-age.png and reference-keyboard.png supplied by user; cream/sage corner shapes, notepad Buddy, greeting hierarchy, age cards and green pill CTA implemented",
   "checks": {
     "typescript": "npx tsc -b: passed",
     "tests": "npx vitest run src/onboarding/screen2: 10 passed in 3 files",
-    "android": "npx expo export --platform android --output-dir tools/.screen2-export: passed, 1977 modules, Hermes bundle",
+    "android": "npx expo export --platform android --max-workers 2 --output-dir tools/.screen2-reference-export: passed, 1978 modules, Hermes bundle",
     "device": "adb devices: no connected devices",
     "visual": "Not device-verified; no screenshot or recording claimed"
   },

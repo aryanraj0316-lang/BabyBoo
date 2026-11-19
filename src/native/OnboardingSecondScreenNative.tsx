@@ -1,9 +1,10 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
   AppState, Image, KeyboardAvoidingView, Platform, Keyboard, useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 import { loadProfileDraft, saveProfileDraft } from '../onboarding/screen2/profileDraftStorage';
 import { palette, type as typography } from '../onboarding/screen1/tokens';
 
@@ -61,9 +62,9 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
   const { width } = useWindowDimensions();
   const t = COPY[lang];
   const cleanName = childName.trim();
-  const compactAge = contentHeight > 0 && contentHeight < 630;
+  const compactAge = contentHeight > 0 && contentHeight < 640;
   const tightKeyboard = keyboardVisible && contentHeight > 0 && contentHeight < 300;
-  const buddySize = Math.min(width * 0.54, nameConfirmed ? 176 : keyboardVisible ? 156 : 220);
+  const buddySize = Math.min(width * 0.56, nameConfirmed ? 204 : keyboardVisible ? 196 : 220);
   const draft = useRef({ name: childName, age: selectedAge, confirmed: nameConfirmed, language: lang });
   draft.current = { name: childName, age: selectedAge, confirmed: nameConfirmed, language: lang };
 
@@ -104,6 +105,15 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
 
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={insets.top}>
+      <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants"
+        style={[StyleSheet.absoluteFill, { top: -insets.top }]}>
+        <Svg width="100%" height="100%" viewBox="0 0 393 874" preserveAspectRatio="none">
+          <Path d="M0 0H158C140 36 136 67 105 86C70 108 24 106 0 153Z" fill="#EFF0E8" />
+          <Path d="M0 0H119C103 32 83 44 57 57C24 74 8 102 0 128Z" fill="#E7EADD" />
+          <Path d="M393 390C357 410 329 441 323 474C315 523 350 552 348 594C346 647 315 687 282 710C253 731 225 732 211 771C198 807 211 846 223 874H393Z" fill="#E9ECE1" />
+          <Path d="M393 694C362 724 333 733 298 748C252 768 252 824 271 874H393Z" fill="#F1F2EB" />
+        </Svg>
+      </View>
       <View style={styles.header}>
         {onBack ? <TouchableOpacity onPress={onBack} accessibilityRole="button" accessibilityLabel={t.back} style={styles.back}>
           <Text style={styles.backText}>←  {t.back}</Text>
@@ -121,11 +131,11 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
         </View>
       </View>
       <View onLayout={event => setContentHeight(event.nativeEvent.layout.height)} style={[
-        styles.content, { paddingBottom: keyboardVisible ? 12 : insets.bottom + 20 },
+        styles.content, { paddingBottom: keyboardVisible ? tightKeyboard ? 12 : 52 : insets.bottom + 38 },
       ]}>
-        <View style={[styles.hero, tightKeyboard && styles.heroCompact]}>
+        <View style={[styles.hero, keyboardVisible && styles.keyboardHero, nameConfirmed && styles.ageHero, compactAge && nameConfirmed && styles.ageHeroCompact, tightKeyboard && styles.heroCompact]}>
           <View style={styles.dialogue}>
-            <Text style={[styles.message, tightKeyboard && styles.messageCompact]} maxFontSizeMultiplier={typography.maxFontScale}>
+            <Text style={[styles.message, nameConfirmed && styles.greeting, tightKeyboard && styles.messageCompact]} maxFontSizeMultiplier={typography.maxFontScale}>
               {cleanName ? t.hi(cleanName) : t.intro}
             </Text>
             {nameConfirmed && <Text style={styles.ageQuestion} maxFontSizeMultiplier={typography.maxFontScale}>{t.age(cleanName)}</Text>}
@@ -133,7 +143,7 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
           <View style={styles.buddySlot}>
             <View style={{ width: buddySize, height: '100%', maxHeight: buddySize * 159 / 160, maxWidth: '100%' }}>
               <View pointerEvents="none" style={styles.buddyShadow} />
-              <Image source={require('../../assets/onboarding/screen1/buddy/buddy_wave.webp')}
+              <Image source={require('../../assets/onboarding/screen2/buddy/buddy_note_approved.webp')}
                 accessibilityLabel={t.buddy} accessible resizeMode="contain"
                 style={{ width: '100%', height: '100%' }} />
             </View>
@@ -168,35 +178,38 @@ export const OnboardingSecondScreenNative: React.FC<OnboardingSecondScreenNative
               style={[styles.ageOption, compactAge && styles.ageOptionCompact, selectedAge === option.id && styles.ageOptionSelected]}>
               <View style={styles.ageCopy}>
                 <Text style={styles.ageLabel} maxFontSizeMultiplier={typography.maxFontScale}>{lang === 'hi' ? option.hi : option.label}</Text>
-                {!compactAge && <Text style={styles.ageDescription} numberOfLines={2} maxFontSizeMultiplier={typography.maxFontScale}>{lang === 'hi' ? option.hiDesc : option.desc}</Text>}
+                <Text style={styles.ageDescription} maxFontSizeMultiplier={typography.maxFontScale}>{lang === 'hi' ? option.hiDesc : option.desc}</Text>
               </View>
               <View style={[styles.radio, selectedAge === option.id && styles.radioSelected]}>
                 {selectedAge === option.id && <View style={styles.radioDot} />}
               </View>
             </TouchableOpacity>)}
           </View>
-          <TouchableOpacity onPress={continueProfile} disabled={!selectedAge} accessibilityState={{ disabled: !selectedAge }} accessibilityRole="button"
-            style={[styles.continue, !selectedAge && styles.continueHidden]}>
-            <Text style={styles.continueText}>{t.continue}</Text>
-          </TouchableOpacity>
         </View>}
+        {nameConfirmed && <TouchableOpacity onPress={continueProfile} disabled={!selectedAge} accessibilityState={{ disabled: !selectedAge }} accessibilityRole="button"
+            style={[styles.continue, compactAge && styles.continueCompact, !selectedAge && styles.continueHidden]}>
+            <Text style={styles.continueText}>{t.continue}</Text>
+          </TouchableOpacity>}
       </View>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FFFEFC' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, minHeight: 52 },
+  root: { flex: 1, backgroundColor: '#FBFAF5' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 24, minHeight: 64 },
   back: { paddingVertical: 10, paddingRight: 12 },
   backText: { fontSize: 17, fontWeight: '600', color: palette.ink.primary },
-  languages: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  language: { paddingHorizontal: 9, paddingVertical: 8, borderRadius: 14 },
-  languageActive: { backgroundColor: '#F0F3ED' },
-  languageText: { fontSize: 12, color: '#6B756E', fontWeight: '500' },
+  languages: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  language: { minHeight: 36, minWidth: 40, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 24, backgroundColor: '#F1F1E9' },
+  languageActive: { backgroundColor: '#E6EADB' },
+  languageText: { fontSize: 14, color: '#354B3B', fontWeight: '500' },
   languageTextActive: { color: palette.ink.primary },
   content: { flex: 1, minHeight: 0, paddingHorizontal: 24, alignItems: 'center' },
   hero: { flexGrow: 0, flexShrink: 1, minHeight: 0, height: '63%', alignItems: 'center', width: '100%', gap: 12, paddingTop: 14, paddingBottom: 20 },
+  keyboardHero: { flex: 1, height: undefined, paddingTop: 40, gap: 44 },
+  ageHero: { flex: 1, height: undefined, paddingTop: 34, paddingBottom: 18, gap: 22 },
+  ageHeroCompact: { paddingTop: 10, paddingBottom: 8, gap: 10 },
   heroCompact: { paddingTop: 4, paddingBottom: 8, gap: 6 },
   buddySlot: { flex: 1, minHeight: 0, width: '100%', alignItems: 'center', justifyContent: 'flex-start' },
   buddyShadow: { position: 'absolute', bottom: '1.5%', left: '23%', width: '54%', height: 3,
@@ -204,7 +217,8 @@ const styles = StyleSheet.create({
   dialogue: { alignItems: 'center', gap: 8, width: '100%', maxWidth: 400 },
   message: { fontFamily: Platform.select(typography.subline.family), fontSize: 18, lineHeight: 26, textAlign: 'center', color: '#424B44', fontWeight: '500' },
   messageCompact: { fontSize: 16, lineHeight: 22 },
-  ageQuestion: { fontSize: 16, lineHeight: 23, textAlign: 'center', color: '#5D6B61' },
+  greeting: { fontSize: 28, lineHeight: 36, fontWeight: '700', color: '#244B38' },
+  ageQuestion: { fontSize: 18, lineHeight: 26, textAlign: 'center', color: '#5E6C62' },
   nameSection: { width: '100%', maxWidth: 430, paddingTop: 16, paddingBottom: 8 },
   inputOutline: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#315E47', borderRadius: 20, paddingLeft: 18, paddingRight: 8, backgroundColor: '#FFFFFF', minHeight: 56 },
   input: { flex: 1, fontSize: 16, lineHeight: 23, paddingVertical: 14, color: '#263F30', minWidth: 0 },
@@ -212,20 +226,21 @@ const styles = StyleSheet.create({
   clearText: { fontSize: 24, color: '#7C887F' },
   next: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: '#315E47' },
   nextText: { color: 'white', fontSize: 24 },
-  ageSection: { width: '100%', maxWidth: 430, paddingBottom: 8 },
-  edit: { alignSelf: 'center', minHeight: 44, justifyContent: 'center', marginBottom: 6 },
-  editText: { color: '#5B7160', fontSize: 13, textDecorationLine: 'underline' },
-  ageOptions: { gap: 8, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  ageOption: { width: '48%', flexDirection: 'row', alignItems: 'center', minHeight: 68, paddingVertical: 8, paddingHorizontal: 12, borderWidth: 1, borderColor: '#E0E7DD', borderRadius: 18, backgroundColor: '#FFFFFF' },
-  ageOptionCompact: { minHeight: 50 },
-  ageOptionSelected: { backgroundColor: '#F0F5EC', borderColor: '#53785B' },
+  ageSection: { width: '100%', maxWidth: 430 },
+  edit: { alignSelf: 'center', minHeight: 44, justifyContent: 'center', marginBottom: 12 },
+  editText: { color: '#356844', fontSize: 16, fontWeight: '600', textDecorationLine: 'underline' },
+  ageOptions: { rowGap: 12, columnGap: '3%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  ageOption: { width: '48.5%', flexDirection: 'row', alignItems: 'center', minHeight: 70, paddingVertical: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: '#DDDFD5', borderRadius: 24, backgroundColor: '#FCFBF7', boxShadow: '0 3px 5px rgba(37,62,37,0.05)' },
+  ageOptionCompact: { minHeight: 58, paddingVertical: 8, paddingHorizontal: 12 },
+  ageOptionSelected: { backgroundColor: '#E8EDDE', borderColor: '#89A184' },
   ageCopy: { flex: 1 },
-  ageLabel: { fontSize: 16, lineHeight: 22, color: '#2B4936', fontWeight: '600' },
-  ageDescription: { fontSize: 12, lineHeight: 18, color: '#718074' },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: '#B9C9B8', alignItems: 'center', justifyContent: 'center', marginLeft: 12 },
-  radioSelected: { borderColor: '#53785B' },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#53785B' },
-  continue: { minHeight: 52, justifyContent: 'center', alignItems: 'center', backgroundColor: '#315E47', borderRadius: 20, marginTop: 18 },
-  continueText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+  ageLabel: { fontSize: 16, lineHeight: 22, color: '#2B533B', fontWeight: '600' },
+  ageDescription: { fontSize: 13, lineHeight: 18, color: '#7A8177', marginTop: 2 },
+  radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 1, borderColor: '#CBD1C5', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
+  radioSelected: { borderColor: '#356844' },
+  radioDot: { width: 14, height: 14, borderRadius: 7, backgroundColor: '#356844' },
+  continue: { width: '100%', maxWidth: 430, minHeight: 54, justifyContent: 'center', alignItems: 'center', backgroundColor: '#285A3E', borderRadius: 30, marginTop: 48, boxShadow: '0 8px 14px rgba(40,76,40,0.12)' },
+  continueCompact: { marginTop: 24 },
+  continueText: { color: '#FFFFFF', fontSize: 19, fontWeight: '600' },
   continueHidden: { opacity: 0.4 },
 });
