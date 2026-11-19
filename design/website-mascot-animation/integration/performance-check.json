@@ -1,0 +1,26 @@
+{
+  "/": {
+    "status": 200,
+    "bytes": 2327,
+    "milliseconds": 47,
+    "type": "text/html; charset=utf-8"
+  },
+  "/babyboo-app-demo.mp4": {
+    "status": 206,
+    "bytes": 64,
+    "milliseconds": 98,
+    "type": "video/mp4"
+  },
+  "/buddy-idle-loop.webm": {
+    "status": 206,
+    "bytes": 64,
+    "milliseconds": 222,
+    "type": "video/webm"
+  },
+  "autoplayDemoInBuild": true,
+  "previousMascotBytes": 22013612,
+  "mascotBytes": 3429947,
+  "reductionPercent": 84.4,
+  "exportBytes": 13395890,
+  "browserPlayback": "Not visually verified in browser; decoded alpha frame reviewed."
+}

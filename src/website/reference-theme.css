@@ -74,7 +74,7 @@
 .bb-site .site-trust span:first-child { padding-left: 6px; border: none; }
 .bb-site .site-trust span:last-child { padding-right: 0; }
 .bb-site .site-hero-figure { position: relative; height: 570px; display: flex; align-items: center; justify-content: center; transform: translateX(16px); }
-.bb-site .site-hero-figure img { width: 550px; max-width: 100%; height: auto; position: relative; z-index: 1; object-fit: contain; }
+.bb-site .site-hero-figure :is(img, .site-buddy-video) { width: 550px; max-width: 100%; height: auto; position: relative; z-index: 1; object-fit: contain; }
 .bb-site .site-buddy-artwork { display: contents; }
 .bb-site .site-demo-video { width: min(100%, 370px); margin: 0 auto; }
 .bb-site .site-demo-video video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #100d19; border: 1px solid #5e496e; border-radius: 24px; box-shadow: 0 22px 60px #0004; }
@@ -175,7 +175,7 @@
  .bb-site .site-nav-links{gap:10px}.bb-site .site-nav-links>button{font-size:17px;padding-inline:10px}.bb-site .site-nav-links>button:last-child{font-size:17px;min-width:170px}
  .bb-site .site-hero{padding-top:180px;min-height:800px}.bb-site .site-hero-copy h1{font-size:clamp(60px,5.05vw,76px)}.bb-site .site-hero-copy>p{font-size:22px;max-width:580px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:20px;min-width:220px;height:62px;padding-inline:28px}.bb-site .site-secondary{min-width:210px}
- .bb-site .site-trust{font-size:17px}.bb-site .site-trust span{padding-inline:30px}.bb-site .site-hero-figure img{width:500px}.bb-site .site-hero-figure{height:540px}
+ .bb-site .site-trust{font-size:17px}.bb-site .site-trust span{padding-inline:30px}.bb-site .site-hero-figure :is(img, .site-buddy-video){width:500px}.bb-site .site-hero-figure{height:540px}
  .bb-site .site-step>div{padding:24px 30px 36px}.bb-site .site-step h3{font-size:27px}.bb-site .site-step p{font-size:20px}.bb-site .site-step .w-14{width:76px;height:76px}
  .bb-site #how-it-works>div>.grid{gap:28px}.bb-site > section>div>.text-center>p{font-size:23px}
 }
@@ -189,7 +189,7 @@
  .bb-site .site-nav-links{display:none}.bb-site>nav>div:first-child{padding-inline:24px}.bb-site>nav,.bb-site>nav>div:first-child{height:78px}
  .bb-site .site-hero{padding-top:140px;min-height:0;padding-bottom:60px}.bb-site .site-hero-grid{width:calc(100% - 48px);grid-template-columns:1fr;gap:34px}
  .bb-site .site-hero-copy{text-align:center}.bb-site .site-hero-copy h1{font-size:clamp(53px,9vw,76px);line-height:.98;letter-spacing:-1.8px}.bb-site .site-hero-copy>p{max-width:620px;margin-inline:auto;font-size:22px}
- .bb-site .site-hero-actions,.bb-site .site-trust{justify-content:center}.bb-site .site-trust{margin-top:36px;font-size:17px}.bb-site .site-hero-figure{height:auto}.bb-site .site-hero-figure img{width:440px}
+ .bb-site .site-hero-actions,.bb-site .site-trust{justify-content:center}.bb-site .site-trust{margin-top:36px;font-size:17px}.bb-site .site-hero-figure{height:auto}.bb-site .site-hero-figure :is(img, .site-buddy-video){width:440px}
  .bb-site .site-buddy-shadow{bottom:10px;width:350px}.bb-site .site-hero-ribbon::before{left:0;top:60%}.bb-site .site-stats{padding:60px 20px 70px}.bb-site .site-stats .text-4xl{font-size:46px}.bb-site .site-stats .text-sm{font-size:18px}
  .bb-site>section:not(.site-hero):not(.site-stats){padding:70px 0}.bb-site >section:not(.site-hero)>div.max-w-6xl{width:calc(100% - 48px)}.bb-site #how-it-works>div>.grid{grid-template-columns:1fr}
  .bb-site .site-step>div{min-height:0;padding:28px 32px 34px}.bb-site .site-step h3{font-size:29px}.bb-site .site-step p{font-size:21px}.bb-site .site-step .w-14{width:80px;height:80px}
@@ -199,7 +199,7 @@
 @media(max-width:520px){
  .bb-site .site-hero-copy h1{font-size:clamp(36px,10.5vw,53px);letter-spacing:-1.2px}
  .bb-site .site-hero-copy>p{font-size:18px;line-height:1.5}.bb-site .site-hero-actions{gap:12px}.bb-site .site-primary,.bb-site .site-secondary{font-size:16px;min-width:0;padding-inline:21px;height:54px;gap:8px}
- .bb-site .site-trust{font-size:13px}.bb-site .site-trust span{padding-inline:16px}.bb-site .site-trust span:first-child{padding-left:0}.bb-site .site-hero-figure img{width:340px}.bb-site .site-buddy-shadow{width:270px}
+ .bb-site .site-trust{font-size:13px}.bb-site .site-trust span{padding-inline:16px}.bb-site .site-trust span:first-child{padding-left:0}.bb-site .site-hero-figure :is(img, .site-buddy-video){width:340px}.bb-site .site-buddy-shadow{width:270px}
  .bb-site .site-stats>div{gap:32px 0}.bb-site .site-stats>div>div:nth-child(3)::before{display:none}.bb-site .site-stats .text-4xl{font-size:43px}.bb-site .site-stats .text-sm{font-size:17px}
  .bb-site>section>div>.text-center h2{font-size:34px;letter-spacing:-.5px}.bb-site>section>div>.text-center>p{font-size:18px}.bb-site .site-step h3{font-size:27px}.bb-site .site-step p{font-size:19px}
 }
@@ -215,7 +215,7 @@
  .bb-site .site-hero-copy h1{font-size:clamp(49px,4.1vw,76px);margin-bottom:22px}
  .bb-site .site-hero-copy>p{font-size:21px;max-width:580px;margin-bottom:32px}
  .bb-site .site-hero-figure{height:450px;top:-24px}
- .bb-site .site-hero-figure img{width:440px}
+ .bb-site .site-hero-figure :is(img, .site-buddy-video){width:440px}
  .bb-site .site-buddy-shadow{width:325px;height:32px;bottom:12px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:18px;height:55px;min-width:218px;padding-inline:34px}
  .bb-site .site-secondary{min-width:207px}
@@ -243,7 +243,7 @@
  .bb-site .site-nav-links>button:last-child{font-size:16px;min-width:156px}
  .bb-site .site-hero{padding-top:135px}
  .bb-site .site-hero-copy>p{font-size:17px;max-width:520px}
- .bb-site .site-hero-figure{height:420px}.bb-site .site-hero-figure img{width:395px}
+ .bb-site .site-hero-figure{height:420px}.bb-site .site-hero-figure :is(img, .site-buddy-video){width:395px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:16px;height:52px;min-width:184px;padding-inline:24px}
  .bb-site .site-secondary{min-width:156px}
  .bb-site .site-trust{font-size:15px}.bb-site .site-trust span{padding-inline:25px}
@@ -255,8 +255,10 @@
  .bb-site .site-hero-copy h1{font-size:clamp(43px,4.5vw,54px)}
  .bb-site .site-hero-copy>p{font-size:16px}
  .bb-site .site-primary,.bb-site .site-secondary{font-size:16px;min-width:160px;padding-inline:16px}
- .bb-site .site-hero-figure img{width:375px}
+ .bb-site .site-hero-figure :is(img, .site-buddy-video){width:375px}
  .bb-site .site-trust{font-size:14px}.bb-site .site-trust span{padding-inline:16px}
  .bb-site .site-step>div{padding:22px}.bb-site .site-step h3{font-size:21px}
 }
 @media(prefers-reduced-motion:reduce){.bb-site *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+.bb-site .site-demo-video video::-webkit-media-controls{display:none!important}

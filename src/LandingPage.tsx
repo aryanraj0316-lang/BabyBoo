@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRelease } from './website/useRelease';
+import { HeroBuddy } from './website/HeroBuddy';
 import './website/reference-theme.css';
 
 /* ───────────────────── Icon Components (inline SVG) ───────────────────── */
@@ -205,7 +206,7 @@ const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description:
 
 const BatterySimDemo: React.FC = () => (
   <figure className="site-demo-video">
-    <video controls playsInline preload="none" poster="/babyboo-app-demo-poster.jpg" width="720" height="1280" aria-label="BabyBoo app walkthrough: battery cue, blackout and parent unlock">
+    <video autoPlay muted loop playsInline disablePictureInPicture disableRemotePlayback preload="metadata" poster="/babyboo-app-demo-poster.jpg" width="720" height="1280" aria-label="BabyBoo app walkthrough: battery cue, blackout and parent unlock">
       <source src="/babyboo-app-demo.mp4" type="video/mp4" />
       Your browser does not support video playback. <a href="/babyboo-app-demo.mp4">Open the walkthrough video</a>.
     </video>
@@ -704,11 +705,7 @@ export const LandingPage: React.FC = () => {
           </div>
           <div className="site-hero-figure">
             <div className="site-buddy-shadow" aria-hidden="true" />
-            <picture className="site-buddy-artwork">
-              <source media="(prefers-reduced-motion: reduce)" srcSet="/buddy-seated-wave.webp" />
-              <img src="/buddy-idle-loop.webp" width="640" height="636" alt="Buddy, BabyBoo’s lavender plush mascot, sitting and waving" fetchPriority="high"
-                onError={event => { const image = event.currentTarget; if (!image.src.endsWith('/buddy-seated-wave.webp')) image.src = '/buddy-seated-wave.webp'; }} />
-            </picture>
+            <HeroBuddy />
           </div>
         </div>
       </section>

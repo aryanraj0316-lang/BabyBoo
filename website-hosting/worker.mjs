@@ -2,6 +2,7 @@ import assets from './web-assets.json' with { type: 'json' };
 import adminPage from './admin-page.mjs';
 
 const MAX_APK = 90 * 1024 * 1024;
+const decodedAssets = new Map();
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const json = (data, status=200, extra={}) => new Response(JSON.stringify(data), {status, headers:{'Content-Type':'application/json','Cache-Control':'no-store',...extra}});
 const query = (env, sql, ...args) => env.DB.prepare(sql).bind(...args);
@@ -179,8 +180,9 @@ async function handle(req,env,ctx) {
  if(!asset)return json({error:'Not found'},404);
  const headers={'Content-Type':asset.type,'Cache-Control':path.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-store'};
  if(path==='/'&&req.method==='GET'&&!bot(req))try{const s=await session(req,env);if(s.cookie)headers['Set-Cookie']=s.cookie;}catch(e){console.error('visit_tracking_unavailable');}
- const bytes=Uint8Array.from(atob(asset.body),x=>x.charCodeAt(0));
- if(asset.type==='video/mp4') {
+ let bytes=decodedAssets.get(asset);
+ if(!bytes){bytes=Uint8Array.from(atob(asset.body),x=>x.charCodeAt(0));decodedAssets.set(asset,bytes);}
+ if(asset.type.startsWith('video/')) {
   const range=parseRange(req.headers.get('range'),bytes.length);
   if(!range)return new Response(null,{status:416,headers:{'Content-Range':`bytes */${bytes.length}`}});
   headers['Accept-Ranges']='bytes';headers['Content-Length']=String(range.end-range.start+1);
