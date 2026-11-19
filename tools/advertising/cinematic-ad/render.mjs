@@ -23,8 +23,8 @@ if(process.argv.includes('--stills')){
  for(const n of (process.argv.includes('--quick')?[30,240,330,449]:[0,30,75,105,165,225,240,285,330,375,405,449])){await frame(n,path.join(OUT,`preview-${String(n).padStart(3,'0')}.png`));console.log('Preview',n);}
 }else{
  const portrait=path.join(OUT,'BabyBoo_Prebooking_Cinematic_1080x1920.mp4'),feed=path.join(OUT,'BabyBoo_Prebooking_Cinematic_1080x1350.mp4');
- const settings=['-an','-c:v','libx264','-preset','fast','-b:v','24M','-minrate','24M','-maxrate','24M','-bufsize','48M','-x264-params','nal-hrd=cbr:force-cfr=1','-pix_fmt','yuv420p','-r','30','-movflags','+faststart'];
- const encoder=spawn('ffmpeg',['-hide_banner','-loglevel','error','-y','-f','image2pipe','-vcodec','mjpeg','-framerate','30','-i','pipe:0','-filter_complex','[0:v]scale=1080:1920:flags=lanczos,split=2[portrait][crop];[crop]crop=1080:1350:0:285[feed]','-map','[portrait]',...settings,portrait,'-map','[feed]',...settings,feed],{stdio:['pipe','ignore','pipe']});
+ const settings=['-an','-c:v','libx264','-preset','fast','-b:v','24M','-minrate','24M','-maxrate','24M','-bufsize','48M','-x264-params','nal-hrd=cbr:force-cfr=1','-pix_fmt','yuv420p','-color_range','tv','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-r','30','-movflags','+faststart'];
+ const encoder=spawn('ffmpeg',['-hide_banner','-loglevel','error','-y','-f','image2pipe','-vcodec','mjpeg','-framerate','30','-i','pipe:0','-filter_complex','[0:v]scale=1080:1920:flags=lanczos:in_range=pc:out_range=tv,format=yuv420p,split=2[portrait][crop];[crop]crop=1080:1350:0:285[feed]','-map','[portrait]',...settings,portrait,'-map','[feed]',...settings,feed],{stdio:['pipe','ignore','pipe']});
  let encoderErrors='';encoder.stderr.on('data',b=>encoderErrors+=b);const completion=once(encoder,'close');
  for(let n=0;n<450;n++){
   const screenshot=await frame(n);

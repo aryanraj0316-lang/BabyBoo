@@ -1,0 +1,56 @@
+{
+  "videos": [
+    {
+      "file": "BabyBoo_Prebooking_Cinematic_1080x1920.mp4",
+      "width": 1080,
+      "height": 1920,
+      "fps": "30/1",
+      "frames": 450,
+      "duration": 15,
+      "bitrate": 23947790,
+      "codec": "h264",
+      "pixelFormat": "yuv420p",
+      "audioTracks": 0,
+      "fullDecode": "passed"
+    },
+    {
+      "file": "BabyBoo_Prebooking_Cinematic_1080x1350.mp4",
+      "width": 1080,
+      "height": 1350,
+      "fps": "30/1",
+      "frames": 450,
+      "duration": 15,
+      "bitrate": 24163326,
+      "codec": "h264",
+      "pixelFormat": "yuv420p",
+      "audioTracks": 0,
+      "fullDecode": "passed"
+    }
+  ],
+  "safeZones": {
+    "samples": 30,
+    "portraitViolations": [],
+    "centreCropViolations": [],
+    "browserErrors": []
+  },
+  "audio": "No audio generated",
+  "supersampling": "2x2160x3840browser screenshots downscaled to1080x1920",
+  "cadence": "12distinct original header poses/sec, alternating2/3frame holds at30fps",
+  "limitations": [
+    "Original header contains waves, turns and blinks, no yawn or arms-raised pose. Those are not invented.",
+    "Source Buddy pixels640x636, upscaled within the2x composition; supersampling improves graphic edges, not original fur detail.",
+    "Final1.5seconds holds the CTA/mascot, grain and atmosphere are retained."
+  ],
+  "review": "All30 decoded half-second samples and final4:5PNG visually reviewed: no clipped critical text/mascot in samples. See README for constraints and corrections.",
+  "sourcePoseChecks": {
+    "fps": 12,
+    "holdsAt30fps": [
+      2,
+      3
+    ],
+    "posesPerFirstSecond": 12,
+    "sampledSourceFrames": 180,
+    "sourceAlphaUnclipped": true,
+    "mascotMotion": "Exact bitmap sequence, whole-image bounded stop-motion transforms only"
+  }
+}

@@ -1,0 +1,839 @@
+{
+  "safe": {
+    "top": 250,
+    "bottom": 340,
+    "left": 60,
+    "right": 60
+  },
+  "errors": [],
+  "audits": [
+    {
+      "frame": 0,
+      "time": 0,
+      "elements": [
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "scene s1 critical",
+          "x": 80,
+          "y": 390,
+          "width": 920,
+          "height": 223.28125,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "scene s3 critical",
+          "x": 80,
+          "y": 355,
+          "width": 920,
+          "height": 248.875,
+          "inside": true
+        },
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        },
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 15,
+      "time": 0.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288.00250244140625,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 30,
+      "time": 1,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 45,
+      "time": 1.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 60,
+      "time": 2,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 75,
+      "time": 2.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 80,
+          "y": 380,
+          "width": 920,
+          "height": 244.78125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 90,
+      "time": 3,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s0 critical",
+          "x": 72.31798553466797,
+          "y": 358.79058837890625,
+          "width": 935.364013671875,
+          "height": 247.18505859375,
+          "inside": true
+        },
+        {
+          "element": "scene s1 critical",
+          "x": 80,
+          "y": 390,
+          "width": 920,
+          "height": 223.28125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 105,
+      "time": 3.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s1 critical",
+          "x": 80,
+          "y": 390,
+          "width": 920,
+          "height": 223.28125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 120,
+      "time": 4,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s1 critical",
+          "x": 80,
+          "y": 390,
+          "width": 920,
+          "height": 223.28125,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 135,
+      "time": 4.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s1 critical",
+          "x": 79.08000946044922,
+          "y": 387.3298645019531,
+          "width": 921.8399658203125,
+          "height": 223.70492553710938,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 150,
+      "time": 5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 165,
+      "time": 5.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 180,
+      "time": 6,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 195,
+      "time": 6.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 210,
+      "time": 7,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 80,
+          "y": 370,
+          "width": 920,
+          "height": 261.09375,
+          "inside": true
+        },
+        {
+          "element": "battery-caption critical",
+          "x": 60,
+          "y": 1520,
+          "width": 960,
+          "height": 44,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 225,
+      "time": 7.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s2 critical",
+          "x": 72.31798553466797,
+          "y": 348.71051025390625,
+          "width": 935.364013671875,
+          "height": 263.65771484375,
+          "inside": true
+        },
+        {
+          "element": "scene s3 critical",
+          "x": 80,
+          "y": 355,
+          "width": 920,
+          "height": 248.875,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 240,
+      "time": 8,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s3 critical",
+          "x": 80,
+          "y": 355,
+          "width": 920,
+          "height": 248.875,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 255,
+      "time": 8.5,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 288,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s3 critical",
+          "x": 80,
+          "y": 355,
+          "width": 920,
+          "height": 248.875,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 270,
+      "time": 9,
+      "elements": [
+        {
+          "element": "small-logo critical",
+          "x": 380,
+          "y": 267.591796875,
+          "width": 320,
+          "height": 83,
+          "inside": true
+        },
+        {
+          "element": "scene s3 critical",
+          "x": 79.08000946044922,
+          "y": 352.3055725097656,
+          "width": 921.8399658203125,
+          "height": 249.34725952148438,
+          "inside": true
+        },
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 285,
+      "time": 9.5,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 300,
+      "time": 10,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 315,
+      "time": 10.5,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 330,
+      "time": 11,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 345,
+      "time": 11.5,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 80,
+          "y": 306,
+          "width": 920,
+          "height": 411,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 360,
+      "time": 12,
+      "elements": [
+        {
+          "element": "scene brand-scene critical",
+          "x": 77.1939697265625,
+          "y": 297.6642761230469,
+          "width": 925.612060546875,
+          "height": 413.1376647949219,
+          "inside": true
+        },
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 375,
+      "time": 12.5,
+      "elements": [
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "cta-button critical",
+          "x": 127.84498596191406,
+          "y": 1399.5755615234375,
+          "width": 824.31005859375,
+          "height": 110.1448974609375,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 390,
+      "time": 13,
+      "elements": [
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "cta-button critical",
+          "x": 109.09700012207031,
+          "y": 1366.4674072265625,
+          "width": 861.8060302734375,
+          "height": 118.23974609375,
+          "inside": true
+        },
+        {
+          "element": "cta-foot critical",
+          "x": 60,
+          "y": 1500,
+          "width": 960,
+          "height": 80,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 405,
+      "time": 13.5,
+      "elements": [
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "cta-button critical",
+          "x": 110,
+          "y": 1368,
+          "width": 860,
+          "height": 118,
+          "inside": true
+        },
+        {
+          "element": "cta-foot critical",
+          "x": 60,
+          "y": 1500,
+          "width": 960,
+          "height": 80,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 420,
+      "time": 14,
+      "elements": [
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "cta-button critical",
+          "x": 110,
+          "y": 1368,
+          "width": 860,
+          "height": 118,
+          "inside": true
+        },
+        {
+          "element": "cta-foot critical",
+          "x": 60,
+          "y": 1500,
+          "width": 960,
+          "height": 80,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "frame": 435,
+      "time": 14.5,
+      "elements": [
+        {
+          "element": "scene cta-scene critical",
+          "x": 80,
+          "y": 328,
+          "width": 920,
+          "height": 265.1875,
+          "inside": true
+        },
+        {
+          "element": "cta-button critical",
+          "x": 110,
+          "y": 1368,
+          "width": 860,
+          "height": 118,
+          "inside": true
+        },
+        {
+          "element": "cta-foot critical",
+          "x": 60,
+          "y": 1500,
+          "width": 960,
+          "height": 80,
+          "inside": true
+        }
+      ]
+    }
+  ]
+}
