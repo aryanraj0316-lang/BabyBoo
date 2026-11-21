@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:image" content="/assets/share.jpg">
   <link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/style.css">
   <link rel="preload" href="/assets/nunito.ttf" as="font" type="font/ttf" crossorigin>
-  <script src="/app.js" defer></script>
+  <script src="/app.js" defer></script><script src="/creators.js" defer></script>
 </head>
 <body>
   <div class="page">
@@ -32,6 +32,7 @@
             <h2>Your first year, on us.</h2>
             <p class="form-note">1 year free for early registrations. Join the Android launch list. No payment needed.</p>
             <form id="booking-form">
+              <details class="referral" open><summary>Apply a creator referral code</summary><label for="referral-code">Referral code (optional)</label><div class="email-row"><input id="referral-code" name="referralCode" maxlength="24" autocomplete="off" placeholder="Creator code"><button id="apply-code" type="button">Apply coupon code</button></div><p id="referral-status" role="status"></p></details>
               <label for="email">Your email address</label>
               <div class="email-row"><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required><button type="submit" disabled>Reserve my spot <span aria-hidden="true">›</span></button></div>
               <div class="trap" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -55,6 +56,7 @@
         <div class="how-intro"><span class="section-index">01 / THE LITTLE IDEA</span><h2>A softer ending.<br>A moment back together.</h2></div>
         <ol><li><span class="step">01</span><div><h3>You set the time.</h3><p>Choose a screen-time session that works for your family.</p></div></li><li><span class="step">02</span><div><h3>The phone takes a rest.</h3><p>A simulated low battery and dark screen give the session a gentle ending.</p></div></li><li><span class="step">03</span><div><h3>You stay in control.</h3><p>A private parent gesture brings the phone back when you’re ready.</p></div></li></ol>
       </section>
+      <section class="creator-section" aria-labelledby="creator-heading"><span class="section-index">EARLY ACCESS / REAL EXPERIENCES</span><h2 id="creator-heading">Tried by a few. Shared honestly.</h2><p>Selected creators test an early-access APK before launch. Their experiences appear here after review, with trial and referral disclosures.</p><div id="creator-reviews"></div><p>Invited to try BabyBoo? <a href="/early-access">Leave your early-access review</a>.</p></section>
       <section class="closing"><p>Something small. For your biggest little person.</p><a href="#reserve">Join the launch list <span aria-hidden="true">↗</span></a><small>In development for Android. Release date to be announced.</small></section>
     </main>
     <footer><a class="wordmark" href="/">BabyBoo<span class="brand-dot">.</span></a><span>Made for little moments.</span><a href="/privacy">Privacy &amp; your reservation</a></footer>

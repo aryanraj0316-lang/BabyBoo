@@ -132,3 +132,42 @@ video::-webkit-media-controls{display:none!important}
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.referral{margin:12px 0 16px;border-bottom:1px solid #ffffff18;padding-bottom:12px}.referral summary{cursor:pointer;color:#dfc6f5;font-size:13px;font-weight:750}.referral label{display:block;margin-top:12px;font-size:12px}.referral p{font-size:12px;line-height:1.5;color:#d8c6e5}.creator-section{max-width:1160px;margin:auto;padding:48px 40px;border-top:1px solid #ffffff15}.creator-section h2{font-size:32px;letter-spacing:-1px}.creator-section>p{color:var(--muted);max-width:660px;line-height:1.7}#creator-reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;color:var(--muted)}#creator-reviews article,#creator-admin article{border:1px solid #ffffff20;border-radius:16px;padding:20px;background:#ffffff03}#creator-reviews h3{color:#f6f3f7}#creator-reviews blockquote{margin:16px 0;white-space:pre-wrap;overflow-wrap:anywhere}#creator-reviews small{display:block;font-size:12px;line-height:1.5}.creator-form{max-width:600px;display:grid;gap:16px;margin:24px 0}.creator-form>label{display:grid;gap:8px}.creator-form input:not([type=checkbox]),.creator-form textarea,.creator-form select{width:100%;min-height:44px;border:1px solid #695776;border-radius:10px;padding:12px;background:#15101f;color:#f6f3f7;font:inherit;font-size:16px}.creator-form .consent{display:flex}.creator-form button,#creator-admin button{border:0;border-radius:10px;padding:12px 18px;background:#dfc6f5;color:#251731;font:inherit;font-weight:800}#creator-admin{padding-top:36px;margin-top:30px;border-top:1px solid #ffffff20}#creator-admin p{white-space:pre-wrap;overflow-wrap:anywhere}#creator-admin article{margin:12px 0}#creator-admin article button{margin-right:8px}#invite-link{overflow-wrap:anywhere}button:disabled{cursor:wait;opacity:.6}
+/* A growing form must extend the page rather than clip its controls. */
+.hero-viewport{height:auto;min-height:100svh;overflow:visible}
+@media(max-width:760px){.creator-section{padding:32px 22px}.creator-section h2{font-size:26px}.referral .email-row{flex-direction:column}.referral summary{font-size:14px}}
+
+/* Creator launch checkpoint: clearer referral entry and a fuller desktop hero. */
+.referral{background:#c89df610;border:1px solid #c89df64d;border-radius:12px;padding:14px;margin:16px 0 18px}
+.referral summary{font-size:15px;font-weight:850;color:#ead6ff;line-height:1.4}
+.referral label{color:#cfc0dd;font-size:12px}
+.referral .email-row{margin-top:8px}
+.referral #apply-code{background:#d8b2f5;color:#251333}
+.referral #referral-code{font-size:16px}
+@media(min-width:761px){
+ .hero{grid-template-columns:1.1fr 1fr;padding-top:30px;padding-bottom:44px;gap:clamp(32px,4vw,72px)}
+ .copy{max-width:720px}
+ .hero h1{font-size:clamp(46px,4.25vw,74px);line-height:1.04;letter-spacing:-2px;margin-bottom:22px}
+ .eyebrow{font-size:11px;margin-bottom:18px}
+ .intro{max-width:620px;font-size:clamp(17px,1.2vw,20px);line-height:1.5;margin-bottom:24px}
+ .reservation{max-width:660px;padding:24px 26px;border-radius:22px}
+ .form-kicker{font-size:11px;margin-bottom:7px}
+ .reservation h2{font-size:27px;margin-bottom:8px}
+ .form-note{font-size:14px;line-height:1.5;margin-bottom:18px}
+ form>label{font-size:14px}
+ .email-row input{font-size:16px;padding:14px 15px;min-height:50px}
+ .email-row button{font-size:15px;padding:14px 18px;min-height:50px}
+ .consent{font-size:12px;line-height:1.5;margin-top:14px;align-items:flex-start}
+ .consent input{width:17px;height:17px}
+ .privacy-note{font-size:11px;margin-top:12px}
+ .buddy-stage{height:auto;align-self:center}
+ .buddy-stage video,.buddy-stage>img{max-width:660px;max-height:660px;width:100%;height:auto}
+ .buddy-label{position:static;font-size:10px;margin-bottom:18px}
+ .hello span{font-size:22px}.hello small{font-size:14px;margin-top:5px}
+ .buddy-floor{bottom:58px}
+ .referral summary{font-size:16px}
+}
+@media(min-width:761px) and (max-width:1080px){
+ .hero h1{font-size:46px}.reservation{padding:20px}.email-row{flex-wrap:wrap}.email-row input{flex:1 1 160px}.email-row button{flex:0 0 auto}
+}
+@media(max-width:760px){.referral{padding:14px}.referral summary{font-size:15px}.referral .email-row input,.referral .email-row button{width:100%;min-height:48px}}

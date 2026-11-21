@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync,rmSync} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {createPrebookingServer} from './server.mjs';
+const password='creator-tests-owner-only';
+const auth={Authorization:'Basic '+Buffer.from('admin:'+password).toString('base64')};
+for(const driver of ['sqlite','postgres'])test(`${driver}: creator code credit, invite review privacy, moderation and admin protection`,{skip:driver==='postgres'&&!process.env.TEST_DATABASE_URL},async()=>{
+ const dataDir=mkdtempSync(path.join(os.tmpdir(),'babyboo-creators-'));
+ const settings={dataDir,adminPassword:password,production:false,databaseUrl:driver==='postgres'?process.env.TEST_DATABASE_URL:''};
+ let app=createPrebookingServer(settings);await new Promise(r=>app.server.listen(0,'127.0.0.1',r));let base='http://127.0.0.1:'+app.server.address().port;
+ const suffix=crypto.randomUUID().slice(0,8).toUpperCase(),code='TEST_'+suffix,email=suffix+'@example.test',handle='creator_'+suffix;
+ const post=(route,body,headers={})=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(body)});
+ try{
+  assert.equal((await post('/api/admin/codes',{code,handle,bonus:3,active:true})).status,401);
+  assert.equal((await post('/api/admin/codes',{code,handle,bonus:3,active:true},{...auth,Origin:'https://evil.test'})).status,403);
+  assert.equal((await post('/api/admin/codes',{code,handle,bonus:0,active:true},auth)).status,400);
+  assert.equal((await post('/api/admin/codes',{code,handle,bonus:3,active:true},auth)).status,200);
+  assert.equal((await post('/api/referral',{code:code.toLowerCase()})).status,200);
+  assert.equal((await post('/api/prebook',{email,consent:true,referralCode:'INVALID_CODE'})).status,400);
+  assert.equal((await post('/api/prebook',{email,consent:true,referralCode:code.toLowerCase()})).status,200);
+  await post('/api/prebook',{email,consent:true});
+  let row=(await app.store.rows()).find(r=>r.email===email.toLowerCase());assert.equal(row.referral_code,code);assert.equal(row.bonus_shutdowns,3);
+  const codes=await (await fetch(base+'/api/admin/codes',{headers:auth})).json();assert.equal(Number(codes.codes.find(c=>c.code===code).reservations),1);
+  const invitation=await (await post('/api/admin/invites',{handle},auth)).json();const token=invitation.path.split('=')[1];assert.equal(token.length,64);
+  const text='The timer helped us end a session. Setup could be clearer. '+suffix;
+  assert.equal((await post('/api/creator-review',{token,handle:'wrong',rating:3,body:text,consent:true})).status,400);
+  assert.equal((await post('/api/creator-review',{token,handle,rating:3,body:text,consent:true,partner:true})).status,200);
+  let publicReviews=await (await fetch(base+'/api/reviews')).json();assert.equal(publicReviews.reviews.some(r=>r.body===text),false);
+  const pending=await (await fetch(base+'/api/admin/reviews',{headers:auth})).json();const review=pending.reviews.find(r=>r.body===text);assert.equal(review.status,'pending');assert.notEqual(review.token_hash,token);
+  assert.equal((await post('/api/admin/reviews',{id:review.token_hash,status:'approved'},auth)).status,200);
+  publicReviews=await (await fetch(base+'/api/reviews')).json();const published=publicReviews.reviews.find(r=>r.body===text);assert.match(published.disclosure,/referral benefits/);assert.equal(published.token_hash,undefined);
+  await post('/api/admin/reviews',{id:review.token_hash,status:'hidden'},auth);
+  publicReviews=await (await fetch(base+'/api/reviews')).json();assert.equal(publicReviews.reviews.some(r=>r.body===text),false);
+  const csv=await (await fetch(base+'/admin/export.csv',{headers:auth})).text();assert.match(csv,/bonus_shutdowns/);assert.match(csv,new RegExp(code));
+  await app.close();app=createPrebookingServer(settings);await new Promise(r=>app.server.listen(0,'127.0.0.1',r));base='http://127.0.0.1:'+app.server.address().port;
+  row=(await app.store.rows()).find(r=>r.email===email.toLowerCase());assert.equal(row.bonus_shutdowns,3);
+ }finally{await app.close();rmSync(dataDir,{recursive:true,force:true});}
+});

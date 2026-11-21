@@ -38,3 +38,11 @@ Optional paid-disk deployment: explicitly set STORAGE_DRIVER=sqlite and DATA_DIR
 
 Run `node --test prebooking/server.test.mjs prebooking/postgres.test.mjs`.
 For actual PostgreSQL coverage, set TEST_DATABASE_URL to a disposable test database first; PostgreSQL integration tests otherwise skip. Test emails use example.test. Production data must never be used as the test database.
+
+## Creator programme (local checkpoint, not deployed)
+
+Admin controls under /admin create invitation links for selected Instagram handles and save case-insensitive referral codes with a configurable extra-shutdowns/day bonus. Codes start unchecked/inactive in the editor. Existing reservations retain their first code and bonus; code edits never rewrite historical promises. Public signup revalidates active codes and saves the benefit snapshot. App redemption/authentication is not implemented: this site cannot alter an installed app's limit. The trial APK and its 1–2 day expiry are managed separately.
+
+/early-access accepts private, random invitation links. Only the invitation hash is stored. Reviews require publication consent and remain pending until the owner publishes them; published content includes free-trial and creator-reported partnership disclosure. Owner can hide reviews. No reviews are fabricated or automatically published. Invite ownership is checked against the recorded handle, not against Instagram OAuth; send invitations only after confirming the handle in your DM. No DM is sent by this code.
+
+Run `npm test --prefix prebooking`; set TEST_DATABASE_URL to a disposable PostgreSQL database for full integration coverage. Never use production data for tests.
